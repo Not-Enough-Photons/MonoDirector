@@ -15,13 +15,21 @@ namespace NEP.MonoDirector.Core
             {
                 instance = this;
             }
+
+            Events.OnPreRecord += OnPreRecord;
+            Events.OnRecordTick += OnRecordTick;
+            Events.OnStopRecording += OnStopRecording;
         }
 
         public static Recorder instance;
 
+        public int RecordTick { get => recordTick; }
+
         private Actor currentRecordingActor;
 
         private Coroutine recordRoutine;
+
+        private int recordTick;
 
         public void BeginRecording()
         {
@@ -102,7 +110,7 @@ namespace NEP.MonoDirector.Core
 
         public void OnStopRecording()
         {
-            if (Director.instance.RecordedTicks <= Director.instance.WorldTick && Director.instance.RecordedTicks != Director.instance.WorldTick)
+            if (recordTick <= Director.instance.WorldTick && recordTick != Director.instance.WorldTick)
             {
                 // TODO: refactor so the director updates this properly
                 //recordedTicks = worldTick;
@@ -112,6 +120,9 @@ namespace NEP.MonoDirector.Core
             Director.instance.Cast.Add(currentRecordingActor);
 
             currentRecordingActor = null;
+
+            Director.instance.WorldProps.AddRange(Director.instance.RecordingProps);
+            Director.instance.RecordingProps.Clear();
 
             if (recordRoutine != null)
             {

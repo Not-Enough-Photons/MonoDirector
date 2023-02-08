@@ -26,8 +26,6 @@ namespace NEP.MonoDirector.Core
         public List<ActorProp> RecordingProps;
 
         public int WorldTick { get => worldTick; }
-        public int CurrentTick { get => currentTick; }
-        public int RecordedTicks { get => recordedTicks; }
 
         private static PlayState playState;
         private static CaptureState captureState;
@@ -35,8 +33,6 @@ namespace NEP.MonoDirector.Core
         private CameraRig camera;
 
         private int worldTick;
-        private int currentTick;
-        private int recordedTicks = 0;
 
         private void Awake()
         {
@@ -48,36 +44,6 @@ namespace NEP.MonoDirector.Core
             Cast = new List<Actor>();
             WorldProps = new List<ActorProp>();
             RecordingProps = new List<ActorProp>();
-        }
-
-        private void Start()
-        {
-            Events.OnPrePlayback += playback.OnPrePlayback;
-            Events.OnPreRecord += recorder.OnPreRecord;
-
-            Events.OnPlaybackTick += playback.OnPlaybackTick;
-            Events.OnRecordTick += recorder.OnRecordTick;
-
-            Events.OnStopPlayback += playback.OnStopPlayback;
-            Events.OnStopRecording += recorder.OnStopRecording;
-        }
-
-        private void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.RightControl))
-            {
-                Record();
-            }
-
-            if (Input.GetKeyDown(KeyCode.P))
-            {
-                Play();
-            }
-
-            if (Input.GetKeyDown(KeyCode.LeftControl))
-            {
-                Stop();
-            }
         }
 
         public void Play()
@@ -132,9 +98,7 @@ namespace NEP.MonoDirector.Core
             }
 
             Cast.Clear();
-            recordedTicks = 0;
             worldTick = 0;
-            currentTick = 0;
         }
         
         public void ClearScene()

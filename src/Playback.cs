@@ -15,11 +15,19 @@ namespace NEP.MonoDirector.Core
             {
                 instance = this;
             }
+
+            Events.OnPrePlayback += OnPrePlayback;
+            Events.OnPlaybackTick += OnPlaybackTick;
+            Events.OnStopPlayback += OnStopPlayback;
         }
 
         public static Playback instance;
 
+        public int PlaybackTick { get => playbackTick; }
+
         private Coroutine playRoutine;
+
+        private int playbackTick;
 
         public void BeginPlayback()
         {
@@ -36,7 +44,7 @@ namespace NEP.MonoDirector.Core
 
             foreach (var castMember in Director.instance.Cast)
             {
-                castMember.Act(0);
+                AnimateActor(0, castMember);
                 castMember.ShowActor(true);
             }
 
@@ -48,6 +56,7 @@ namespace NEP.MonoDirector.Core
                 }
                 else
                 {
+                    AnimateProp(0, prop);
                     prop.gameObject.SetActive(true);
                 }
             }
@@ -60,20 +69,17 @@ namespace NEP.MonoDirector.Core
                 return;
             }
 
-            /*if (currentTick < RecordedTicks - 1)
-            {
-                currentTick++;
-            }*/
-
             foreach (var castMember in Director.instance.Cast)
             {
-                AnimateActor(Director.instance.CurrentTick, castMember);
+                AnimateActor(playbackTick, castMember);
             }
 
             foreach (var prop in Director.instance.WorldProps)
             {
-                AnimateProp(Director.instance.CurrentTick, prop);
+                AnimateProp(playbackTick, prop);
             }
+
+            playbackTick++;
         }
 
         public void OnStopPlayback()
