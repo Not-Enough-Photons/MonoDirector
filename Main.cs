@@ -1,14 +1,16 @@
-﻿using MelonLoader;
-using UnityEngine;
-
-using System.Reflection;
+﻿using System.Reflection;
 using System.IO;
 
-using NEP.MonoDirector.Cameras;
-using NEP.MonoDirector.Audio;
-using BoneLib.BoneMenu;
-using NEP.MonoDirector.State;
+using MelonLoader;
+using UnityEngine;
+
 using BoneLib;
+using BoneLib.BoneMenu;
+
+using NEP.MonoDirector.Audio;
+using NEP.MonoDirector.Cameras;
+using NEP.MonoDirector.Core;
+using NEP.MonoDirector.State;
 
 namespace NEP.MonoDirector
 {
@@ -103,7 +105,7 @@ namespace NEP.MonoDirector
             var actorCategory = mdMenu.CreateCategory("Actors", Color.white);
             var settingsCategory = mdMenu.CreateCategory("Settings", Color.white);
 
-            playbackCategory.CreateEnumElement<CaptureState>("Capture Type", Color.white, (type) => director.captureState = type);
+            //playbackCategory.CreateEnumElement<CaptureState>("Capture Type", Color.white, (type) => director.captureState = type);
             playbackCategory.CreateFunctionElement("Record", Color.red, () => director.Record());
             playbackCategory.CreateFunctionElement("Play", Color.green, () => director.Play());
             playbackCategory.CreateFunctionElement("Pause", Color.yellow, () => director.Pause());

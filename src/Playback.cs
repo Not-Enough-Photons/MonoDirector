@@ -39,8 +39,7 @@ namespace NEP.MonoDirector.Core
 
         public void OnPrePlayback()
         {
-            //Director.instance.PlayState = PlayState.Playing;
-            //currentTick = 0;
+            playbackTick = 0;
 
             foreach (var castMember in Director.instance.Cast)
             {

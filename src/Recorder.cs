@@ -51,30 +51,28 @@ namespace NEP.MonoDirector.Core
         {
             currentRecordingActor.CaptureAvatarFrame();
 
-            foreach (var castMember in Director.instance.Cast)
-            {
-                Playback.instance.AnimateActor(Director.instance.WorldTick, castMember);
-            }
-
             foreach (var prop in Director.instance.RecordingProps)
             {
-                prop.Record(Director.instance.WorldTick);
+                prop.Record(recordTick);
+            }
+
+            foreach (var castMember in Director.instance.Cast)
+            {
+                Playback.instance.AnimateActor(recordTick, castMember);
             }
 
             foreach(var prop in Director.instance.WorldProps)
             {
-                Playback.instance.AnimateProp(Director.instance.WorldTick, prop);
+                Playback.instance.AnimateProp(recordTick, prop);
             }
         }
 
         public void OnPreRecord()
         {
-            // playState = PlayState.Recording;
-
-            /*if (Director.instance.RecordedTicks > 0)
+            if (recordTick > 0)
             {
-                worldTick = 0;
-            }*/
+                recordTick = 0;
+            }
 
             currentRecordingActor = new Actor(Constants.rigManager.avatar);
 
@@ -95,7 +93,7 @@ namespace NEP.MonoDirector.Core
                 return;
             }
 
-            //worldTick++;
+            recordTick++;
 
             if (Director.CaptureState == CaptureState.CaptureCamera)
             {
@@ -110,12 +108,6 @@ namespace NEP.MonoDirector.Core
 
         public void OnStopRecording()
         {
-            if (recordTick <= Director.instance.WorldTick && recordTick != Director.instance.WorldTick)
-            {
-                // TODO: refactor so the director updates this properly
-                //recordedTicks = worldTick;
-            }
-
             currentRecordingActor.CloneAvatar();
             Director.instance.Cast.Add(currentRecordingActor);
 
@@ -126,7 +118,7 @@ namespace NEP.MonoDirector.Core
 
             if (recordRoutine != null)
             {
-                MelonLoader.MelonCoroutines.Stop(recordRoutine);
+                MelonCoroutines.Stop(recordRoutine);
                 recordRoutine = null;
             }
         }

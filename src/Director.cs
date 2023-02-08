@@ -28,7 +28,7 @@ namespace NEP.MonoDirector.Core
         public int WorldTick { get => worldTick; }
 
         private static PlayState playState;
-        private static CaptureState captureState;
+        private static CaptureState captureState = CaptureState.CaptureActor;
 
         private CameraRig camera;
 

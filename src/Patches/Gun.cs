@@ -1,4 +1,5 @@
 ﻿using NEP.MonoDirector.Actors;
+using NEP.MonoDirector.Core;
 
 namespace NEP.MonoDirector.Patches
 {
@@ -13,9 +14,9 @@ namespace NEP.MonoDirector.Patches
 
                 if (gunProp != null)
                 {
-                    if (Director.instance.playState == State.PlayState.Recording)
+                    if (Director.PlayState == State.PlayState.Recording)
                     {
-                        gunProp.RecordGunShot(Director.instance.WorldTick, gunProp.GunFakeFire);
+                        gunProp.RecordGunShot(Recorder.instance.RecordTick, gunProp.GunFakeFire);
                     }
                 }
             }

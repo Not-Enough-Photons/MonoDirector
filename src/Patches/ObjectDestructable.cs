@@ -1,9 +1,5 @@
-﻿using MelonLoader;
-using NEP.MonoDirector;
-using NEP.MonoDirector.Actors;
-using SLZ.Marrow.Data;
-using System.Runtime.InteropServices;
-using UnityEngine;
+﻿using NEP.MonoDirector.Actors;
+using NEP.MonoDirector.Core;
 
 namespace NEP.MonoDirector.Patches
 {
@@ -21,9 +17,9 @@ namespace NEP.MonoDirector.Patches
             {
                 var prop = destructable.GetComponent<ActorBreakableProp>();
 
-                if(prop != null && Director.instance.playState == State.PlayState.Recording)
+                if(prop != null && Director.PlayState == State.PlayState.Recording)
                 {
-                    prop.RecordDestructionEvent(Director.instance.WorldTick, prop.DestructionEvent);
+                    prop.RecordDestructionEvent(Recorder.instance.RecordTick, prop.DestructionEvent);
                 }
             }
         }
