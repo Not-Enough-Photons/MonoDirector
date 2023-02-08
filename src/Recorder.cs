@@ -1,5 +1,5 @@
 ﻿using System.Collections;
-S
+
 using NEP.MonoDirector.Actors;
 using NEP.MonoDirector.State;
 
@@ -21,7 +21,7 @@ namespace NEP.MonoDirector.Core
 
         private Actor currentRecordingActor;
 
-        private IEnumerator recordRoutine;
+        private Coroutine recordRoutine;
 
         public void RecordCamera()
         {

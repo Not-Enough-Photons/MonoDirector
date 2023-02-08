@@ -1,4 +1,8 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+
+using NEP.MonoDirector.State;
+
+using UnityEngine;
 
 namespace NEP.MonoDirector.Core
 {
@@ -14,18 +18,20 @@ namespace NEP.MonoDirector.Core
 
         public static Playback instance;
 
+        private Coroutine playRoutine;
+
         public void OnPrePlayback()
         {
-            Director.instance.PlayState = PlayState.Playing;
-            currentTick = 0;
+            //Director.instance.PlayState = PlayState.Playing;
+            //currentTick = 0;
 
-            foreach (var castMember in Cast)
+            foreach (var castMember in Director.instance.Cast)
             {
                 castMember.Act(0);
                 castMember.ShowActor(true);
             }
 
-            foreach (var prop in WorldProps)
+            foreach (var prop in Director.instance.WorldProps)
             {
                 if (prop == null)
                 {
@@ -40,24 +46,24 @@ namespace NEP.MonoDirector.Core
 
         public void OnPlaybackTick()
         {
-            if (playState == PlayState.Paused)
+            if (Director.PlayState == PlayState.Paused)
             {
                 return;
             }
 
-            if (currentTick < RecordedTicks - 1)
+            /*if (currentTick < RecordedTicks - 1)
             {
                 currentTick++;
+            }*/
+
+            foreach (var castMember in Director.instance.Cast)
+            {
+                castMember.Act(Director.instance.CurrentTick);
             }
 
-            foreach (var castMember in Cast)
+            foreach (var prop in Director.instance.WorldProps)
             {
-                castMember.Act(currentTick);
-            }
-
-            foreach (var prop in WorldProps)
-            {
-                prop.Play(currentTick);
+                prop.Play(Director.instance.CurrentTick);
             }
         }
 
@@ -70,13 +76,14 @@ namespace NEP.MonoDirector.Core
             }
         }
 
+
         public IEnumerator PlayRoutine()
         {
             Events.OnPrePlayback?.Invoke();
             yield return new WaitForSeconds(4f);
             Events.OnPlay?.Invoke();
 
-            while (playState == PlayState.Playing || playState == PlayState.Paused)
+            while (Director.PlayState == PlayState.Playing || Director.PlayState == PlayState.Paused)
             {
                 Events.OnPlaybackTick?.Invoke();
                 yield return null;
