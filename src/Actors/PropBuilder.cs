@@ -1,7 +1,8 @@
 ﻿using static MelonLoader.MelonLogger;
 
+using NEP.MonoDirector.Core;
+
 using UnityEngine;
-using NEP.MonoDirector.Patches;
 
 namespace NEP.MonoDirector.Actors
 {
@@ -37,7 +38,7 @@ namespace NEP.MonoDirector.Actors
                 var actorProp = gameObject.AddComponent<ActorGunProp>();
                 actorProp.SetRigidbody(rigidbody);
                 actorProp.SetGun(gameObject.GetComponent<SLZ.Props.Weapons.Gun>());
-                Director.instance.WorldProps.Add(actorProp);
+                Director.instance.RecordingProps.Add(actorProp);
 
                 return;
             }
@@ -50,7 +51,7 @@ namespace NEP.MonoDirector.Actors
                 destructableProp.SetRigidbody(rigidbody);
                 destructableProp.SetBreakableObject(gameObject.GetComponent<SLZ.Props.ObjectDestructable>());
 
-                Director.instance.WorldProps.Add(destructableProp);
+                Director.instance.RecordingProps.Add(destructableProp);
 
                 return;
             }
@@ -61,7 +62,7 @@ namespace NEP.MonoDirector.Actors
 
                 var actorProp = gameObject.AddComponent<ActorProp>();
                 actorProp.SetRigidbody(rigidbody);
-                Director.instance.WorldProps.Add(actorProp);
+                Director.instance.RecordingProps.Add(actorProp);
             }
         }
 
@@ -74,11 +75,11 @@ namespace NEP.MonoDirector.Actors
                 ActorProp actorProp = gameObject.GetComponent<ActorProp>();
                 bool isProp = actorProp != null;
 
-                if (isProp && Director.instance.playState == State.PlayState.Stopped)
+                if (isProp && Director.PlayState == State.PlayState.Stopped)
                 {
                     var prop = actorProp;
                     prop.InteractableRigidbody.isKinematic = false;
-                    Director.instance.WorldProps.Remove(prop);
+                    Director.instance.RecordingProps.Remove(prop);
                     GameObject.Destroy(prop);
                     MelonLoader.MelonLogger.Msg($"Removing component from {gameObject.name}");
                 }

@@ -1,5 +1,5 @@
 ﻿using System.Collections;
-
+using MelonLoader;
 using NEP.MonoDirector.Actors;
 using NEP.MonoDirector.State;
 
@@ -23,6 +23,14 @@ namespace NEP.MonoDirector.Core
 
         private Coroutine recordRoutine;
 
+        public void BeginRecording()
+        {
+            if (recordRoutine == null)
+            {
+                recordRoutine = MelonCoroutines.Start(RecordRoutine()) as Coroutine;
+            }
+        }
+
         public void RecordCamera()
         {
             foreach (var castMember in Director.instance.Cast)
@@ -33,16 +41,21 @@ namespace NEP.MonoDirector.Core
 
         public void RecordActor()
         {
-            foreach (var castMember in Director.instance.Cast)
-            {
-                castMember?.Act(Director.instance.WorldTick);
-            }
-
             currentRecordingActor.CaptureAvatarFrame();
 
-            foreach (var prop in Director.instance.WorldProps)
+            foreach (var castMember in Director.instance.Cast)
+            {
+                Playback.instance.AnimateActor(Director.instance.WorldTick, castMember);
+            }
+
+            foreach (var prop in Director.instance.RecordingProps)
             {
                 prop.Record(Director.instance.WorldTick);
+            }
+
+            foreach(var prop in Director.instance.WorldProps)
+            {
+                Playback.instance.AnimateProp(Director.instance.WorldTick, prop);
             }
         }
 

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
-
+using MelonLoader;
+using NEP.MonoDirector.Actors;
 using NEP.MonoDirector.State;
 
 using UnityEngine;
@@ -19,6 +20,14 @@ namespace NEP.MonoDirector.Core
         public static Playback instance;
 
         private Coroutine playRoutine;
+
+        public void BeginPlayback()
+        {
+            if (playRoutine == null)
+            {
+                playRoutine = MelonCoroutines.Start(PlayRoutine()) as Coroutine;
+            }
+        }
 
         public void OnPrePlayback()
         {
@@ -58,12 +67,12 @@ namespace NEP.MonoDirector.Core
 
             foreach (var castMember in Director.instance.Cast)
             {
-                castMember.Act(Director.instance.CurrentTick);
+                AnimateActor(Director.instance.CurrentTick, castMember);
             }
 
             foreach (var prop in Director.instance.WorldProps)
             {
-                prop.Play(Director.instance.CurrentTick);
+                AnimateProp(Director.instance.CurrentTick, prop);
             }
         }
 
@@ -71,11 +80,30 @@ namespace NEP.MonoDirector.Core
         {
             if (playRoutine != null)
             {
-                MelonLoader.MelonCoroutines.Stop(playRoutine);
+                MelonCoroutines.Stop(playRoutine);
                 playRoutine = null;
             }
         }
 
+        public void AnimateActor(int frame, Actor actor)
+        {
+            if(actor == null)
+            {
+                return;
+            }
+
+            actor.Act(frame);
+        }
+
+        public void AnimateProp(int frame, ActorProp prop)
+        {
+            if(prop == null)
+            {
+                return;
+            }
+
+            prop.Play(frame);
+        }
 
         public IEnumerator PlayRoutine()
         {

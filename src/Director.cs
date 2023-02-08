@@ -23,7 +23,7 @@ namespace NEP.MonoDirector.Core
 
         public List<Actor> Cast;
         public List<ActorProp> WorldProps;
-        public List<ActorProp> RecordedProps;
+        public List<ActorProp> RecordingProps;
 
         public int WorldTick { get => worldTick; }
         public int CurrentTick { get => currentTick; }
@@ -33,11 +33,6 @@ namespace NEP.MonoDirector.Core
         private static CaptureState captureState;
 
         private CameraRig camera;
-
-        private Coroutine playRoutine;
-        private Coroutine recordRoutine;
-
-        
 
         private int worldTick;
         private int currentTick;
@@ -52,7 +47,7 @@ namespace NEP.MonoDirector.Core
 
             Cast = new List<Actor>();
             WorldProps = new List<ActorProp>();
-            RecordedProps = new List<ActorProp>();
+            RecordingProps = new List<ActorProp>();
         }
 
         private void Start()
@@ -87,23 +82,19 @@ namespace NEP.MonoDirector.Core
 
         public void Play()
         {
-            if (playRoutine == null)
-            {
-                playRoutine = MelonLoader.MelonCoroutines.Start(playback.PlayRoutine()) as Coroutine;
-            }
+            playState = PlayState.Playing;
+            playback.BeginPlayback();
         }
 
         public void Pause()
         {
-
+            playState = PlayState.Paused;
         }
 
         public void Record()
         {
-            if (recordRoutine == null)
-            {
-                recordRoutine = MelonLoader.MelonCoroutines.Start(recorder.RecordRoutine()) as Coroutine;
-            }
+            playState = PlayState.Recording;
+            recorder.BeginRecording();
         }
 
         public void Stop()
