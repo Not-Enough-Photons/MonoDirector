@@ -25,7 +25,9 @@ namespace NEP.MonoDirector.Core
 
         public int RecordTick { get => recordTick; }
 
-        private Actor currentRecordingActor;
+        public Actor ActiveActor { get => activeActor; }
+
+        private Actor activeActor;
 
         private Coroutine recordRoutine;
 
@@ -49,7 +51,7 @@ namespace NEP.MonoDirector.Core
 
         public void RecordActor()
         {
-            currentRecordingActor.CaptureAvatarFrame();
+            activeActor.CaptureAvatarFrame();
 
             foreach (var prop in Director.instance.RecordingProps)
             {
@@ -74,7 +76,7 @@ namespace NEP.MonoDirector.Core
                 recordTick = 0;
             }
 
-            currentRecordingActor = new Actor(Constants.rigManager.avatar);
+            activeActor = new Actor(Constants.rigManager.avatar);
 
             foreach (var castMember in Director.instance.Cast)
             {
@@ -108,10 +110,10 @@ namespace NEP.MonoDirector.Core
 
         public void OnStopRecording()
         {
-            currentRecordingActor.CloneAvatar();
-            Director.instance.Cast.Add(currentRecordingActor);
+            activeActor.CloneAvatar();
+            Director.instance.Cast.Add(activeActor);
 
-            currentRecordingActor = null;
+            activeActor = null;
 
             Director.instance.WorldProps.AddRange(Director.instance.RecordingProps);
             Director.instance.RecordingProps.Clear();

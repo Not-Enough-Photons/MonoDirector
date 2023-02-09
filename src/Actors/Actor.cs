@@ -1,9 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
 
 using NEP.MonoDirector.Data;
 using UnhollowerRuntimeLib;
+using System;
+using NEP.MonoDirector.Core;
 
 namespace NEP.MonoDirector.Actors
 {
@@ -13,6 +16,7 @@ namespace NEP.MonoDirector.Actors
         {
             playerAvatar = avatar;
             actorFrames = new Dictionary<int, TickFrame>();
+            actorActionFrames = new Dictionary<int, Action>();
             avatarBones = GetAvatarBones(playerAvatar);
         }
 
@@ -24,6 +28,7 @@ namespace NEP.MonoDirector.Actors
         private SLZ.VRMK.Avatar playerAvatar;
         private SLZ.VRMK.Avatar clonedAvatar;
         private Dictionary<int, TickFrame> actorFrames;
+        private Dictionary<int, Action> actorActionFrames;
 
         private Transform[] avatarBones;
         private Transform[] clonedRigBones;
@@ -72,6 +77,14 @@ namespace NEP.MonoDirector.Actors
         public void CaptureAvatarFrame()
         {
             actorFrames.Add(recordedTicks++, new TickFrame(CaptureBoneFrames(avatarBones)));
+        }
+
+        public void CaptureAvatarAction(int frame, Action action)
+        {
+            if(Director.PlayState == State.PlayState.Recording)
+            {
+                actorActionFrames.Add(frame, action);
+            }
         }
 
         public void CloneAvatar()

@@ -1,13 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+
+using BoneLib.Nullables;
+
 using NEP.MonoDirector.Data;
+using NEP.MonoDirector.Core;
+
 using SLZ.Marrow.Data;
 using SLZ.Marrow.Pool;
 using SLZ.Marrow.Warehouse;
 using SLZ.Props.Weapons;
-using System;
+
 using UnityEngine;
-using BoneLib.Nullables;
-using BoneLib;
 
 namespace NEP.MonoDirector.Actors
 {
@@ -16,15 +20,25 @@ namespace NEP.MonoDirector.Actors
     {
         public ActorGunProp(IntPtr ptr) : base(ptr) { }
 
+        public Gun Gun { get => gun; }
+
         private Gun gun;
-        private Dictionary<int, Action> gunShotFrames;
+        private Dictionary<int, Action> actionFrames;
 
         protected override void Awake()
         {
             base.Awake();
 
             propFrames = new Dictionary<int, ObjectFrame>();
-            gunShotFrames = new Dictionary<int, Action>();
+            actionFrames = new Dictionary<int, Action>();
+        }
+
+        public void RecordAction(int frame, Action action)
+        {
+            if (Director.PlayState == State.PlayState.Recording)
+            {
+                actionFrames.Add(frame, action);
+            }
         }
 
         public void GunFakeFire()
@@ -40,7 +54,7 @@ namespace NEP.MonoDirector.Actors
             AssetSpawner.Register(spawnable);
             AssetSpawner.Spawn(spawnable, gun.firePointTransform.position, gun.firePointTransform.rotation, new BoxedNullable<Vector3>(Vector3.one), false, new BoxedNullable<int>(null), null, null);
 
-            AudioSource.PlayClipAtPoint(gun.gunSFX.fire[UnityEngine.Random.Range(0, gun.gunSFX.fire.Length)], gun.firePointTransform.position);
+            gun.gunSFX.GunShot();
         }
 
         public void SetGun(Gun gun)
@@ -52,17 +66,17 @@ namespace NEP.MonoDirector.Actors
         {
             base.Play(currentTick);
 
-            if (gunShotFrames.ContainsKey(currentTick))
+            if (actionFrames.ContainsKey(currentTick))
             {
-                gunShotFrames[currentTick]?.Invoke();
+                actionFrames[currentTick]?.Invoke();
             }
         }
 
         public void RecordGunShot(int timeStamp, Action action)
         {
-            if (!gunShotFrames.ContainsKey(timeStamp))
+            if (!actionFrames.ContainsKey(timeStamp))
             {
-                gunShotFrames.Add(timeStamp, action);
+                actionFrames.Add(timeStamp, action);
             }
         }
     }

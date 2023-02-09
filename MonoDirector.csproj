@@ -49,9 +49,12 @@
     <Compile Include="src\Camera\FreeCameraRig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Main.cs" />
-    <Compile Include="src\Patches\Gun.cs" />
+    <Compile Include="src\Patches\SFX\FootstepSFX.cs" />
+    <Compile Include="src\Patches\Guns\Gun.cs" />
+    <Compile Include="src\Patches\SFX\HandSFX.cs" />
+    <Compile Include="src\Patches\SFX\GunSFX.cs" />
     <Compile Include="src\Patches\ObjectDestructable.cs" />
-    <Compile Include="src\Patches\SpawnGun.cs" />
+    <Compile Include="src\Patches\Guns\SpawnGun.cs" />
     <Compile Include="src\Playback.cs" />
     <Compile Include="src\Recorder.cs" />
     <Compile Include="src\Settings.cs" />
