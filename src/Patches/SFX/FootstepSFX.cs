@@ -19,12 +19,13 @@ namespace NEP.MonoDirector.Patches
                     return;
                 }
 
-                activeActor.CaptureAvatarAction(Recorder.instance.RecordTick, () => PlayFootstep(__instance));
+                activeActor.CaptureAvatarAction(Recorder.instance.RecordTick, () => PlayFootstep(__instance, velocitySqr));
             }
 
-            internal static void PlayFootstep(SLZ.SFX.FootstepSFX footstep)
+            internal static void PlayFootstep(SLZ.SFX.FootstepSFX footstep, float velocitySqr)
             {
-                AudioPlayer.PlayAtPoint(footstep.walkConcrete, footstep.transform.position);
+                int rand = Random.Range(0, footstep.walkConcrete.Count);
+                AudioSource.PlayClipAtPoint(footstep.walkConcrete[rand], footstep.transform.position, velocitySqr);
             }
         }
     }

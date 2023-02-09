@@ -19,12 +19,16 @@ namespace NEP.MonoDirector.Patches
                     return;
                 }
 
-                activeActor.CaptureAvatarAction(Recorder.instance.RecordTick, () => PlaySFX(__instance));
+                if(Director.PlayState == State.PlayState.Recording)
+                {
+                    activeActor.CaptureAvatarAction(Recorder.instance.RecordTick, () => PlaySFX(__instance));
+                }
             }
 
             internal static void PlaySFX(SLZ.SFX.HandSFX hand)
             {
-                AudioPlayer.PlayAtPoint(hand.grab, hand.transform.position);
+                int rand = Random.Range(0, hand.grab.Count);
+                AudioSource.PlayClipAtPoint(hand.grab[rand], hand.transform.position);
             }
         }
     }

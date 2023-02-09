@@ -68,6 +68,11 @@ namespace NEP.MonoDirector.Actors
                 boneFrame.transform.position = boneFrame.position;
                 boneFrame.transform.rotation = boneFrame.rotation;
             }
+
+            if (actorActionFrames.ContainsKey(currentFrame))
+            {
+                actorActionFrames[currentFrame]?.Invoke();
+            }
         }
 
         /// <summary>
@@ -81,7 +86,7 @@ namespace NEP.MonoDirector.Actors
 
         public void CaptureAvatarAction(int frame, Action action)
         {
-            if(Director.PlayState == State.PlayState.Recording)
+            if(Director.PlayState == State.PlayState.Recording && !actorActionFrames.ContainsKey(frame))
             {
                 actorActionFrames.Add(frame, action);
             }

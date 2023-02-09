@@ -11,7 +11,11 @@ namespace NEP.MonoDirector.Patches
             internal static void Postfix(SLZ.SFX.GunSFX __instance)
             {
                 var gunProp = __instance.gameObject.GetComponent<ActorGunProp>();
-                gunProp?.RecordAction(Recorder.instance.RecordTick, gunProp.Gun.gunSFX.MagazineInsert);
+
+                if(Director.PlayState == State.PlayState.Recording)
+                {
+                    gunProp?.RecordAction(Recorder.instance.RecordTick, gunProp.Gun.gunSFX.MagazineInsert);
+                }
             }
         }
 
@@ -21,7 +25,11 @@ namespace NEP.MonoDirector.Patches
             internal static void Postfix(SLZ.SFX.GunSFX __instance)
             {
                 var gunProp = __instance.gameObject.GetComponent<ActorGunProp>();
-                gunProp?.RecordAction(Recorder.instance.RecordTick, gunProp.Gun.gunSFX.SlidePull);
+
+                if(Director.PlayState == State.PlayState.Recording)
+                {
+                    gunProp?.RecordAction(Recorder.instance.RecordTick, gunProp.Gun.gunSFX.SlidePull);
+                }
             }
         }
     }

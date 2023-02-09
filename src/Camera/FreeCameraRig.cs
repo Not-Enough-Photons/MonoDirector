@@ -106,9 +106,9 @@ namespace NEP.MonoDirector.Cameras
             float shakeY = Mathf.Sin(Time.time) + Mathf.PerlinNoise(xFactor, 1f - yFactor * Time.time) * shakeVector.y;
             float shakeZ = shakeY * shakeVector.z;
 
-            Vector3 rightVector = (Vector3.right * (mouseInput.y + shakeX));
-            Vector3 upVector = (Vector3.up * (mouseInput.x + shakeY));
-            Vector3 forwardVector = (Vector3.forward * (mouseInput.z + shakeZ));
+            Vector3 rightVector = (Vector3.right * (mouseInput.y + (shakeX * multiplier)));
+            Vector3 upVector = (Vector3.up * (mouseInput.x + (shakeY * multiplier)));
+            Vector3 forwardVector = (Vector3.forward * (mouseInput.z + (shakeZ * multiplier)));
 
             transform.rotation = Quaternion.Euler(rightVector + upVector + forwardVector);
 
