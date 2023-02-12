@@ -11,6 +11,7 @@ using NEP.MonoDirector.Audio;
 using NEP.MonoDirector.Cameras;
 using NEP.MonoDirector.Core;
 using NEP.MonoDirector.State;
+using NEP.MonoDirector.UI;
 
 namespace NEP.MonoDirector
 {
@@ -47,20 +48,7 @@ namespace NEP.MonoDirector
 
         public override void OnUpdate()
         {
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                Player.rigManager.tutorialRig.CUSTOMTUTORIAL(
-                    SLZ.Bonelab.TutorialRig.InputHighlight.none,
-                    SLZ.Bonelab.TutorialRig.InputHighlight.none,
-                    SLZ.Bonelab.TutorialRig.LocationHighlight.upDown_l,
-                    SLZ.Bonelab.TutorialRig.LocationHighlight.none_l,
-                    SLZ.Bonelab.TutorialRig.SpecificHand.either,
-                    true,
-                    "Test",
-                    string.Empty,
-                    1,
-                    10f);
-            }
+
         }
 
         private void MonoDirectorInitialize()
@@ -68,6 +56,8 @@ namespace NEP.MonoDirector
             Events.FlushActions();
             director = null;
             feedbackSFX = null;
+
+            //UIManager.Construct();
 
             SLZ.Rig.RigManager rigManager = BoneLib.Player.rigManager;
             GameObject gameObject = rigManager.transform.Find("Spectator Camera").gameObject;

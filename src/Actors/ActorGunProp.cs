@@ -55,6 +55,8 @@ namespace NEP.MonoDirector.Actors
             AssetSpawner.Spawn(spawnable, gun.firePointTransform.position, gun.firePointTransform.rotation, new BoxedNullable<Vector3>(Vector3.one), false, new BoxedNullable<int>(null), null, null);
 
             gun.gunSFX.GunShot();
+
+            gun.EjectCartridge();
         }
 
         public void SetGun(Gun gun)

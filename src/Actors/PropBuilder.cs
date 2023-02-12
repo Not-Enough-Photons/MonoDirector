@@ -3,6 +3,7 @@
 using NEP.MonoDirector.Core;
 
 using UnityEngine;
+using SLZ.VFX;
 
 namespace NEP.MonoDirector.Actors
 {
@@ -31,6 +32,8 @@ namespace NEP.MonoDirector.Actors
                 return;
             }
 
+            var vfxBlip = rigidbody.GetComponent<Blip>();
+
             if (ActorProp.EligibleWithType<SLZ.Props.Weapons.Gun>(rigidbody))
             {
                 Main.Logger.Msg($"Adding gun component to {gameObject.name}");
@@ -40,6 +43,7 @@ namespace NEP.MonoDirector.Actors
                 actorProp.SetGun(gameObject.GetComponent<SLZ.Props.Weapons.Gun>());
                 Director.instance.RecordingProps.Add(actorProp);
 
+                vfxBlip?.CallSpawnEffect();
                 return;
             }
 
@@ -53,6 +57,7 @@ namespace NEP.MonoDirector.Actors
 
                 Director.instance.RecordingProps.Add(destructableProp);
 
+                vfxBlip?.CallSpawnEffect();
                 return;
             }
 
@@ -63,30 +68,28 @@ namespace NEP.MonoDirector.Actors
                 var actorProp = gameObject.AddComponent<ActorProp>();
                 actorProp.SetRigidbody(rigidbody);
                 Director.instance.RecordingProps.Add(actorProp);
+
+                vfxBlip?.CallSpawnEffect();
             }
         }
 
         public static void RemoveProp(SLZ.Marrow.Pool.AssetPoolee pooleeObject)
         {
-            try
+            var gameObject = pooleeObject.gameObject;
+            var vfxBlip = gameObject.GetComponent<Blip>();
+
+            ActorProp actorProp = gameObject.GetComponent<ActorProp>();
+            bool isProp = actorProp != null;
+
+            if (isProp && Director.PlayState == State.PlayState.Stopped)
             {
-                var gameObject = pooleeObject.gameObject;
+                MelonLoader.MelonLogger.Msg($"Removing component from {gameObject.name}");
 
-                ActorProp actorProp = gameObject.GetComponent<ActorProp>();
-                bool isProp = actorProp != null;
-
-                if (isProp && Director.PlayState == State.PlayState.Stopped)
-                {
-                    var prop = actorProp;
-                    prop.InteractableRigidbody.isKinematic = false;
-                    Director.instance.RecordingProps.Remove(prop);
-                    GameObject.Destroy(prop);
-                    MelonLoader.MelonLogger.Msg($"Removing component from {gameObject.name}");
-                }
-            }
-            catch
-            {
-
+                var prop = actorProp;
+                prop.InteractableRigidbody.isKinematic = false;
+                Director.instance.RecordingProps.Remove(prop);
+                GameObject.Destroy(prop);
+                vfxBlip?.CallDespawnEffect();
             }
         }
     }
