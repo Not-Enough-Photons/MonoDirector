@@ -61,6 +61,10 @@
     <Compile Include="src\State\CaptureState.cs" />
     <Compile Include="src\State\PlayState.cs" />
     <Compile Include="src\UI\Debug\DeveloperUI.cs" />
+    <Compile Include="src\UI\Interface\ActorPage.cs" />
+    <Compile Include="src\UI\Interface\PlayheadPage.cs" />
+    <Compile Include="src\UI\Interface\RootPanel.cs" />
+    <Compile Include="src\UI\Interface\PanelInterface.cs" />
     <Compile Include="src\UI\UIManager.cs" />
   </ItemGroup>
   <ItemGroup>

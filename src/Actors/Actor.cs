@@ -20,10 +20,12 @@ namespace NEP.MonoDirector.Actors
             avatarBones = GetAvatarBones(playerAvatar);
         }
 
+        public string ActorName { get => actorName; }
         public int ActorId { get => actorId; }
         public SLZ.VRMK.Avatar PlayerAvatar { get => playerAvatar; }
         public Transform[] AvatarBones { get => avatarBones; }
 
+        private string actorName;
         private int actorId;
         private SLZ.VRMK.Avatar playerAvatar;
         private SLZ.VRMK.Avatar clonedAvatar;
@@ -100,9 +102,12 @@ namespace NEP.MonoDirector.Actors
             clonedRigBones = GetAvatarBones(clonedAvatar);
             GameObject.Destroy(clonedAvatar.GetComponent<LODGroup>());
 
-            clonedAvatar.name = $"Actor - {Constants.rigManager.AvatarCrate.Crate.Title}";
+            actorName = $"Actor - {Constants.rigManager.AvatarCrate.Crate.Title}";
+            clonedAvatar.name = actorName;
             ShowHairMeshes(clonedAvatar);
             clonedAvatar.gameObject.SetActive(false);
+
+            Events.OnActorCasted?.Invoke(this);
         }
 
         public void ShowActor(bool show)

@@ -12,6 +12,7 @@ using NEP.MonoDirector.Cameras;
 using NEP.MonoDirector.Core;
 using NEP.MonoDirector.State;
 using NEP.MonoDirector.UI;
+using NEP.MonoDirector.UI.Interface;
 
 namespace NEP.MonoDirector
 {
@@ -58,6 +59,8 @@ namespace NEP.MonoDirector
             feedbackSFX = null;
 
             //UIManager.Construct();
+            var test = GameObject.Instantiate(bundle.LoadAsset("md_main_menu")).Cast<GameObject>();
+            test.AddComponent<RootPanel>();
 
             SLZ.Rig.RigManager rigManager = BoneLib.Player.rigManager;
             GameObject gameObject = rigManager.transform.Find("Spectator Camera").gameObject;
