@@ -7,8 +7,7 @@ using UnityEngine;
 namespace NEP.MonoDirector.Cameras
 {
     /// <summary>
-    /// Simple camera controller. Can place down points in the world for
-    /// the camera rig to follow.
+    /// Simple camera controller.
     /// </summary>
     /// 
     [MelonLoader.RegisterTypeInIl2Cpp]
@@ -48,6 +47,8 @@ namespace NEP.MonoDirector.Cameras
         private float xMouseMove = 0f;
         private float yMouseMove = 0f;
 
+        private SmoothFollower headCameraTracker;
+
         private Rigidbody rigidbody;
 
         protected override void Awake()
@@ -62,13 +63,18 @@ namespace NEP.MonoDirector.Cameras
             // may affect performance 
             _camera.useOcclusionCulling = false;
 
-            GetComponent<SmoothFollower>().enabled = false;
+            headCameraTracker = GetComponent<SmoothFollower>();
 
             GameObject test = GameObject.Instantiate(Main.bundle.LoadAsset("md_camera").Cast<GameObject>());
             test.transform.parent = transform;
             test.transform.localPosition = Vector3.forward * -0.1f;
             test.transform.eulerAngles = Vector3.zero;
             test.transform.localScale = new Vector3(0.075f, 0.075f, -0.075f);
+        }
+
+        public void TrackHeadCamera()
+        {
+            headCameraTracker.enabled = !headCameraTracker.enabled;
         }
 
         protected void OnEnable()

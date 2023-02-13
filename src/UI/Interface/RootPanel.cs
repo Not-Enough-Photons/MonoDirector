@@ -65,6 +65,7 @@ namespace NEP.MonoDirector.UI.Interface
                 if (pageList[i] == page)
                 {
                     pageList[i].SetActive(true);
+                    text_Title.text = name;
                 }
                 else
                 {

@@ -18,6 +18,8 @@ namespace NEP.MonoDirector.Core
         public Playback playback;
         public Recorder recorder;
 
+        public FreeCameraRig Camera { get => camera; }
+
         public static PlayState PlayState { get => playState; }
         public static CaptureState CaptureState { get => captureState; }
 
@@ -30,7 +32,7 @@ namespace NEP.MonoDirector.Core
         private static PlayState playState = PlayState.Stopped;
         private static CaptureState captureState = CaptureState.CaptureActor;
 
-        private CameraRig camera;
+        private FreeCameraRig camera;
 
         private int worldTick;
 
@@ -44,6 +46,29 @@ namespace NEP.MonoDirector.Core
             Cast = new List<Actor>();
             WorldProps = new List<ActorProp>();
             RecordingProps = new List<ActorProp>();
+        }
+
+        private void Update()
+        {
+            if (!Settings.Debug.useKeys)
+            {
+                return;
+            }
+
+            if (Input.GetKeyDown(KeyCode.P))
+            {
+                Play();
+            }
+
+            if (Input.GetKeyDown(KeyCode.RightControl))
+            {
+                Record();
+            }
+
+            if (Input.GetKeyDown(KeyCode.LeftControl))
+            {
+                Stop();
+            }
         }
 
         public void Play()
@@ -68,7 +93,7 @@ namespace NEP.MonoDirector.Core
             playState = PlayState.Stopped;
         }
 
-        public void SetCamera(CameraRig camera)
+        public void SetCamera(FreeCameraRig camera)
         {
             this.camera = camera;
         }
