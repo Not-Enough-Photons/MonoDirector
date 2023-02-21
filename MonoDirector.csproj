@@ -32,6 +32,9 @@
     <Compile Include="src\Actors\ActorBreakableProp.cs" />
     <Compile Include="src\Actors\ActorGunProp.cs" />
     <Compile Include="src\Actors\ActorProp.cs" />
+    <Compile Include="src\Actors\ActorNPC.cs" />
+    <Compile Include="src\Actors\ActorNPCBuilder.cs" />
+    <Compile Include="src\Actors\ActorPlayer.cs" />
     <Compile Include="src\Actors\PropBuilder.cs" />
     <Compile Include="src\Camera\CameraRigManager.cs" />
     <Compile Include="src\Camera\FollowCameraRig.cs" />
@@ -55,6 +58,8 @@
     <Compile Include="src\Patches\SFX\GunSFX.cs" />
     <Compile Include="src\Patches\ObjectDestructable.cs" />
     <Compile Include="src\Patches\Guns\SpawnGun.cs" />
+    <Compile Include="src\Patches\UI\LaserCursor.cs" />
+    <Compile Include="src\Patches\VRGraphicRaycaster.cs" />
     <Compile Include="src\Playback.cs" />
     <Compile Include="src\Recorder.cs" />
     <Compile Include="src\Settings.cs" />
@@ -65,6 +70,7 @@
     <Compile Include="src\UI\Interface\PlayheadPage.cs" />
     <Compile Include="src\UI\Interface\RootPanel.cs" />
     <Compile Include="src\UI\Interface\PanelInterface.cs" />
+    <Compile Include="src\UI\ShotDisplay.cs" />
     <Compile Include="src\UI\UIManager.cs" />
   </ItemGroup>
   <ItemGroup>

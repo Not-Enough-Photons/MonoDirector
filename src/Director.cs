@@ -24,6 +24,7 @@ namespace NEP.MonoDirector.Core
         public static CaptureState CaptureState { get => captureState; }
 
         public List<Actor> Cast;
+        public List<ActorNPC> NPCCast;
         public List<ActorProp> WorldProps;
         public List<ActorProp> RecordingProps;
 
@@ -44,6 +45,7 @@ namespace NEP.MonoDirector.Core
             recorder = new Recorder();
 
             Cast = new List<Actor>();
+            NPCCast = new List<ActorNPC>();
             WorldProps = new List<ActorProp>();
             RecordingProps = new List<ActorProp>();
         }
@@ -53,6 +55,16 @@ namespace NEP.MonoDirector.Core
             if (!Settings.Debug.useKeys)
             {
                 return;
+            }
+
+            if (Input.GetKey(KeyCode.LeftArrow))
+            {
+                Playback.instance.Seek(-1);
+            }
+
+            if (Input.GetKey(KeyCode.RightArrow))
+            {
+                Playback.instance.Seek(1);
             }
 
             if (Input.GetKeyDown(KeyCode.P))

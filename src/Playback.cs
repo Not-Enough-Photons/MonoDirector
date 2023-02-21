@@ -44,7 +44,6 @@ namespace NEP.MonoDirector.Core
             foreach (var castMember in Director.instance.Cast)
             {
                 AnimateActor(0, castMember);
-                castMember.ShowActor(true);
             }
 
             foreach (var prop in Director.instance.WorldProps)
@@ -68,15 +67,7 @@ namespace NEP.MonoDirector.Core
                 return;
             }
 
-            foreach (var castMember in Director.instance.Cast)
-            {
-                AnimateActor(playbackTick, castMember);
-            }
-
-            foreach (var prop in Director.instance.WorldProps)
-            {
-                AnimateProp(playbackTick, prop);
-            }
+            AnimateAll(playbackTick);
 
             playbackTick++;
         }
@@ -90,7 +81,56 @@ namespace NEP.MonoDirector.Core
             }
         }
 
+        public void Seek(int rate)
+        {
+            if(Director.PlayState != PlayState.Stopped)
+            {
+                return;
+            }
+
+            if(playbackTick <= 0)
+            {
+                playbackTick = 0;
+            }
+
+            if(playbackTick > Recorder.instance.RecordTick)
+            {
+                playbackTick = Recorder.instance.RecordTick;
+            }
+
+            AnimateAll(playbackTick);
+            playbackTick += rate;
+        }
+
+        public void AnimateAll(int frame)
+        {
+            foreach (var castMember in Director.instance.Cast)
+            {
+                AnimateActor(frame, castMember);
+            }
+
+            foreach (var prop in Director.instance.WorldProps)
+            {
+                AnimateProp(frame, prop);
+            }
+        }
+
         public void AnimateActor(int frame, Actor actor)
+        {
+            if(actor == null)
+            {
+                return;
+            }
+
+            if(actor is ActorPlayer playerActor)
+            {
+                playerActor.Act(frame);
+            }
+
+            actor.Act(frame);
+        }
+
+        public void AnimateNPC(int frame, ActorNPC actor)
         {
             if(actor == null)
             {

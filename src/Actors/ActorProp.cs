@@ -90,6 +90,11 @@ namespace NEP.MonoDirector.Actors
             this.actor = actor;
         }
 
+        public void SetPhysicsActive(bool enable)
+        {
+            interactableRigidbody.isKinematic = enable;
+        }
+
         public virtual void Play(int currentTick)
         {
             if (!propFrames.ContainsKey(currentTick))

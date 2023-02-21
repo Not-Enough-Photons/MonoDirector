@@ -12,16 +12,12 @@ namespace NEP.MonoDirector.Patches
         {
             internal static bool Prefix(SLZ.Props.SpawnGun __instance)
             {
-                if (!Settings.World.spawnGunProps)
-                {
-                    return true;
-                }
-                else
+                if (Settings.World.spawnGunProps)
                 {
                     var hitRigidbody = __instance._hitInfo.rigidbody;
                     var poolee = hitRigidbody?.GetComponent<AssetPoolee>();
 
-                    if(__instance._selectedMode == SLZ.Props.UtilityModes.SPAWNER)
+                    if (__instance._selectedMode == SLZ.Props.UtilityModes.SPAWNER)
                     {
                         PropBuilder.BuildProp(poolee);
                     }
@@ -29,9 +25,20 @@ namespace NEP.MonoDirector.Patches
                     {
                         PropBuilder.RemoveProp(poolee);
                     }
+                }
+
+                if (Settings.World.spawnGunNPCs)
+                {
+                    var hitRigidbody = __instance._hitInfo.rigidbody;
+                    var poolee = hitRigidbody.transform.root.GetComponent<AssetPoolee>();
+                    Main.Logger.Msg(poolee.name);
+
+                    ActorNPCBuilder.BuildNPCActor(poolee);
 
                     return false;
                 }
+
+                return true;
             }
         }
 
@@ -42,14 +49,14 @@ namespace NEP.MonoDirector.Patches
             {
                 if (!Settings.World.spawnGunProps)
                 {
-                    __instance.placerPreivewRenderer.enabled = true;
-                    __instance.placerPreviewBoundsArt.SetActive(true);
+                    __instance.placerPreivewRenderer.enabled = false;
+                    __instance.placerPreviewBoundsArt.SetActive(false);
 
                     return;
                 }
 
-                __instance.placerPreivewRenderer.enabled = false;
-                __instance.placerPreviewBoundsArt.SetActive(false);
+                __instance.placerPreivewRenderer.enabled = true;
+                __instance.placerPreviewBoundsArt.SetActive(true);
             }
         }
     }

@@ -13,6 +13,7 @@
         public static class World
         {
             public static bool spawnGunProps = false;
+            public static bool spawnGunNPCs = false;
         }
 
         public static class Debug

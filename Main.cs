@@ -58,7 +58,7 @@ namespace NEP.MonoDirector
             ResetInstances();
             CreateDirector();
             CreateCamera();
-            CreateUI();
+            //CreateUI();
             CreateSFX();
         }
 
@@ -130,7 +130,13 @@ namespace NEP.MonoDirector
             actorCategory.CreateFunctionElement("Clear Scene", Color.red, () => director.ClearScene(), "Are you sure? This cannot be undone.");
 
             settingsCategory.CreateBoolElement("Spawn Gun Sets Props", Color.white, false, (value) => Settings.World.spawnGunProps = value);
+            settingsCategory.CreateBoolElement("Spawn Gun Sets NPCs", Color.white, false, (value) => Settings.World.spawnGunNPCs = value);
             settingsCategory.CreateFunctionElement("Spectator Head Mode", Color.white, () => Director.instance.Camera.TrackHeadCamera());
+
+            var debug = settingsCategory.CreateCategory("Debug", Color.green);
+
+            debug.CreateBoolElement("Debug Mode", Color.white, false, (value) => Settings.Debug.debugEnabled = value);
+            debug.CreateBoolElement("Use Debug Keys", Color.white, false, (value) => Settings.Debug.useKeys = value);
         }
     }
 }
