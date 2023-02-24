@@ -4,6 +4,7 @@ using NEP.MonoDirector.Core;
 
 using UnityEngine;
 using SLZ.VFX;
+using NEP.MonoDirector.Patches.Guns;
 
 namespace NEP.MonoDirector.Actors
 {
@@ -56,6 +57,19 @@ namespace NEP.MonoDirector.Actors
                 destructableProp.SetBreakableObject(gameObject.GetComponent<SLZ.Props.ObjectDestructable>());
 
                 Director.instance.RecordingProps.Add(destructableProp);
+
+                vfxBlip?.CallSpawnEffect();
+                return;
+            }
+
+            if (ActorProp.EligibleWithType<SLZ.Props.Weapons.Magazine>(rigidbody))
+            {
+                Main.Logger.Msg($"Adding magazine component to {gameObject.name}");
+
+                var magazineProp = gameObject.AddComponent<ActorProp>();
+                magazineProp.SetRigidbody(rigidbody);
+
+                Director.instance.RecordingProps.Add(magazineProp);
 
                 vfxBlip?.CallSpawnEffect();
                 return;

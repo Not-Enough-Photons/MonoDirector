@@ -14,10 +14,7 @@ namespace NEP.MonoDirector.Patches
 
                 if (gunProp != null)
                 {
-                    if (Director.PlayState == State.PlayState.Recording)
-                    {
-                        gunProp.RecordGunShot(Recorder.instance.RecordTick, gunProp.GunFakeFire);
-                    }
+                    gunProp.RecordAction(Recorder.instance.RecordTick, gunProp.GunFakeFire);
                 }
             }
         }

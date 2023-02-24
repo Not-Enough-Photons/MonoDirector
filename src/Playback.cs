@@ -122,11 +122,6 @@ namespace NEP.MonoDirector.Core
                 return;
             }
 
-            if(actor is ActorPlayer playerActor)
-            {
-                playerActor.Act(frame);
-            }
-
             actor.Act(frame);
         }
 
@@ -147,7 +142,7 @@ namespace NEP.MonoDirector.Core
                 return;
             }
 
-            prop.Play(frame);
+            prop.Act(frame);
         }
 
         public IEnumerator PlayRoutine()
@@ -159,11 +154,11 @@ namespace NEP.MonoDirector.Core
             while (Director.PlayState == PlayState.Playing || Director.PlayState == PlayState.Paused)
             {
                 Events.OnPlaybackTick?.Invoke();
-                yield return null;
+                yield return new WaitForEndOfFrame();
             }
 
             Events.OnStopPlayback?.Invoke();
-            yield return null;
+            yield return new WaitForEndOfFrame();
         }
     }
 }

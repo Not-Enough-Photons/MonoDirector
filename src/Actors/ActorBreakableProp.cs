@@ -26,9 +26,9 @@ namespace NEP.MonoDirector.Actors
             this.breakableProp = destructable;
         }
 
-        public override void Play(int currentTick)
+        public override void Act(int currentTick)
         {
-            base.Play(currentTick);
+            base.Act(currentTick);
 
             if (eventDictionary.ContainsKey(currentTick))
             {

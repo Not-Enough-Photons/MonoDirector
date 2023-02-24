@@ -110,15 +110,13 @@ namespace NEP.MonoDirector.Core
             this.camera = camera;
         }
 
-        public void RemoveActor(Actor actor)
+        public void RemoveActorPlayer(ActorPlayer actor)
         {
             for(int i = 0; i < Cast.Count; i++)
             {
-                var castMember = Cast[i];
-
-                if (castMember == actor)
+                if (Cast[i] is ActorPlayer player && player == actor)
                 {
-                    castMember.Delete();
+                    player.Delete();
                     Cast.Remove(actor);
                     return;
                 }
@@ -131,7 +129,7 @@ namespace NEP.MonoDirector.Core
 
             for (int i = 0; i < Cast.Count; i++)
             {
-                Cast[i].Delete();
+                RemoveActorPlayer(Cast[i] as ActorPlayer);
             }
 
             Cast.Clear();

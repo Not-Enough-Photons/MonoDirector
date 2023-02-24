@@ -26,7 +26,7 @@ namespace NEP.MonoDirector.Actors
         private string actorName;
         private int actorId;
         private Transform root;
-        private Dictionary<int, TickFrame> actorFrames;
+        private Dictionary<int, FrameGroup> actorFrames;
 
         private List<Renderer> meshes;
         private Transform[] npcBones;
@@ -74,7 +74,7 @@ namespace NEP.MonoDirector.Actors
         /// <param name="index">The frame to record the bones.</param>
         public void CaptureActorFrame()
         {
-            actorFrames.Add(recordedTicks++, new TickFrame(CaptureBoneFrames(meshes.ToArray())));
+            actorFrames.Add(recordedTicks++, new FrameGroup(CaptureBoneFrames(meshes.ToArray())));
         }
 
         public void CloneNPC()

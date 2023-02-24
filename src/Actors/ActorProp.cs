@@ -12,6 +12,7 @@ using UnityEngine;
 using Il2CppSystem;
 
 using UnhollowerRuntimeLib;
+using Jevil;
 
 namespace NEP.MonoDirector.Actors
 {
@@ -29,6 +30,7 @@ namespace NEP.MonoDirector.Actors
         public static readonly Type[] whitelistedTypes = new Type[]
         {
             UnhollowerRuntimeLib.Il2CppType.Of<Gun>(),
+            UnhollowerRuntimeLib.Il2CppType.Of<Magazine>(),
             UnhollowerRuntimeLib.Il2CppType.Of<ObjectDestructable>()
         };
 
@@ -95,7 +97,7 @@ namespace NEP.MonoDirector.Actors
             interactableRigidbody.isKinematic = enable;
         }
 
-        public virtual void Play(int currentTick)
+        public virtual void Act(int currentTick)
         {
             if (!propFrames.ContainsKey(currentTick))
             {
@@ -105,7 +107,15 @@ namespace NEP.MonoDirector.Actors
             var propFrame = propFrames[currentTick];
 
             gameObject.SetActive(true);
-            interactableRigidbody.isKinematic = true;
+
+            if(interactableRigidbody == null)
+            {
+                interactableRigidbody = GetComponent<Rigidbody>();
+            }
+            else
+            {
+                interactableRigidbody.isKinematic = true;
+            }
 
             if (propFrame.transform == null)
             {
@@ -120,15 +130,15 @@ namespace NEP.MonoDirector.Actors
         {
             isRecording = true;
 
-            if (!propFrames.ContainsKey(frame) && interactableRigidbody != null)
+            if (!propFrames.ContainsKey(frame))
             {
-                if(frame == 0 && interactableRigidbody.IsSleeping())
+                if(frame == 0 || interactableRigidbody != null && interactableRigidbody.IsSleeping())
                 {
-                    propFrames.Add(frame, new ObjectFrame(interactableRigidbody.transform));
+                    propFrames.Add(frame, new ObjectFrame(transform));
                 }
                 else
                 {
-                    propFrames.Add(frame, new ObjectFrame(interactableRigidbody.transform));
+                    propFrames.Add(frame, new ObjectFrame(transform));
                     recordedTicks++;
                 }
             }

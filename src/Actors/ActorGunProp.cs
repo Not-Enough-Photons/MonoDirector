@@ -37,14 +37,17 @@ namespace NEP.MonoDirector.Actors
         {
             if (Director.PlayState == State.PlayState.Recording)
             {
-                actionFrames.Add(frame, action);
+                if (!actionFrames.ContainsKey(frame))
+                {
+                    actionFrames.Add(frame, action);
+                }
             }
         }
 
         public void GunFakeFire()
         {
-            string barcode = "c1534c5a-93e8-405b-89e2-e39c466c6172";
-            SpawnableCrateReference reference = new SpawnableCrateReference(barcode);
+            string muzzleFlashBarcode = "c1534c5a-93e8-405b-89e2-e39c466c6172";
+            SpawnableCrateReference reference = new SpawnableCrateReference(muzzleFlashBarcode);
 
             Spawnable spawnable = new Spawnable()
             {
@@ -56,7 +59,7 @@ namespace NEP.MonoDirector.Actors
 
             gun.gunSFX.GunShot();
 
-            gun.EjectCartridge();
+            gun.PlayAnimationState(Gun.AnimationStates.FIRE, 0f);
         }
 
         public void SetGun(Gun gun)
@@ -64,21 +67,13 @@ namespace NEP.MonoDirector.Actors
             this.gun = gun;
         }
 
-        public override void Play(int currentTick)
+        public override void Act(int currentTick)
         {
-            base.Play(currentTick);
+            base.Act(currentTick);
 
             if (actionFrames.ContainsKey(currentTick))
             {
                 actionFrames[currentTick]?.Invoke();
-            }
-        }
-
-        public void RecordGunShot(int timeStamp, Action action)
-        {
-            if (!actionFrames.ContainsKey(timeStamp))
-            {
-                actionFrames.Add(timeStamp, action);
             }
         }
     }

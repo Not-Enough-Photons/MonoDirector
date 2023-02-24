@@ -16,13 +16,13 @@ namespace NEP.MonoDirector.Actors
         {
             playerAvatar = avatar;
             avatarBones = GetAvatarBones(playerAvatar);
-            avatarFrames = new Dictionary<int, TickFrame>();
+            avatarFrames = new Dictionary<int, FrameGroup>();
         }
 
         public SLZ.VRMK.Avatar PlayerAvatar { get => playerAvatar; }
         public Transform[] AvatarBones { get => avatarBones; }
 
-        protected Dictionary<int, TickFrame> avatarFrames;
+        protected Dictionary<int, FrameGroup> avatarFrames;
 
         private SLZ.VRMK.Avatar playerAvatar;
         private SLZ.VRMK.Avatar clonedAvatar;
@@ -32,8 +32,6 @@ namespace NEP.MonoDirector.Actors
 
         public override void Act(int currentFrame)
         {
-            base.Act(currentFrame);
-
             if (!CanAct(currentFrame))
             {
                 return;
@@ -56,13 +54,18 @@ namespace NEP.MonoDirector.Actors
             }
         }
 
+        public override bool CanAct(int frame)
+        {
+            return base.CanAct(frame) || avatarFrames.ContainsKey(frame);
+        }
+
         /// <summary>
         /// Records the actor's bones, positons, and rotations for this frame.
         /// </summary>
         /// <param name="index">The frame to record the bones.</param>
         public override void RecordFrame()
         {
-            avatarFrames.Add(recordedTicks++, new TickFrame(CaptureBoneFrames(avatarBones)));
+            avatarFrames.Add(recordedTicks++, new FrameGroup(CaptureBoneFrames(avatarBones)));
         }
 
         public void CaptureAvatarAction(int frame, Action action)
@@ -88,6 +91,15 @@ namespace NEP.MonoDirector.Actors
             GameObject.FindObjectOfType<PullCordDevice>().PlayAvatarParticleEffects();
 
             Events.OnActorCasted?.Invoke(this);
+
+            Act(Recorder.instance.RecordTick - 1);
+        }
+
+        public override void Delete()
+        {
+            avatarFrames.Clear();
+            GameObject.Destroy(clonedAvatar.gameObject);
+            transform = null;
         }
 
         private void ShowHairMeshes(SLZ.VRMK.Avatar avatar)

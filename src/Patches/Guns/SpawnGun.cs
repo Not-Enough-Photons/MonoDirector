@@ -47,16 +47,18 @@ namespace NEP.MonoDirector.Patches
         {
             internal static void Postfix(SLZ.Props.SpawnGun __instance, Hand hand)
             {
-                if (!Settings.World.spawnGunProps)
+                if (Settings.World.spawnGunProps)
                 {
                     __instance.placerPreivewRenderer.enabled = false;
                     __instance.placerPreviewBoundsArt.SetActive(false);
 
                     return;
                 }
-
-                __instance.placerPreivewRenderer.enabled = true;
-                __instance.placerPreviewBoundsArt.SetActive(true);
+                else
+                {
+                    __instance.placerPreivewRenderer.enabled = true;
+                    __instance.placerPreviewBoundsArt.SetActive(true);
+                }
             }
         }
     }

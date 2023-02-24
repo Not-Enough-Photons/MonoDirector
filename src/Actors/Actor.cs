@@ -49,15 +49,10 @@ namespace NEP.MonoDirector.Actors
             }
         }
 
-        public bool CanAct(int frame)
+        public virtual bool CanAct(int frame)
         {
             // We've reached past our recorded ticks, don't proceed further!
             if (frame >= recordedTicks)
-            {
-                return false;
-            }
-
-            if (!objectFrames.ContainsKey(frame))
             {
                 return false;
             }
@@ -77,10 +72,7 @@ namespace NEP.MonoDirector.Actors
 
         public virtual void Delete()
         {
-            objectFrames.Clear();
-            actionFrames.Clear();
-            GameObject.Destroy(transform.gameObject);
-            transform = null;
+            
         }
     }
 }

@@ -2,9 +2,9 @@
 
 namespace NEP.MonoDirector.Data
 {
-    public struct TickFrame
+    public struct FrameGroup
     {
-        public TickFrame(List<ObjectFrame> frames)
+        public FrameGroup(List<ObjectFrame> frames)
         {
             this.transformFrames = frames;
         }

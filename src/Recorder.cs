@@ -138,11 +138,11 @@ namespace NEP.MonoDirector.Core
             while (Director.PlayState == PlayState.Recording || Director.PlayState == PlayState.Paused)
             {
                 Events.OnRecordTick?.Invoke();
-                yield return null;
+                yield return new WaitForEndOfFrame();
             }
 
             Events.OnStopRecording?.Invoke();
-            yield return null;
+            yield return new WaitForEndOfFrame();
         }
     }
 }
