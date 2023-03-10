@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 using NEP.MonoDirector.Data;
 
@@ -11,8 +10,7 @@ using UnityEngine;
 
 using Il2CppSystem;
 
-using UnhollowerRuntimeLib;
-using Jevil;
+using SLZ.Vehicle;
 
 namespace NEP.MonoDirector.Actors
 {
@@ -31,7 +29,8 @@ namespace NEP.MonoDirector.Actors
         {
             UnhollowerRuntimeLib.Il2CppType.Of<Gun>(),
             UnhollowerRuntimeLib.Il2CppType.Of<Magazine>(),
-            UnhollowerRuntimeLib.Il2CppType.Of<ObjectDestructable>()
+            UnhollowerRuntimeLib.Il2CppType.Of<ObjectDestructable>(),
+            UnhollowerRuntimeLib.Il2CppType.Of<Atv>()
         };
 
         private Actor actor;
@@ -132,13 +131,21 @@ namespace NEP.MonoDirector.Actors
 
             if (!propFrames.ContainsKey(frame))
             {
+                ObjectFrame objectFrame = new ObjectFrame()
+                {
+                    transform = transform,
+                    position = transform.position,
+                    rotation = transform.rotation,
+                    scale = transform.localScale
+                };
+
                 if(frame == 0 || interactableRigidbody != null && interactableRigidbody.IsSleeping())
                 {
-                    propFrames.Add(frame, new ObjectFrame(transform));
+                    propFrames.Add(frame, objectFrame);
                 }
                 else
                 {
-                    propFrames.Add(frame, new ObjectFrame(transform));
+                    propFrames.Add(frame, objectFrame);
                     recordedTicks++;
                 }
             }

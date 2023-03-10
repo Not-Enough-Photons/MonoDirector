@@ -46,13 +46,13 @@ namespace NEP.MonoDirector.UI.Debug
         {
             try
             {
-
-            }
-            catch
-            {
                 txt_actorCount.text = "Actor Count: " + Director.instance?.Cast.Count.ToString();
                 txt_currentTick.text = "Current Tick: " + Playback.instance?.PlaybackTick.ToString();
                 txt_recordedTicks.text = "Recording Tick: " + Recorder.instance?.RecordTick.ToString();
+            }
+            catch
+            {
+                
             }
         }
     }

@@ -13,6 +13,8 @@ using NEP.MonoDirector.Core;
 using NEP.MonoDirector.State;
 using NEP.MonoDirector.UI;
 using NEP.MonoDirector.UI.Interface;
+using UnityEngine.Splines;
+using Unity.Mathematics;
 
 namespace NEP.MonoDirector
 {
@@ -58,7 +60,7 @@ namespace NEP.MonoDirector
             ResetInstances();
             CreateDirector();
             CreateCamera();
-            //CreateUI();
+            CreateUI();
             CreateSFX();
         }
 

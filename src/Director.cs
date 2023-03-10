@@ -5,6 +5,7 @@ using NEP.MonoDirector.State;
 
 using System.Collections.Generic;
 using NEP.MonoDirector.Actors;
+using UnityEngine.Splines;
 
 namespace NEP.MonoDirector.Core
 {
@@ -50,6 +51,15 @@ namespace NEP.MonoDirector.Core
             RecordingProps = new List<ActorProp>();
         }
 
+        private void Start()
+        {
+            Events.OnPrePlayback += () => SetPlayState(PlayState.Preplaying);
+            Events.OnPreRecord += () => SetPlayState(PlayState.Prerecording);
+
+            Events.OnPlay += () => SetPlayState(PlayState.Playing);
+            Events.OnStartRecording += () => SetPlayState(PlayState.Recording);
+        }
+
         private void Update()
         {
             if (!Settings.Debug.useKeys)
@@ -83,9 +93,14 @@ namespace NEP.MonoDirector.Core
             }
         }
 
+        private void LateUpdate()
+        {
+            Recorder.instance.LateUpdate();
+            Playback.instance.LateUpdate();
+        }
+
         public void Play()
         {
-            playState = PlayState.Playing;
             playback.BeginPlayback();
         }
 
@@ -96,7 +111,6 @@ namespace NEP.MonoDirector.Core
 
         public void Record()
         {
-            playState = PlayState.Recording;
             recorder.BeginRecording();
         }
 
@@ -147,6 +161,11 @@ namespace NEP.MonoDirector.Core
             }
 
             WorldProps.Clear();
+        }
+
+        private void SetPlayState(PlayState state)
+        {
+            playState = state;
         }
     }
 }

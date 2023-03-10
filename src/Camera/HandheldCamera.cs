@@ -41,7 +41,7 @@ namespace NEP.MonoDirector.Cameras
 
             rigidbody = gameObject.AddComponent<Rigidbody>();
 
-            _camera = GetComponent<Camera>();
+            _camera = GetComponent<UnityEngine.Camera>();
 
             GetComponent<SmoothFollower>().enabled = false;
 

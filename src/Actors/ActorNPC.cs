@@ -98,7 +98,12 @@ namespace NEP.MonoDirector.Actors
 
             for (int i = 0; i < boneList.Length; i++)
             {
-                frames.Add(new ObjectFrame(boneList[i].transform));
+                ObjectFrame objectFrame = new ObjectFrame()
+                {
+                    transform = boneList[i].transform
+                };
+
+                frames.Add(objectFrame);
             }
 
             return frames;

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using MelonLoader;
 using NEP.MonoDirector.Actors;
 using NEP.MonoDirector.State;
@@ -28,6 +29,16 @@ namespace NEP.MonoDirector.Core
         private Coroutine playRoutine;
 
         private int playbackTick;
+
+        public void LateUpdate()
+        {
+            if (Director.PlayState != PlayState.Playing)
+            {
+                return;
+            }
+
+            Events.OnPlaybackTick?.Invoke();
+        }
 
         public void BeginPlayback()
         {
@@ -153,12 +164,11 @@ namespace NEP.MonoDirector.Core
 
             while (Director.PlayState == PlayState.Playing || Director.PlayState == PlayState.Paused)
             {
-                Events.OnPlaybackTick?.Invoke();
-                yield return new WaitForEndOfFrame();
+                yield return null;
             }
 
             Events.OnStopPlayback?.Invoke();
-            yield return new WaitForEndOfFrame();
+            yield return null;
         }
     }
 }

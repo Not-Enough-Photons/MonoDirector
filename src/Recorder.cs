@@ -33,6 +33,16 @@ namespace NEP.MonoDirector.Core
 
         private int recordTick;
 
+        public void LateUpdate()
+        {
+            if (Director.PlayState != PlayState.Recording)
+            {
+                return;
+            }
+
+            Events.OnRecordTick?.Invoke();
+        }
+
         public void BeginRecording()
         {
             if (recordRoutine == null)
@@ -137,12 +147,11 @@ namespace NEP.MonoDirector.Core
 
             while (Director.PlayState == PlayState.Recording || Director.PlayState == PlayState.Paused)
             {
-                Events.OnRecordTick?.Invoke();
-                yield return new WaitForEndOfFrame();
+                yield return null;
             }
 
             Events.OnStopRecording?.Invoke();
-            yield return new WaitForEndOfFrame();
+            yield return null;
         }
     }
 }

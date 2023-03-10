@@ -25,6 +25,8 @@ namespace NEP.MonoDirector.Patches
                     {
                         PropBuilder.RemoveProp(poolee);
                     }
+
+                    return false;
                 }
 
                 if (Settings.World.spawnGunNPCs)

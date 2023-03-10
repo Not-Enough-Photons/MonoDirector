@@ -58,7 +58,7 @@ namespace NEP.MonoDirector.Cameras
             rigidbody = gameObject.AddComponent<Rigidbody>();
             rigidbody.useGravity = false;
 
-            _camera = GetComponent<Camera>();
+            _camera = GetComponent<UnityEngine.Camera>();
 
             // may affect performance 
             _camera.useOcclusionCulling = false;

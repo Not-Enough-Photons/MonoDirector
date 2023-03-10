@@ -5,6 +5,7 @@ using NEP.MonoDirector.Core;
 using UnityEngine;
 using SLZ.VFX;
 using NEP.MonoDirector.Patches.Guns;
+using SLZ.Vehicle;
 
 namespace NEP.MonoDirector.Actors
 {
@@ -70,6 +71,20 @@ namespace NEP.MonoDirector.Actors
                 magazineProp.SetRigidbody(rigidbody);
 
                 Director.instance.RecordingProps.Add(magazineProp);
+
+                vfxBlip?.CallSpawnEffect();
+                return;
+            }
+
+            if (ActorProp.EligibleWithType<Atv>(rigidbody))
+            {
+                Main.Logger.Msg($"Adding vehicle component to {gameObject.name}");
+
+                var vehicle = gameObject.AddComponent<ActorVehicle>();
+                vehicle.SetRigidbody(rigidbody);
+                vehicle.SetVehicle(rigidbody.GetComponent<Atv>());
+
+                Director.instance.RecordingProps.Add(vehicle);
 
                 vfxBlip?.CallSpawnEffect();
                 return;

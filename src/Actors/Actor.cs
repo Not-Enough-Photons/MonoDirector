@@ -62,7 +62,12 @@ namespace NEP.MonoDirector.Actors
 
         public virtual void RecordFrame()
         {
-            objectFrames.Add(recordedTicks++, new ObjectFrame(transform));
+            ObjectFrame objectFrame = new ObjectFrame()
+            {
+                transform = transform
+            };
+
+            objectFrames.Add(recordedTicks++, objectFrame);
         }
 
         public void SetTransform(Transform transform)

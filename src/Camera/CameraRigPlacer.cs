@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using SLZ.Bonelab;
+using UnityEngine.Splines;
 
 namespace NEP.MonoDirector.Cameras
 {
@@ -17,6 +18,8 @@ namespace NEP.MonoDirector.Cameras
         public CameraRigPlacer(System.IntPtr ptr) : base(ptr) { }
 
         public static CameraRigPlacer instance;
+
+        public Spline trackSpline;
 
         private int index = 0;
 
@@ -106,6 +109,27 @@ namespace NEP.MonoDirector.Cameras
             yMouse -= y;
 
             freeCam.transform.rotation = Quaternion.Euler((Vector3.right * yMouse + Vector3.up * xMouse + Vector3.forward * zMouse) * 4f);
+        }
+
+        private void PlayBezier()
+        {
+
+        }
+
+        private void RecordBezier()
+        {
+            if(trackSpline == null)
+            {
+                trackSpline = new Spline();
+            }
+
+            BezierKnot knot = new BezierKnot()
+            {
+                Position = transform.position,
+                Rotation = transform.rotation
+            };
+
+            trackSpline.Add(knot);
         }
 
         private void MoveUpdate()
