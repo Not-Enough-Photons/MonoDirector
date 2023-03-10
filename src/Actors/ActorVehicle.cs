@@ -35,10 +35,15 @@ namespace NEP.MonoDirector.Actors
                 return;
             }
 
-            InteractableRigidbody.isKinematic = true;
+            if (currentTick == 1)
+            {
+                vehicle.transform.position = propFrame.position;
+                vehicle.transform.rotation = propFrame.rotation;
+                vehicle.transform.localScale = propFrame.scale;
+            }
 
-            vehicle.mainBody.position = propFrame.position;
-            vehicle.mainBody.rotation = propFrame.rotation;
+            vehicle.mainBody.velocity = propFrame.rigidbodyVelocity;
+            vehicle.mainBody.angularVelocity = propFrame.rigidbodyAngularVelocity;
         }
 
         public override void Record(int frame)
@@ -47,9 +52,16 @@ namespace NEP.MonoDirector.Actors
 
             if (!propFrames.ContainsKey(frame))
             {
-                if (InteractableRigidbody != null && !InteractableRigidbody.IsSleeping())
+                if (InteractableRigidbody != null)
                 {
-                    propFrames.Add(frame, new ObjectFrame(transform));
+                    if(frame == 1)
+                    {
+                        propFrames.Add(frame, new ObjectFrame(InteractableRigidbody));
+                    }
+                    else
+                    {
+                        propFrames.Add(frame, new ObjectFrame(InteractableRigidbody));
+                    }
                 }
             }
         }

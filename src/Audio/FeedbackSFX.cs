@@ -27,6 +27,8 @@ namespace NEP.MonoDirector.Audio
 
             Events.OnPrePlayback += OnPrePlay;
             Events.OnStopPlayback += OnStopPlayback;
+
+            Events.OnPreSnapshot += OnStartRecording;
         }
 
         private void OnDisable()
@@ -36,6 +38,8 @@ namespace NEP.MonoDirector.Audio
 
             Events.OnPlay -= OnPrePlay;
             Events.OnStopPlayback -= OnStopPlayback;
+
+            Events.OnPreSnapshot -= OnStartRecording;
         }
 
         public void Play(AudioClip clip)

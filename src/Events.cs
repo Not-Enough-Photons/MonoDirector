@@ -24,6 +24,8 @@ namespace NEP.MonoDirector
 
             OnPlaybackTick = null;
             OnRecordTick = null;
+
+            OnPreSnapshot = null;
         }
 
         public static Action<Actor> OnActorCasted;
@@ -43,5 +45,7 @@ namespace NEP.MonoDirector
 
         public static Action OnPlaybackTick;
         public static Action OnRecordTick;
+
+        public static Action OnPreSnapshot;
     }
 }
