@@ -5,11 +5,8 @@ using UnityEngine;
 
 namespace NEP.MonoDirector.Actors
 {
-    [MelonLoader.RegisterTypeInIl2Cpp]
     public class ActorBreakableProp : ActorProp
     {
-        public ActorBreakableProp(IntPtr ptr) : base(ptr) { }
-
         public ObjectDestructable breakableProp;
 
         private Dictionary<int, Action> eventDictionary;

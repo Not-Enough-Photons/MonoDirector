@@ -29,15 +29,15 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="src\Actors\Actor.cs" />
-    <Compile Include="src\Actors\ActorBreakableProp.cs" />
-    <Compile Include="src\Actors\ActorGunProp.cs" />
-    <Compile Include="src\Actors\ActorProp.cs" />
-    <Compile Include="src\Actors\ActorNPC.cs" />
-    <Compile Include="src\Actors\ActorNPCBuilder.cs" />
-    <Compile Include="src\Actors\ActorPlayer.cs" />
-    <Compile Include="src\Actors\ActorPlayerProxy.cs" />
-    <Compile Include="src\Actors\ActorVehicle.cs" />
-    <Compile Include="src\Actors\PropBuilder.cs" />
+    <Compile Include="src\Actors\Human\SkeletonCloner.cs" />
+    <Compile Include="src\Actors\Prop\ActorBreakableProp.cs" />
+    <Compile Include="src\Actors\Prop\ActorGunProp.cs" />
+    <Compile Include="src\Actors\Prop\ActorProp.cs" />
+    <Compile Include="src\Actors\Human\ActorNPC.cs" />
+    <Compile Include="src\Actors\Human\ActorNPCBuilder.cs" />
+    <Compile Include="src\Actors\Human\ActorPlayer.cs" />
+    <Compile Include="src\Actors\Prop\ActorVehicle.cs" />
+    <Compile Include="src\Actors\Prop\PropBuilder.cs" />
     <Compile Include="src\Camera\CameraRigManager.cs" />
     <Compile Include="src\Camera\DollyRig.cs" />
     <Compile Include="src\Camera\FollowCameraRig.cs" />
@@ -55,6 +55,8 @@
     <Compile Include="src\Camera\FreeCameraRig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\Main.cs" />
+    <Compile Include="src\Modes\InterpolatedRecorder.cs" />
+    <Compile Include="src\Modes\PhotoMode.cs" />
     <Compile Include="src\Patches\Guns\InventoryAmmoReciever.cs" />
     <Compile Include="src\Patches\SFX\FootstepSFX.cs" />
     <Compile Include="src\Patches\Guns\Gun.cs" />
@@ -63,9 +65,10 @@
     <Compile Include="src\Patches\ObjectDestructable.cs" />
     <Compile Include="src\Patches\Guns\SpawnGun.cs" />
     <Compile Include="src\Patches\UI\LaserCursor.cs" />
+    <Compile Include="src\Patches\Vehicles\Seat.cs" />
     <Compile Include="src\Patches\VRGraphicRaycaster.cs" />
-    <Compile Include="src\Playback.cs" />
-    <Compile Include="src\Recorder.cs" />
+    <Compile Include="src\Modes\Playback.cs" />
+    <Compile Include="src\Modes\Recorder.cs" />
     <Compile Include="src\Settings.cs" />
     <Compile Include="src\State\CaptureState.cs" />
     <Compile Include="src\State\PlayState.cs" />

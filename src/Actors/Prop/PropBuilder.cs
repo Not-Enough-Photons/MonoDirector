@@ -1,10 +1,8 @@
-﻿using static MelonLoader.MelonLogger;
-
-using NEP.MonoDirector.Core;
+﻿using NEP.MonoDirector.Core;
 
 using UnityEngine;
+
 using SLZ.VFX;
-using NEP.MonoDirector.Patches.Guns;
 using SLZ.Vehicle;
 
 namespace NEP.MonoDirector.Actors
@@ -38,55 +36,25 @@ namespace NEP.MonoDirector.Actors
 
             if (ActorProp.EligibleWithType<SLZ.Props.Weapons.Gun>(rigidbody))
             {
-                Main.Logger.Msg($"Adding gun component to {gameObject.name}");
-
-                var actorProp = gameObject.AddComponent<ActorGunProp>();
-                actorProp.SetRigidbody(rigidbody);
-                actorProp.SetGun(gameObject.GetComponent<SLZ.Props.Weapons.Gun>());
-                Director.instance.RecordingProps.Add(actorProp);
-
-                vfxBlip?.CallSpawnEffect();
+                BuildGunProp(rigidbody);
                 return;
             }
 
             if (ActorProp.EligibleWithType<SLZ.Props.ObjectDestructable>(rigidbody))
             {
-                Main.Logger.Msg($"Adding destructable component to {gameObject.name}");
-
-                var destructableProp = gameObject.AddComponent<ActorBreakableProp>();
-                destructableProp.SetRigidbody(rigidbody);
-                destructableProp.SetBreakableObject(gameObject.GetComponent<SLZ.Props.ObjectDestructable>());
-
-                Director.instance.RecordingProps.Add(destructableProp);
-
-                vfxBlip?.CallSpawnEffect();
+                BuildDestructibleProp(rigidbody);
                 return;
             }
 
             if (ActorProp.EligibleWithType<SLZ.Props.Weapons.Magazine>(rigidbody))
             {
-                Main.Logger.Msg($"Adding magazine component to {gameObject.name}");
-
-                var magazineProp = gameObject.AddComponent<ActorProp>();
-                magazineProp.SetRigidbody(rigidbody);
-
-                Director.instance.RecordingProps.Add(magazineProp);
-
-                vfxBlip?.CallSpawnEffect();
+                BuildMagazineProp(rigidbody);
                 return;
             }
 
             if (ActorProp.EligibleWithType<Atv>(rigidbody))
             {
-                Main.Logger.Msg($"Adding vehicle component to {gameObject.name}");
-
-                var vehicle = gameObject.AddComponent<ActorVehicle>();
-                vehicle.SetRigidbody(rigidbody);
-                vehicle.SetVehicle(rigidbody.GetComponent<Atv>());
-
-                Director.instance.RecordingProps.Add(vehicle);
-
-                vfxBlip?.CallSpawnEffect();
+                BuildVehicle(rigidbody);
                 return;
             }
 
@@ -94,12 +62,11 @@ namespace NEP.MonoDirector.Actors
             {
                 Main.Logger.Msg($"Adding prop component to {rigidbody.name}");
 
-                var actorProp = gameObject.AddComponent<ActorProp>();
-                actorProp.SetRigidbody(rigidbody);
-                Director.instance.RecordingProps.Add(actorProp);
-
-                vfxBlip?.CallSpawnEffect();
+                var actorProp = new ActorProp();
+                actorProp.Pair(rigidbody);
             }
+            
+            vfxBlip?.CallSpawnEffect();
         }
 
         public static void RemoveProp(SLZ.Marrow.Pool.AssetPoolee pooleeObject)
@@ -117,9 +84,47 @@ namespace NEP.MonoDirector.Actors
                 var prop = actorProp;
                 prop.InteractableRigidbody.isKinematic = false;
                 Director.instance.RecordingProps.Remove(prop);
-                GameObject.Destroy(prop);
                 vfxBlip?.CallDespawnEffect();
             }
+        }
+
+        internal static void BuildGunProp(Rigidbody prop)
+        {
+            GameObject gameObject = prop.gameObject;
+
+            var actorProp = new ActorGunProp();
+
+            actorProp.Pair(prop);
+            actorProp.SetGun(gameObject.GetComponent<SLZ.Props.Weapons.Gun>());
+        }
+
+        internal static void BuildDestructibleProp(Rigidbody prop)
+        {
+            GameObject gameObject = prop.gameObject;
+
+            var destructableProp = new ActorBreakableProp();
+
+            destructableProp.Pair(prop);
+            destructableProp.SetBreakableObject(gameObject.GetComponent<SLZ.Props.ObjectDestructable>());
+        }
+
+        internal static void BuildMagazineProp(Rigidbody prop)
+        {
+            GameObject gameObject = prop.gameObject;
+
+            var magazineProp = new ActorProp();
+
+            magazineProp.Pair(prop);
+        }
+
+        internal static void BuildVehicle(Rigidbody prop)
+        {
+            GameObject gameObject = prop.gameObject;
+
+            var vehicle = new ActorVehicle();
+
+            vehicle.Pair(prop);
+            vehicle.SetVehicle(prop.GetComponent<Atv>());
         }
     }
 }

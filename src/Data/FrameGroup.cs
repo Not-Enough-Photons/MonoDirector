@@ -2,18 +2,26 @@
 
 namespace NEP.MonoDirector.Data
 {
-    public struct FrameGroup
+    public class FrameGroup
     {
-        public FrameGroup(List<ObjectFrame> frames)
+        public FrameGroup(ObjectFrame[] frames)
         {
             this.transformFrames = frames;
         }
 
-        public void SetFrames(List<ObjectFrame> transformFrames)
+        public FrameGroup(List<ObjectFrame> frames)
         {
-            this.transformFrames = transformFrames;
+            this.transformFrames = frames.ToArray();
         }
 
-        public List<ObjectFrame> transformFrames;
+        public void SetFrames(List<ObjectFrame> transformFrames)
+        {
+            this.transformFrames = transformFrames.ToArray();
+        }
+
+        public ObjectFrame[] transformFrames;
+
+        public FrameGroup previous;
+        public FrameGroup next;
     }
 }

@@ -1,8 +1,11 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using System.Threading;
 using MelonLoader;
+
 using NEP.MonoDirector.Actors;
 using NEP.MonoDirector.State;
-
+using UnhollowerBaseLib;
 using UnityEngine;
 
 namespace NEP.MonoDirector.Core
@@ -11,10 +14,7 @@ namespace NEP.MonoDirector.Core
     {
         public Recorder()
         {
-            if (instance == null)
-            {
-                instance = this;
-            }
+            instance = this;
 
             Events.OnPreRecord += OnPreRecord;
             Events.OnRecordTick += OnRecordTick;
@@ -25,6 +25,8 @@ namespace NEP.MonoDirector.Core
 
         public int RecordTick { get => recordTick; }
 
+        public float TimeRecording { get => timeRecording; }
+
         public ActorPlayer ActiveActor { get => activeActor; }
 
         private ActorPlayer activeActor;
@@ -33,15 +35,7 @@ namespace NEP.MonoDirector.Core
 
         private int recordTick;
 
-        public void LateUpdate()
-        {
-            if (Director.PlayState != PlayState.Recording)
-            {
-                return;
-            }
-
-            Events.OnRecordTick?.Invoke();
-        }
+        private float timeRecording;
 
         public void BeginRecording()
         {
@@ -53,15 +47,15 @@ namespace NEP.MonoDirector.Core
 
         public void RecordCamera()
         {
-            foreach (var castMember in Director.instance.Cast)
+            /*foreach (var castMember in Director.instance.Cast)
             {
                 castMember?.Act(Director.instance.WorldTick);
-            }
+            }*/
         }
 
         public void RecordActor()
         {
-            activeActor.RecordFrame();
+            activeActor.Capture();
 
             foreach (var prop in Director.instance.RecordingProps)
             {
@@ -91,13 +85,15 @@ namespace NEP.MonoDirector.Core
                 recordTick = 0;
             }
 
+            timeRecording = 0f;
+
             activeActor = new ActorPlayer(Constants.rigManager.avatar);
 
             foreach (var castMember in Director.instance.Cast)
             {
                 if (castMember != null)
                 {
-                    castMember.Act(0);
+
                 }
             }
         }
@@ -120,11 +116,12 @@ namespace NEP.MonoDirector.Core
             {
                 RecordActor();
             }
+
+            timeRecording += Time.deltaTime;
         }
 
         public void OnStopRecording()
         {
-            activeActor.CloneAvatar();
             Director.instance.Cast.Add(activeActor);
 
             activeActor = null;
@@ -145,12 +142,14 @@ namespace NEP.MonoDirector.Core
             yield return new WaitForSeconds(5f);
             Events.OnStartRecording?.Invoke();
 
-            while (Director.PlayState == PlayState.Recording || Director.PlayState == PlayState.Paused)
+            while(Director.PlayState == PlayState.Recording)
             {
-                yield return null;
+                Events.OnRecordTick?.Invoke();
+                yield return new WaitForEndOfFrame();
             }
 
             Events.OnStopRecording?.Invoke();
+
             yield return null;
         }
     }

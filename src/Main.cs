@@ -55,6 +55,11 @@ namespace NEP.MonoDirector
             BuildMenu();
         }
 
+        public override void OnUpdate()
+        {
+            director?.Update();
+        }
+
         private void MonoDirectorInitialize()
         {
             ResetInstances();
@@ -80,8 +85,7 @@ namespace NEP.MonoDirector
 
         private void CreateDirector()
         {
-            GameObject directorObject = new GameObject("Director");
-            director = directorObject.AddComponent<Director>();
+            director = new Director();
             director.SetCamera(camera);
         }
 

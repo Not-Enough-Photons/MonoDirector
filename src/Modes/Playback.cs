@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections;
+using System.Threading;
+using Il2CppSystem.IO;
 using MelonLoader;
+
 using NEP.MonoDirector.Actors;
 using NEP.MonoDirector.State;
-
+using UnhollowerBaseLib;
 using UnityEngine;
 
 namespace NEP.MonoDirector.Core
@@ -12,10 +15,7 @@ namespace NEP.MonoDirector.Core
     {
         public Playback()
         {
-            if(instance == null)
-            {
-                instance = this;
-            }
+            instance = this;
 
             Events.OnPrePlayback += OnPrePlayback;
             Events.OnPlaybackTick += OnPlaybackTick;
@@ -29,16 +29,6 @@ namespace NEP.MonoDirector.Core
         private Coroutine playRoutine;
 
         private int playbackTick;
-
-        public void LateUpdate()
-        {
-            if (Director.PlayState != PlayState.Playing)
-            {
-                return;
-            }
-
-            Events.OnPlaybackTick?.Invoke();
-        }
 
         public void BeginPlayback()
         {
@@ -66,7 +56,7 @@ namespace NEP.MonoDirector.Core
                 else
                 {
                     AnimateProp(0, prop);
-                    prop.gameObject.SetActive(true);
+                    prop.GameObject.SetActive(true);
                 }
             }
         }
@@ -76,6 +66,11 @@ namespace NEP.MonoDirector.Core
             if (Director.PlayState == PlayState.Paused)
             {
                 return;
+            }
+
+            if(playbackTick >= Recorder.instance.RecordTick)
+            {
+                playbackTick = Recorder.instance.RecordTick;
             }
 
             AnimateAll(playbackTick);
@@ -119,11 +114,6 @@ namespace NEP.MonoDirector.Core
             {
                 AnimateActor(frame, castMember);
             }
-
-            foreach (var prop in Director.instance.WorldProps)
-            {
-                AnimateProp(frame, prop);
-            }
         }
 
         public void AnimateActor(int frame, Actor actor)
@@ -133,7 +123,7 @@ namespace NEP.MonoDirector.Core
                 return;
             }
 
-            actor.Act(frame);
+            actor.Act();
         }
 
         public void AnimateNPC(int frame, ActorNPC actor)
@@ -162,12 +152,14 @@ namespace NEP.MonoDirector.Core
             yield return new WaitForSeconds(4f);
             Events.OnPlay?.Invoke();
 
-            while (Director.PlayState == PlayState.Playing || Director.PlayState == PlayState.Paused)
+            while(Director.PlayState == PlayState.Playing)
             {
-                yield return null;
+                Events.OnPlaybackTick?.Invoke();
+                yield return new WaitForEndOfFrame();
             }
 
             Events.OnStopPlayback?.Invoke();
+
             yield return null;
         }
     }

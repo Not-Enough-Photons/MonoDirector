@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using NEP.MonoDirector.Core;
 using NEP.MonoDirector.Data;
 using UnityEngine;
 
@@ -8,12 +8,6 @@ namespace NEP.MonoDirector.Actors
 {
     public class Actor
     {
-        public Actor()
-        {
-            objectFrames = new Dictionary<int, ObjectFrame>();
-            actionFrames = new Dictionary<int, Action>();
-        }
-
         public string ActorName { get => actorName; }
         public int ActorId { get => actorId; }
 
@@ -21,8 +15,8 @@ namespace NEP.MonoDirector.Actors
         protected int actorId;
 
         protected Transform transform;
-        protected Dictionary<int, ObjectFrame> objectFrames;
-        protected Dictionary<int, Action> actionFrames;
+        protected ObjectFrame[] objectFrames;
+        protected Action[] actionFrames;
 
         protected int stateTick;
         protected int recordedTicks;
@@ -31,22 +25,12 @@ namespace NEP.MonoDirector.Actors
         /// Updates the actor's pose on this recorded frame.
         /// </summary>
         /// <param name="currentFrame">The frame to act, or to display the pose on that frame.</param>
-        public virtual void Act(int currentFrame)
+        public virtual void Act()
         {
-            if (!CanAct(currentFrame))
-            {
-                return;
-            }
-
-            var objectFrame = objectFrames[currentFrame];
+            var objectFrame = objectFrames[Playback.instance.PlaybackTick];
 
             transform.position = objectFrame.position;
             transform.rotation = objectFrame.rotation;
-
-            if (actionFrames.ContainsKey(currentFrame))
-            {
-                actionFrames[currentFrame]?.Invoke();
-            }
         }
 
         public virtual bool CanAct(int frame)
@@ -62,12 +46,11 @@ namespace NEP.MonoDirector.Actors
 
         public virtual void RecordFrame()
         {
-            ObjectFrame objectFrame = new ObjectFrame()
-            {
-                transform = transform
-            };
+            List<ObjectFrame> objectFrames = new List<ObjectFrame>();
 
-            objectFrames.Add(recordedTicks++, objectFrame);
+            ObjectFrame objectFrame = new ObjectFrame(transform);
+
+            objectFrames.Add(objectFrame);
         }
 
         public void SetTransform(Transform transform)

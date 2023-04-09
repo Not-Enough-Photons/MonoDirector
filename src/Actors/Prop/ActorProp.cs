@@ -11,17 +11,16 @@ using UnityEngine;
 using Il2CppSystem;
 
 using SLZ.Vehicle;
+using NEP.MonoDirector.Core;
 
 namespace NEP.MonoDirector.Actors
 {
-    [MelonLoader.RegisterTypeInIl2Cpp]
-    public class ActorProp : MonoBehaviour
+    public class ActorProp
     {
-        public ActorProp(System.IntPtr ptr) : base(ptr) { }
-
         public Actor Actor { get => actor; }
 
         public Dictionary<int, ObjectFrame> PropFrames { get => propFrames; }
+        public GameObject GameObject { get => gameObject; }
         public Rigidbody InteractableRigidbody { get => interactableRigidbody; }
         public bool isRecording;
 
@@ -35,6 +34,8 @@ namespace NEP.MonoDirector.Actors
 
         private Actor actor;
         private Rigidbody interactableRigidbody;
+
+        protected GameObject gameObject;
 
         protected int stateTick;
         protected int recordedTicks;
@@ -76,6 +77,13 @@ namespace NEP.MonoDirector.Actors
             return true;
         }
 
+        public void Pair(Rigidbody prop)
+        {
+            this.gameObject = prop.gameObject;
+            SetRigidbody(prop);
+            Director.instance.RecordingProps.Add(this);
+        }
+
         public static bool EligibleWithType<T>(Rigidbody rigidbody)
         {
             return rigidbody.GetComponent<T>() != null;
@@ -109,7 +117,7 @@ namespace NEP.MonoDirector.Actors
 
             if(interactableRigidbody == null)
             {
-                interactableRigidbody = GetComponent<Rigidbody>();
+                interactableRigidbody = gameObject.GetComponent<Rigidbody>();
             }
             else
             {
@@ -131,13 +139,7 @@ namespace NEP.MonoDirector.Actors
 
             if (!propFrames.ContainsKey(frame))
             {
-                ObjectFrame objectFrame = new ObjectFrame()
-                {
-                    transform = transform,
-                    position = transform.position,
-                    rotation = transform.rotation,
-                    scale = transform.localScale
-                };
+                ObjectFrame objectFrame = new ObjectFrame(gameObject.transform);
 
                 if(frame == 0 || interactableRigidbody != null && interactableRigidbody.IsSleeping())
                 {

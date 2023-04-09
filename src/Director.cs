@@ -6,13 +6,16 @@ using NEP.MonoDirector.State;
 using System.Collections.Generic;
 using NEP.MonoDirector.Actors;
 using UnityEngine.Splines;
+using UnhollowerBaseLib;
 
 namespace NEP.MonoDirector.Core
 {
-    [MelonLoader.RegisterTypeInIl2Cpp]
-    public class Director : MonoBehaviour
+    public class Director
     {
-        public Director(System.IntPtr ptr) : base(ptr) { }
+        public Director()
+        {
+            Awake();
+        }
 
         public static Director instance { get; private set; }
 
@@ -38,6 +41,8 @@ namespace NEP.MonoDirector.Core
 
         private int worldTick;
 
+        private float seekRate = 1f;
+
         private void Awake()
         {
             instance = this;
@@ -49,6 +54,8 @@ namespace NEP.MonoDirector.Core
             NPCCast = new List<ActorNPC>();
             WorldProps = new List<ActorProp>();
             RecordingProps = new List<ActorProp>();
+
+            Start();
         }
 
         private void Start()
@@ -60,19 +67,19 @@ namespace NEP.MonoDirector.Core
             Events.OnStartRecording += () => SetPlayState(PlayState.Recording);
         }
 
-        private void Update()
+        public void Update()
         {
             if (!Settings.Debug.useKeys)
             {
                 return;
             }
 
-            if (Input.GetKey(KeyCode.LeftArrow))
+            if (Input.GetKeyDown(KeyCode.LeftArrow))
             {
                 Playback.instance.Seek(-1);
             }
 
-            if (Input.GetKey(KeyCode.RightArrow))
+            if (Input.GetKeyDown(KeyCode.RightArrow))
             {
                 Playback.instance.Seek(1);
             }
@@ -91,12 +98,6 @@ namespace NEP.MonoDirector.Core
             {
                 Stop();
             }
-        }
-
-        private void LateUpdate()
-        {
-            Recorder.instance.LateUpdate();
-            Playback.instance.LateUpdate();
         }
 
         public void Play()
@@ -157,7 +158,7 @@ namespace NEP.MonoDirector.Core
             foreach(var prop in WorldProps)
             {
                 prop.InteractableRigidbody.isKinematic = false;
-                GameObject.Destroy(prop);
+                GameObject.Destroy(prop.GameObject);
             }
 
             WorldProps.Clear();

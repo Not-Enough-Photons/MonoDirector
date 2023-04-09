@@ -30,7 +30,7 @@ namespace NEP.MonoDirector.Actors
                 var prop = actorProp;
                 prop.InteractableRigidbody.isKinematic = false;
                 Director.instance.RecordingProps.Remove(prop);
-                GameObject.Destroy(prop);
+                GameObject.Destroy(prop.GameObject);
                 vfxBlip?.CallDespawnEffect();
             }
         }

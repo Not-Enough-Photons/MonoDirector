@@ -3,11 +3,13 @@ using UnityEngine;
 
 namespace NEP.MonoDirector.Data
 {
-    public struct ObjectFrame
+    public class ObjectFrame
     {
         public ObjectFrame(Transform transform)
         {
             name = transform != null ? transform.name : "Null";
+
+            deltaTime = 0f;
 
             this.transform = transform;
             position = transform != null ? transform.position : Vector3.zero;
@@ -17,11 +19,16 @@ namespace NEP.MonoDirector.Data
             rigidbody = null;
             rigidbodyVelocity = Vector3.zero;
             rigidbodyAngularVelocity = Vector3.zero;
+
+            previous = null;
+            next = null;
         }
 
         public ObjectFrame(Rigidbody rigidbody)
         {
             name = rigidbody.name;
+
+            deltaTime = 0f;
 
             this.transform = rigidbody.transform;
             position = transform != null ? transform.position : Vector3.zero;
@@ -31,9 +38,17 @@ namespace NEP.MonoDirector.Data
             this.rigidbody = rigidbody;
             rigidbodyVelocity = rigidbody.velocity;
             rigidbodyAngularVelocity = rigidbody.angularVelocity;
+
+            previous = null;
+            next = null;
         }
 
+        public ObjectFrame previous;
+        public ObjectFrame next;
+
         public string name;
+
+        public float deltaTime;
 
         public Transform transform;
         public Rigidbody rigidbody;
@@ -44,5 +59,10 @@ namespace NEP.MonoDirector.Data
 
         public Vector3 rigidbodyVelocity;
         public Vector3 rigidbodyAngularVelocity;
+
+        public void SetDelta(float deltaTime)
+        {
+            this.deltaTime = deltaTime;
+        }
     }
 }

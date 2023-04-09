@@ -21,7 +21,7 @@ namespace NEP.MonoDirector.Patches
 
                 if(Director.PlayState == State.PlayState.Recording)
                 {
-                    activeActor.CaptureAvatarAction(Recorder.instance.RecordTick, () => PlaySFX(__instance));
+
                 }
             }
 

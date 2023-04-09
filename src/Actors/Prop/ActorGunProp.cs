@@ -15,11 +15,8 @@ using UnityEngine;
 
 namespace NEP.MonoDirector.Actors
 {
-    [MelonLoader.RegisterTypeInIl2Cpp]
     public class ActorGunProp : ActorProp
     {
-        public ActorGunProp(IntPtr ptr) : base(ptr) { }
-
         public Gun Gun { get => gun; }
 
         private Gun gun;

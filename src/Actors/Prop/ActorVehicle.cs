@@ -5,11 +5,8 @@ using UnityEngine;
 
 namespace NEP.MonoDirector.Actors
 {
-    [MelonLoader.RegisterTypeInIl2Cpp]
     public class ActorVehicle : ActorProp
     {
-        public ActorVehicle(IntPtr ptr) : base(ptr) { }
-
         public Atv Vehicle { get => vehicle; }
 
         protected Atv vehicle;
