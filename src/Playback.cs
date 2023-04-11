@@ -25,11 +25,15 @@ namespace NEP.MonoDirector.Core
 
         public float PlaybackTime { get => playbackTime; }
 
+        public float PlaybackRate { get => playbackRate; }
+
         private Coroutine playRoutine;
 
         private int playbackTick;
 
         private float playbackTime;
+
+        private float playbackRate = 1f;
 
         public void LateUpdate()
         {
@@ -83,7 +87,7 @@ namespace NEP.MonoDirector.Core
             AnimateAll();
 
             playbackTick++;
-            playbackTime += Time.deltaTime;
+            playbackTime += Time.deltaTime * playbackRate;
         }
 
         public void OnStopPlayback()
@@ -114,6 +118,11 @@ namespace NEP.MonoDirector.Core
 
             AnimateAll();
             playbackTick += rate;
+        }
+
+        public void MovePlayhead(float amount)
+        {
+            playbackTime += amount;
         }
 
         public void AnimateAll()
