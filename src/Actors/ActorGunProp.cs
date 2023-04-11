@@ -29,7 +29,7 @@ namespace NEP.MonoDirector.Actors
         {
             base.Awake();
 
-            propFrames = new Dictionary<int, ObjectFrame>();
+            propFrames = new List<ObjectFrame>();
             actionFrames = new Dictionary<int, Action>();
         }
 
@@ -67,14 +67,9 @@ namespace NEP.MonoDirector.Actors
             this.gun = gun;
         }
 
-        public override void Act(int currentTick)
+        public override void Act()
         {
-            base.Act(currentTick);
-
-            if (actionFrames.ContainsKey(currentTick))
-            {
-                actionFrames[currentTick]?.Invoke();
-            }
+            base.Act();
         }
     }
 }

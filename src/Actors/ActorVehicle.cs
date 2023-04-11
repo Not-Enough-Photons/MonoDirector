@@ -19,51 +19,14 @@ namespace NEP.MonoDirector.Actors
             this.vehicle = vehicle;
         }
 
-        public override void Act(int currentTick)
+        public void Act()
         {
-            if (!propFrames.ContainsKey(currentTick))
-            {
-                return;
-            }
 
-            var propFrame = propFrames[currentTick];
-
-            gameObject.SetActive(true);
-
-            if (vehicle == null)
-            {
-                return;
-            }
-
-            if (currentTick == 1)
-            {
-                vehicle.transform.position = propFrame.position;
-                vehicle.transform.rotation = propFrame.rotation;
-                vehicle.transform.localScale = propFrame.scale;
-            }
-
-            vehicle.mainBody.velocity = propFrame.rigidbodyVelocity;
-            vehicle.mainBody.angularVelocity = propFrame.rigidbodyAngularVelocity;
         }
 
         public override void Record(int frame)
         {
             isRecording = true;
-
-            if (!propFrames.ContainsKey(frame))
-            {
-                if (InteractableRigidbody != null)
-                {
-                    if(frame == 1)
-                    {
-                        propFrames.Add(frame, new ObjectFrame(InteractableRigidbody));
-                    }
-                    else
-                    {
-                        propFrames.Add(frame, new ObjectFrame(InteractableRigidbody));
-                    }
-                }
-            }
         }
     }
 }

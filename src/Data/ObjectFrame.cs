@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using static SLZ.VFX.GenericFrameTimer;
 
 namespace NEP.MonoDirector.Data
 {
@@ -13,6 +14,8 @@ namespace NEP.MonoDirector.Data
             position = transform != null ? transform.position : Vector3.zero;
             rotation = transform != null ? transform.rotation : Quaternion.identity;
             scale = transform != null ? transform.localScale : Vector3.one;
+
+            frameTime = 0f;
 
             rigidbody = null;
             rigidbodyVelocity = Vector3.zero;
@@ -28,9 +31,16 @@ namespace NEP.MonoDirector.Data
             rotation = transform != null ? transform.rotation : Quaternion.identity;
             scale = transform != null ? transform.localScale : Vector3.one;
 
+            frameTime = 0f;
+
             this.rigidbody = rigidbody;
             rigidbodyVelocity = rigidbody.velocity;
             rigidbodyAngularVelocity = rigidbody.angularVelocity;
+        }
+
+        public void SetDelta(float frameTime)
+        {
+            this.frameTime = frameTime;
         }
 
         public string name;
@@ -41,6 +51,8 @@ namespace NEP.MonoDirector.Data
         public Vector3 position;
         public Quaternion rotation;
         public Vector3 scale;
+
+        public float frameTime;
 
         public Vector3 rigidbodyVelocity;
         public Vector3 rigidbodyAngularVelocity;

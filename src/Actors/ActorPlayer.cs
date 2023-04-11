@@ -16,13 +16,13 @@ namespace NEP.MonoDirector.Actors
         {
             playerAvatar = avatar;
             avatarBones = GetAvatarBones(playerAvatar);
-            avatarFrames = new Dictionary<int, FrameGroup>();
+            avatarFrames = new List<FrameGroup>();
         }
 
         public SLZ.VRMK.Avatar PlayerAvatar { get => playerAvatar; }
         public Transform[] AvatarBones { get => avatarBones; }
 
-        protected Dictionary<int, FrameGroup> avatarFrames;
+        protected List<FrameGroup> avatarFrames;
 
         private SLZ.VRMK.Avatar playerAvatar;
         private SLZ.VRMK.Avatar clonedAvatar;
@@ -30,33 +30,56 @@ namespace NEP.MonoDirector.Actors
         private Transform[] avatarBones;
         private Transform[] clonedRigBones;
 
-        public override void Act(int currentFrame)
+        private FrameGroup previousFrame;
+        private FrameGroup nextFrame;
+
+        public override void Act()
         {
-            if (!CanAct(currentFrame))
+            previousFrame = new FrameGroup();
+            nextFrame = new FrameGroup();
+
+            foreach (var frame in avatarFrames)
             {
-                return;
+                previousFrame = nextFrame;
+                nextFrame = frame;
+
+                if (frame.frameTime > Playback.instance.PlaybackTime)
+                {
+                    break;
+                }
             }
 
-            var actorFrame = avatarFrames[currentFrame];
+            float gap = nextFrame.frameTime - previousFrame.frameTime;
+            float head = Playback.instance.PlaybackTime - previousFrame.frameTime;
 
-            for (int i = 0; i < actorFrame.transformFrames.Count; i++)
+            float delta = head / gap;
+
+            List<ObjectFrame> previousTransformFrames = previousFrame.transformFrames;
+            List<ObjectFrame> nextTransformFrames = nextFrame.transformFrames;
+
+            for (int i = 0; i < 55; i++)
             {
-                var boneFrame = actorFrame.transformFrames[i];
-                boneFrame.transform = clonedRigBones[i];
+                var bone = clonedRigBones[i];
 
-                if (boneFrame.transform == null)
+                if (bone == null)
                 {
                     continue;
                 }
 
-                boneFrame.transform.position = boneFrame.position;
-                boneFrame.transform.rotation = boneFrame.rotation;
-            }
-        }
+                if (previousTransformFrames == null)
+                {
+                    continue;
+                }
 
-        public override bool CanAct(int frame)
-        {
-            return base.CanAct(frame) || avatarFrames.ContainsKey(frame);
+                Vector3 previousBonePosition = previousTransformFrames[i].position;
+                Vector3 nextBonePosition = nextTransformFrames[i].position;
+
+                Quaternion previousBoneRotation = previousTransformFrames[i].rotation;
+                Quaternion nextBoneRotation = nextTransformFrames[i].rotation;
+
+                bone.position = Vector3.Lerp(previousBonePosition, nextBonePosition, delta);
+                bone.rotation = Quaternion.Slerp(previousBoneRotation, nextBoneRotation, delta);
+            }
         }
 
         /// <summary>
@@ -65,7 +88,9 @@ namespace NEP.MonoDirector.Actors
         /// <param name="index">The frame to record the bones.</param>
         public override void RecordFrame()
         {
-            avatarFrames.Add(recordedTicks++, new FrameGroup(CaptureBoneFrames(avatarBones)));
+            FrameGroup frameGroup = new FrameGroup();
+            frameGroup.SetFrames(CaptureBoneFrames(avatarBones), Recorder.instance.RecordingTime);
+            avatarFrames.Add(frameGroup);
         }
 
         public void CaptureAvatarAction(int frame, Action action)
@@ -91,8 +116,6 @@ namespace NEP.MonoDirector.Actors
             GameObject.FindObjectOfType<PullCordDevice>().PlayAvatarParticleEffects();
 
             Events.OnActorCasted?.Invoke(this);
-
-            Act(Recorder.instance.RecordTick - 1);
         }
 
         public override void Delete()
@@ -116,7 +139,9 @@ namespace NEP.MonoDirector.Actors
 
             for (int i = 0; i < boneList.Length; i++)
             {
-                frames.Add(new ObjectFrame(boneList[i]));
+                ObjectFrame frame = new ObjectFrame(boneList[i]);
+                //frame.currentTime = Recorder.instance.RecordingTime;
+                frames.Add(frame);
             }
 
             return frames;

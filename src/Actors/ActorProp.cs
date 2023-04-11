@@ -11,6 +11,7 @@ using UnityEngine;
 using Il2CppSystem;
 
 using SLZ.Vehicle;
+using NEP.MonoDirector.Core;
 
 namespace NEP.MonoDirector.Actors
 {
@@ -21,7 +22,7 @@ namespace NEP.MonoDirector.Actors
 
         public Actor Actor { get => actor; }
 
-        public Dictionary<int, ObjectFrame> PropFrames { get => propFrames; }
+        public List<ObjectFrame> PropFrames { get => propFrames; }
         public Rigidbody InteractableRigidbody { get => interactableRigidbody; }
         public bool isRecording;
 
@@ -39,11 +40,14 @@ namespace NEP.MonoDirector.Actors
         protected int stateTick;
         protected int recordedTicks;
 
-        protected Dictionary<int, ObjectFrame> propFrames;
+        private ObjectFrame previousFrame;
+        private ObjectFrame nextFrame;
+
+        protected List<ObjectFrame> propFrames;
 
         protected virtual void Awake()
         {
-            propFrames = new Dictionary<int, ObjectFrame>();
+            propFrames = new List<ObjectFrame>();
         }
 
         public static bool IsActorProp(Rigidbody rigidbody)
@@ -96,15 +100,8 @@ namespace NEP.MonoDirector.Actors
             interactableRigidbody.isKinematic = enable;
         }
 
-        public virtual void Act(int currentTick)
+        public virtual void Act()
         {
-            if (!propFrames.ContainsKey(currentTick))
-            {
-                return;
-            }
-
-            var propFrame = propFrames[currentTick];
-
             gameObject.SetActive(true);
 
             if(interactableRigidbody == null)
@@ -116,38 +113,50 @@ namespace NEP.MonoDirector.Actors
                 interactableRigidbody.isKinematic = true;
             }
 
-            if (propFrame.transform == null)
+            previousFrame = new ObjectFrame();
+            nextFrame = new ObjectFrame();
+
+            foreach (var frame in propFrames)
             {
-                return;
+                previousFrame = nextFrame;
+                nextFrame = frame;
+
+                if (frame.frameTime > Playback.instance.PlaybackTime)
+                {
+                    break;
+                }
             }
 
-            propFrame.transform.position = propFrame.position;
-            propFrame.transform.rotation = propFrame.rotation;
+            float gap = nextFrame.frameTime - previousFrame.frameTime;
+            float head = Playback.instance.PlaybackTime - previousFrame.frameTime;
+
+            float delta = head / gap;
+
+            transform.position = Vector3.Lerp(previousFrame.position, nextFrame.position, delta);
+            transform.rotation = Quaternion.Slerp(previousFrame.rotation, nextFrame.rotation, delta);
         }
 
         public virtual void Record(int frame)
         {
             isRecording = true;
 
-            if (!propFrames.ContainsKey(frame))
+            ObjectFrame objectFrame = new ObjectFrame()
             {
-                ObjectFrame objectFrame = new ObjectFrame()
-                {
-                    transform = transform,
-                    position = transform.position,
-                    rotation = transform.rotation,
-                    scale = transform.localScale
-                };
+                transform = transform,
+                position = transform.position,
+                rotation = transform.rotation,
+                scale = transform.localScale,
+                frameTime = Recorder.instance.RecordingTime
+            };
 
-                if(frame == 0 || interactableRigidbody != null && interactableRigidbody.IsSleeping())
-                {
-                    propFrames.Add(frame, objectFrame);
-                }
-                else
-                {
-                    propFrames.Add(frame, objectFrame);
-                    recordedTicks++;
-                }
+            if (frame == 0 || interactableRigidbody != null && interactableRigidbody.IsSleeping())
+            {
+                propFrames.Add(objectFrame);
+            }
+            else
+            {
+                propFrames.Add(objectFrame);
+                recordedTicks++;
             }
         }
 

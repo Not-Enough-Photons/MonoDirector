@@ -11,10 +11,7 @@ namespace NEP.MonoDirector.Core
     {
         public Recorder()
         {
-            if (instance == null)
-            {
-                instance = this;
-            }
+            instance = this;
 
             Events.OnPreRecord += OnPreRecord;
             Events.OnRecordTick += OnRecordTick;
@@ -23,6 +20,8 @@ namespace NEP.MonoDirector.Core
 
         public static Recorder instance;
 
+        public float RecordingTime { get => recordingTime; }
+
         public int RecordTick { get => recordTick; }
 
         public ActorPlayer ActiveActor { get => activeActor; }
@@ -30,6 +29,8 @@ namespace NEP.MonoDirector.Core
         private ActorPlayer activeActor;
 
         private Coroutine recordRoutine;
+
+        private float recordingTime;
 
         private int recordTick;
 
@@ -55,7 +56,7 @@ namespace NEP.MonoDirector.Core
         {
             foreach (var castMember in Director.instance.Cast)
             {
-                castMember?.Act(Director.instance.WorldTick);
+                castMember?.Act();
             }
         }
 
@@ -70,17 +71,12 @@ namespace NEP.MonoDirector.Core
 
             foreach (var castMember in Director.instance.Cast)
             {
-                Playback.instance.AnimateActor(recordTick, castMember);
-            }
-
-            foreach(var npcCastMember in Director.instance.NPCCast)
-            {
-                Playback.instance.AnimateNPC(recordTick, npcCastMember);
+                Playback.instance.AnimateActor(castMember);
             }
 
             foreach(var prop in Director.instance.WorldProps)
             {
-                Playback.instance.AnimateProp(recordTick, prop);
+                Playback.instance.AnimateProp(prop);
             }
         }
 
@@ -91,13 +87,15 @@ namespace NEP.MonoDirector.Core
                 recordTick = 0;
             }
 
+            recordingTime = 0f;
+
             activeActor = new ActorPlayer(Constants.rigManager.avatar);
 
             foreach (var castMember in Director.instance.Cast)
             {
                 if (castMember != null)
                 {
-                    castMember.Act(0);
+                    castMember.Act();
                 }
             }
         }
@@ -111,6 +109,8 @@ namespace NEP.MonoDirector.Core
 
             recordTick++;
 
+            recordingTime += Time.deltaTime;
+
             if (Director.CaptureState == CaptureState.CaptureCamera)
             {
                 RecordCamera();
@@ -119,6 +119,14 @@ namespace NEP.MonoDirector.Core
             if (Director.CaptureState == CaptureState.CaptureActor)
             {
                 RecordActor();
+            }
+
+            foreach (var castMember in Director.instance.Cast)
+            {
+                if (castMember != null)
+                {
+                    castMember.Act();
+                }
             }
         }
 
@@ -147,6 +155,7 @@ namespace NEP.MonoDirector.Core
 
             while (Director.PlayState == PlayState.Recording || Director.PlayState == PlayState.Paused)
             {
+                LateUpdate();
                 yield return null;
             }
 

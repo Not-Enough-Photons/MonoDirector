@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 
 using NEP.MonoDirector.Data;
+using NEP.MonoDirector.Core;
+
 using UnityEngine;
 
 namespace NEP.MonoDirector.Actors
@@ -10,7 +12,7 @@ namespace NEP.MonoDirector.Actors
     {
         public Actor()
         {
-            objectFrames = new Dictionary<int, ObjectFrame>();
+            objectFrames = new List<ObjectFrame>();
             actionFrames = new Dictionary<int, Action>();
         }
 
@@ -21,43 +23,41 @@ namespace NEP.MonoDirector.Actors
         protected int actorId;
 
         protected Transform transform;
-        protected Dictionary<int, ObjectFrame> objectFrames;
+        protected List<ObjectFrame> objectFrames;
         protected Dictionary<int, Action> actionFrames;
 
         protected int stateTick;
         protected int recordedTicks;
 
+        private ObjectFrame previousFrame;
+        private ObjectFrame nextFrame;
+
         /// <summary>
         /// Updates the actor's pose on this recorded frame.
         /// </summary>
-        /// <param name="currentFrame">The frame to act, or to display the pose on that frame.</param>
-        public virtual void Act(int currentFrame)
+        public virtual void Act()
         {
-            if (!CanAct(currentFrame))
+            previousFrame = new ObjectFrame();
+            nextFrame = new ObjectFrame();
+
+            foreach (var frame in objectFrames)
             {
-                return;
+                previousFrame = nextFrame;
+                nextFrame = frame;
+
+                if (frame.frameTime > Playback.instance.PlaybackTime)
+                {
+                    break;
+                }
             }
 
-            var objectFrame = objectFrames[currentFrame];
+            float gap = nextFrame.frameTime - previousFrame.frameTime;
+            float head = Playback.instance.PlaybackTime - previousFrame.frameTime;
 
-            transform.position = objectFrame.position;
-            transform.rotation = objectFrame.rotation;
+            float delta = head / gap;
 
-            if (actionFrames.ContainsKey(currentFrame))
-            {
-                actionFrames[currentFrame]?.Invoke();
-            }
-        }
-
-        public virtual bool CanAct(int frame)
-        {
-            // We've reached past our recorded ticks, don't proceed further!
-            if (frame >= recordedTicks)
-            {
-                return false;
-            }
-
-            return true;
+            transform.position = Vector3.Lerp(previousFrame.position, nextFrame.position, delta);
+            transform.rotation = Quaternion.Slerp(previousFrame.rotation, nextFrame.rotation, delta);
         }
 
         public virtual void RecordFrame()
@@ -67,7 +67,7 @@ namespace NEP.MonoDirector.Actors
                 transform = transform
             };
 
-            objectFrames.Add(recordedTicks++, objectFrame);
+            objectFrames.Add(objectFrame);
         }
 
         public void SetTransform(Transform transform)

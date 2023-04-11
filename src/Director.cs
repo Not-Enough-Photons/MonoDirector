@@ -93,12 +93,6 @@ namespace NEP.MonoDirector.Core
             }
         }
 
-        private void LateUpdate()
-        {
-            Recorder.instance.LateUpdate();
-            Playback.instance.LateUpdate();
-        }
-
         public void Play()
         {
             playback.BeginPlayback();

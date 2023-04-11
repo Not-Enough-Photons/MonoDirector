@@ -35,7 +35,6 @@
     <Compile Include="src\Actors\ActorNPC.cs" />
     <Compile Include="src\Actors\ActorNPCBuilder.cs" />
     <Compile Include="src\Actors\ActorPlayer.cs" />
-    <Compile Include="src\Actors\ActorPlayerProxy.cs" />
     <Compile Include="src\Actors\ActorVehicle.cs" />
     <Compile Include="src\Actors\PropBuilder.cs" />
     <Compile Include="src\Camera\CameraRigManager.cs" />
@@ -100,7 +99,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\BONELAB\MelonLoader\Managed\Il2CppSystem.dll</HintPath>
     </Reference>
-    <Reference Include="JeviLib">
+    <Reference Include="JeviLib, Version=2.0.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\BONELAB\Mods\JeviLib.dll</HintPath>
     </Reference>
     <Reference Include="MelonLoader, Version=0.4.0.0, Culture=neutral, processorArchitecture=MSIL">

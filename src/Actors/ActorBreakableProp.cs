@@ -26,14 +26,9 @@ namespace NEP.MonoDirector.Actors
             this.breakableProp = destructable;
         }
 
-        public override void Act(int currentTick)
+        public override void Act()
         {
-            base.Act(currentTick);
-
-            if (eventDictionary.ContainsKey(currentTick))
-            {
-                eventDictionary[currentTick]?.Invoke();
-            }
+            base.Act();
         }
 
         public void RecordDestructionEvent(int timeStamp, Action action)
