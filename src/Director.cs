@@ -108,6 +108,13 @@ namespace NEP.MonoDirector.Core
             recorder.BeginRecording();
         }
 
+        public void Retake()
+        {
+            recorder.RetakeRecording();
+            playState = PlayState.Stopped;
+            recorder.BeginRecording();
+        }
+
         public void Stop()
         {
             playState = PlayState.Stopped;

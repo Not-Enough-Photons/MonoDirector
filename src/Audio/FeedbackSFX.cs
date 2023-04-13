@@ -45,7 +45,7 @@ namespace NEP.MonoDirector.Audio
         public void Play(AudioClip clip)
         {
             source.clip = clip;
-            source.Play();
+            source.PlayOneShot(clip);
         }
 
         private void OnStartRecording()
@@ -58,7 +58,7 @@ namespace NEP.MonoDirector.Audio
             Play(sfx_beep);
         }
 
-        private void OnPrePlay()
+        private void OnPrePlay() 
         {
             Play(sfx_postroll);
         }

@@ -35,6 +35,11 @@ namespace NEP.MonoDirector.Core
 
         private float playbackRate = 1f;
 
+        public void SetPlaybackRate(float rate)
+        {
+            this.playbackRate = rate;
+        }
+
         public void LateUpdate()
         {
             if (Director.PlayState != PlayState.Playing)
@@ -118,6 +123,11 @@ namespace NEP.MonoDirector.Core
 
             AnimateAll();
             playbackTick += rate;
+        }
+
+        public void ResetPlayhead()
+        {
+            playbackTime = 0f;
         }
 
         public void MovePlayhead(float amount)

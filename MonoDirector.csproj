@@ -66,6 +66,7 @@
     <Compile Include="src\Playback.cs" />
     <Compile Include="src\Recorder.cs" />
     <Compile Include="src\Settings.cs" />
+    <Compile Include="src\Spline\SplinePlacer.cs" />
     <Compile Include="src\State\CaptureState.cs" />
     <Compile Include="src\State\PlayState.cs" />
     <Compile Include="src\UI\Debug\DeveloperUI.cs" />

@@ -76,6 +76,7 @@ namespace NEP.MonoDirector
             SLZ.Rig.RigManager rigManager = BoneLib.Player.rigManager;
             GameObject gameObject = rigManager.transform.Find("Spectator Camera").gameObject;
             camera = gameObject.AddComponent<FreeCameraRig>();
+            gameObject.AddComponent<SplinePlacer>();
         }
 
         private void CreateDirector()
@@ -126,6 +127,7 @@ namespace NEP.MonoDirector
             playbackCategory.CreateFunctionElement("Record", Color.red, () => director.Record());
             playbackCategory.CreateFunctionElement("Play", Color.green, () => director.Play());
             playbackCategory.CreateFunctionElement("Pause", Color.yellow, () => director.Pause());
+            playbackCategory.CreateFunctionElement("Retake Shot", Color.magenta, () => director.Retake());
             playbackCategory.CreateFunctionElement("Stop", Color.red, () => director.Stop());
 
             actorCategory.CreateFunctionElement("Remove All Actors", Color.red, () => director.RemoveAllActors(), "Are you sure? This cannot be undone.");
@@ -133,6 +135,7 @@ namespace NEP.MonoDirector
 
             settingsCategory.CreateBoolElement("Spawn Gun Sets Props", Color.white, false, (value) => Settings.World.spawnGunProps = value);
             settingsCategory.CreateBoolElement("Spawn Gun Sets NPCs", Color.white, false, (value) => Settings.World.spawnGunNPCs = value);
+            settingsCategory.CreateFloatElement("Playback Speed", Color.white, 1f, 0.1f, float.NegativeInfinity, float.PositiveInfinity, (value) => Playback.instance.SetPlaybackRate(value));
             settingsCategory.CreateFunctionElement("Spectator Head Mode", Color.white, () => Director.instance.Camera.TrackHeadCamera());
 
             var debug = settingsCategory.CreateCategory("Debug", Color.green);

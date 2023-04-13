@@ -34,6 +34,8 @@ namespace NEP.MonoDirector.Core
 
         private int recordTick;
 
+        private bool retake = false;
+
         public void LateUpdate()
         {
             if (Director.PlayState != PlayState.Recording)
@@ -42,6 +44,11 @@ namespace NEP.MonoDirector.Core
             }
 
             Events.OnRecordTick?.Invoke();
+        }
+
+        public void RetakeRecording()
+        {
+            retake = true;
         }
 
         public void BeginRecording()
@@ -82,10 +89,14 @@ namespace NEP.MonoDirector.Core
 
         public void OnPreRecord()
         {
+            retake = false;
+
             if (recordTick > 0)
             {
                 recordTick = 0;
             }
+
+            Playback.instance.ResetPlayhead();
 
             recordingTime = 0f;
 
@@ -108,8 +119,9 @@ namespace NEP.MonoDirector.Core
             }
 
             recordTick++;
-
             recordingTime += Time.deltaTime;
+
+            Playback.instance.MovePlayhead(Time.deltaTime);
 
             if (Director.CaptureState == CaptureState.CaptureCamera)
             {
@@ -132,13 +144,20 @@ namespace NEP.MonoDirector.Core
 
         public void OnStopRecording()
         {
-            activeActor.CloneAvatar();
-            Director.instance.Cast.Add(activeActor);
+            if (!retake)
+            {
+                activeActor.CloneAvatar();
+                Director.instance.Cast.Add(activeActor);
 
-            activeActor = null;
+                activeActor = null;
 
-            Director.instance.WorldProps.AddRange(Director.instance.RecordingProps);
-            Director.instance.RecordingProps.Clear();
+                Director.instance.WorldProps.AddRange(Director.instance.RecordingProps);
+                Director.instance.RecordingProps.Clear();
+            }
+            else
+            {
+                activeActor = null;
+            }
 
             if (recordRoutine != null)
             {
@@ -158,7 +177,7 @@ namespace NEP.MonoDirector.Core
                 LateUpdate();
                 yield return null;
             }
-
+            
             Events.OnStopRecording?.Invoke();
             yield return null;
         }
