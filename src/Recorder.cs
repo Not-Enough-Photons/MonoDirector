@@ -14,6 +14,7 @@ namespace NEP.MonoDirector.Core
             instance = this;
 
             Events.OnPreRecord += OnPreRecord;
+            Events.OnStartRecording += OnStartRecording;
             Events.OnRecordTick += OnRecordTick;
             Events.OnStopRecording += OnStopRecording;
         }
@@ -111,6 +112,19 @@ namespace NEP.MonoDirector.Core
             }
         }
 
+        public void OnStartRecording()
+        {
+            activeActor.Microphone.RecordMicrophone();
+
+            foreach (Actor castMember in Director.instance.Cast)
+            {
+                if (castMember != null && castMember is ActorPlayer actorPlayer)
+                {
+                    actorPlayer.Microphone.Playback();
+                }
+            }
+        }
+
         public void OnRecordTick()
         {
             if (Director.PlayState == PlayState.Paused)
@@ -127,7 +141,7 @@ namespace NEP.MonoDirector.Core
             {
                 RecordCamera();
             }
-
+            
             if (Director.CaptureState == CaptureState.CaptureActor)
             {
                 RecordActor();
@@ -146,6 +160,16 @@ namespace NEP.MonoDirector.Core
         {
             if (!retake)
             {
+                activeActor.Microphone.StopRecordingMicrophone();
+
+                foreach (Actor castMember in Director.instance.Cast)
+                {
+                    if (castMember != null && castMember is ActorPlayer actorPlayer)
+                    {
+                        actorPlayer.Microphone.StopPlayback();
+                    }
+                }
+
                 activeActor.CloneAvatar();
                 Director.instance.Cast.Add(activeActor);
 

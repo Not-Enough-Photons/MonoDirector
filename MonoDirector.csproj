@@ -37,6 +37,8 @@
     <Compile Include="src\Actors\ActorPlayer.cs" />
     <Compile Include="src\Actors\ActorVehicle.cs" />
     <Compile Include="src\Actors\PropBuilder.cs" />
+    <Compile Include="src\Audio\ActorMic.cs" />
+    <Compile Include="src\Audio\Spectrum.cs" />
     <Compile Include="src\Camera\CameraRigManager.cs" />
     <Compile Include="src\Camera\DollyRig.cs" />
     <Compile Include="src\Camera\FollowCameraRig.cs" />
@@ -61,7 +63,6 @@
     <Compile Include="src\Patches\SFX\GunSFX.cs" />
     <Compile Include="src\Patches\ObjectDestructable.cs" />
     <Compile Include="src\Patches\Guns\SpawnGun.cs" />
-    <Compile Include="src\Patches\UI\LaserCursor.cs" />
     <Compile Include="src\Patches\VRGraphicRaycaster.cs" />
     <Compile Include="src\Playback.cs" />
     <Compile Include="src\Recorder.cs" />
@@ -174,6 +175,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\md_resources.pack" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="src\Patches\UI\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

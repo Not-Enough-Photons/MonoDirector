@@ -15,6 +15,7 @@ namespace NEP.MonoDirector.Core
             instance = this;
 
             Events.OnPrePlayback += OnPrePlayback;
+            Events.OnPlay += OnPlay;
             Events.OnPlaybackTick += OnPlaybackTick;
             Events.OnStopPlayback += OnStopPlayback;
         }
@@ -78,6 +79,17 @@ namespace NEP.MonoDirector.Core
                 {
                     AnimateProp(prop);
                     prop.gameObject.SetActive(true);
+                }
+            }
+        }
+
+        public void OnPlay()
+        {
+            foreach(var actor in Director.instance.Cast)
+            {
+                if(actor is ActorPlayer actorPlayer)
+                {
+                    actorPlayer.Microphone.Playback();
                 }
             }
         }

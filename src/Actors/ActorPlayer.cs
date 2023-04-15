@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using NEP.MonoDirector.Audio;
 using NEP.MonoDirector.Core;
 using NEP.MonoDirector.Data;
 
@@ -17,12 +17,19 @@ namespace NEP.MonoDirector.Actors
             playerAvatar = avatar;
             avatarBones = GetAvatarBones(playerAvatar);
             avatarFrames = new List<FrameGroup>();
+
+            GameObject micObject = new GameObject("Actor Microphone");
+            microphone = micObject.AddComponent<ActorMic>();
         }
 
         public SLZ.VRMK.Avatar PlayerAvatar { get => playerAvatar; }
         public Transform[] AvatarBones { get => avatarBones; }
 
+        public ActorMic Microphone { get => microphone; }
+
         protected List<FrameGroup> avatarFrames;
+
+        private ActorMic microphone;
 
         private SLZ.VRMK.Avatar playerAvatar;
         private SLZ.VRMK.Avatar clonedAvatar;
@@ -59,6 +66,11 @@ namespace NEP.MonoDirector.Actors
 
             for (int i = 0; i < 55; i++)
             {
+                if(i == (int)HumanBodyBones.Jaw)
+                {
+                    continue;
+                }
+
                 var bone = clonedRigBones[i];
 
                 if (bone == null)
@@ -80,6 +92,8 @@ namespace NEP.MonoDirector.Actors
                 bone.position = Vector3.Lerp(previousBonePosition, nextBonePosition, delta);
                 bone.rotation = Quaternion.Slerp(previousBoneRotation, nextBoneRotation, delta);
             }
+
+            microphone.UpdateJaw();
         }
 
         /// <summary>
@@ -114,6 +128,8 @@ namespace NEP.MonoDirector.Actors
             ShowHairMeshes(clonedAvatar);
 
             GameObject.FindObjectOfType<PullCordDevice>().PlayAvatarParticleEffects();
+
+            microphone.SetAvatar(clonedAvatar);
 
             Events.OnActorCasted?.Invoke(this);
         }
