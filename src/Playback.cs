@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using Il2CppSystem;
 using MelonLoader;
 using NEP.MonoDirector.Actors;
 using NEP.MonoDirector.State;
@@ -109,6 +110,14 @@ namespace NEP.MonoDirector.Core
 
         public void OnStopPlayback()
         {
+            foreach (Actor castMember in Director.instance.Cast)
+            {
+                if (castMember != null && castMember is ActorPlayer actorPlayer)
+                {
+                    actorPlayer.Microphone.StopPlayback();
+                }
+            }
+
             if (playRoutine != null)
             {
                 MelonCoroutines.Stop(playRoutine);

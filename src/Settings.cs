@@ -12,6 +12,8 @@
 
         public static class World
         {
+            public static bool useMicrophone = false;
+            public static bool micPlayback = true;
             public static bool spawnGunProps = false;
             public static bool spawnGunNPCs = false;
         }

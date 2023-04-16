@@ -47,7 +47,12 @@ namespace NEP.MonoDirector.Audio
 
         public void Playback()
         {
-            if(clip != null)
+            if (!Settings.World.micPlayback)
+            {
+                return;
+            }
+
+            if (clip != null)
             {
                 source.clip = clip;
                 source.Play();
@@ -61,7 +66,7 @@ namespace NEP.MonoDirector.Audio
 
         public void RecordMicrophone()
         {
-            if (!micEnabled)
+            if (!Settings.World.useMicrophone)
             {
                 return;
             }

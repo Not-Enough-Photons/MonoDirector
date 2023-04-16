@@ -133,6 +133,8 @@ namespace NEP.MonoDirector
             actorCategory.CreateFunctionElement("Remove All Actors", Color.red, () => director.RemoveAllActors(), "Are you sure? This cannot be undone.");
             actorCategory.CreateFunctionElement("Clear Scene", Color.red, () => director.ClearScene(), "Are you sure? This cannot be undone.");
 
+            settingsCategory.CreateBoolElement("Use Microphone", Color.white, false, (value) => Settings.World.useMicrophone = value);
+            settingsCategory.CreateBoolElement("Mic Playback", Color.white, false, (value) => Settings.World.micPlayback = value);
             settingsCategory.CreateBoolElement("Spawn Gun Sets Props", Color.white, false, (value) => Settings.World.spawnGunProps = value);
             settingsCategory.CreateBoolElement("Spawn Gun Sets NPCs", Color.white, false, (value) => Settings.World.spawnGunNPCs = value);
             settingsCategory.CreateFloatElement("Playback Speed", Color.white, 1f, 0.1f, float.NegativeInfinity, float.PositiveInfinity, (value) => Playback.instance.SetPlaybackRate(value));
