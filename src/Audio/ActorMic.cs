@@ -42,6 +42,11 @@ namespace NEP.MonoDirector.Audio
 
         public void UpdateJaw()
         {
+            if(jaw == null)
+            {
+                return;
+            }
+
             jaw.localRotation = Quaternion.Euler(new Vector3(0f, 0f, 90f + spectrum.BandVol(0f, 44100f) * 10000f));
         }
 
