@@ -114,13 +114,13 @@ namespace NEP.MonoDirector.Core
 
         public void OnStartRecording()
         {
-            activeActor.Microphone.RecordMicrophone();
+            activeActor?.Microphone?.RecordMicrophone();
 
             foreach (Actor castMember in Director.instance.Cast)
             {
                 if (castMember != null && castMember is ActorPlayer actorPlayer)
                 {
-                    actorPlayer.Microphone.Playback();
+                    actorPlayer?.Microphone?.Playback();
                 }
             }
         }
@@ -160,13 +160,13 @@ namespace NEP.MonoDirector.Core
         {
             if (!retake)
             {
-                activeActor.Microphone.StopRecordingMicrophone();
+                activeActor?.Microphone?.StopRecordingMicrophone();
 
                 foreach (Actor castMember in Director.instance.Cast)
                 {
                     if (castMember != null && castMember is ActorPlayer actorPlayer)
                     {
-                        actorPlayer.Microphone.StopPlayback();
+                        actorPlayer?.Microphone?.StopPlayback();
                     }
                 }
 

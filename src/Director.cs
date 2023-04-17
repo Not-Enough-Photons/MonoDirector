@@ -133,7 +133,6 @@ namespace NEP.MonoDirector.Core
                 {
                     player.Delete();
                     Cast.Remove(actor);
-                    return;
                 }
             }
         }

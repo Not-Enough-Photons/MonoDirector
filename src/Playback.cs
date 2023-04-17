@@ -90,7 +90,7 @@ namespace NEP.MonoDirector.Core
             {
                 if(actor is ActorPlayer actorPlayer)
                 {
-                    actorPlayer.Microphone.Playback();
+                    actorPlayer?.Microphone?.Playback();
                 }
             }
         }
@@ -114,7 +114,7 @@ namespace NEP.MonoDirector.Core
             {
                 if (castMember != null && castMember is ActorPlayer actorPlayer)
                 {
-                    actorPlayer.Microphone.StopPlayback();
+                    actorPlayer?.Microphone?.StopPlayback();
                 }
             }
 

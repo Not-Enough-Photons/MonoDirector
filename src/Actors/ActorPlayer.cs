@@ -93,7 +93,7 @@ namespace NEP.MonoDirector.Actors
                 bone.rotation = Quaternion.Slerp(previousBoneRotation, nextBoneRotation, delta);
             }
 
-            microphone.UpdateJaw();
+            microphone?.UpdateJaw();
         }
 
         /// <summary>

@@ -15,11 +15,12 @@ namespace NEP.MonoDirector.Audio
         private AudioClip clip;
         private AudioSource source;
 
+        private Transform head;
         private Transform jaw;
 
-        private Spectrum spectrum;
+        private Vector3 initialJawRotation;
 
-        private bool micEnabled = true;
+        private Spectrum spectrum;
 
         private void Awake()
         {
@@ -35,8 +36,18 @@ namespace NEP.MonoDirector.Audio
         public void SetAvatar(Avatar avatar)
         {
             this.avatar = avatar;
+
+            head = avatar.animator.GetBoneTransform(HumanBodyBones.Head);
             jaw = avatar.animator.GetBoneTransform(HumanBodyBones.Jaw);
-            transform.parent = jaw;
+
+            Main.Logger.Msg("Initial jaw rotations: ");
+            Main.Logger.Msg(jaw.localEulerAngles.x);
+            Main.Logger.Msg(jaw.localEulerAngles.y);
+            Main.Logger.Msg(jaw.localEulerAngles.z);
+
+            initialJawRotation = new Vector3(jaw.localEulerAngles.x, jaw.localEulerAngles.y, jaw.localEulerAngles.z);
+
+            transform.parent = jaw != null ? jaw : head;
             transform.localPosition = Vector3.zero;
         }
 
@@ -47,7 +58,7 @@ namespace NEP.MonoDirector.Audio
                 return;
             }
 
-            jaw.localRotation = Quaternion.Euler(new Vector3(0f, 0f, 90f + spectrum.BandVol(0f, 44100f) * 10000f));
+            jaw.localRotation = Quaternion.Euler(new Vector3(initialJawRotation.x, initialJawRotation.y, initialJawRotation.z + spectrum.BandVol(0f, 44100f) * 10000f));
         }
 
         public void Playback()

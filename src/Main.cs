@@ -4,17 +4,12 @@ using System.IO;
 using MelonLoader;
 using UnityEngine;
 
-using BoneLib;
 using BoneLib.BoneMenu;
 
 using NEP.MonoDirector.Audio;
 using NEP.MonoDirector.Cameras;
 using NEP.MonoDirector.Core;
-using NEP.MonoDirector.State;
-using NEP.MonoDirector.UI;
-using NEP.MonoDirector.UI.Interface;
-using UnityEngine.Splines;
-using Unity.Mathematics;
+using BoneLib.BoneMenu.Elements;
 
 namespace NEP.MonoDirector
 {
@@ -60,7 +55,6 @@ namespace NEP.MonoDirector
             ResetInstances();
             CreateDirector();
             CreateCamera();
-            CreateUI();
             CreateSFX();
         }
 
@@ -92,13 +86,6 @@ namespace NEP.MonoDirector
             feedbackSFX = feedback.AddComponent<FeedbackSFX>();
         }
 
-        private void CreateUI()
-        {
-            //UIManager.Construct();
-            var test = GameObject.Instantiate(bundle.LoadAsset("md_main_menu")).Cast<GameObject>();
-            test.AddComponent<RootPanel>();
-        }
-
         private static AssetBundle GetEmbeddedBundle()
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
@@ -122,28 +109,48 @@ namespace NEP.MonoDirector
             var playbackCategory = mdMenu.CreateCategory("Playback", Color.white);
             var actorCategory = mdMenu.CreateCategory("Actors", Color.white);
             var settingsCategory = mdMenu.CreateCategory("Settings", Color.white);
-
-            //playbackCategory.CreateEnumElement<CaptureState>("Capture Type", Color.white, (type) => director.captureState = type);
-            playbackCategory.CreateFunctionElement("Record", Color.red, () => director.Record());
-            playbackCategory.CreateFunctionElement("Play", Color.green, () => director.Play());
-            playbackCategory.CreateFunctionElement("Pause", Color.yellow, () => director.Pause());
-            playbackCategory.CreateFunctionElement("Retake Shot", Color.magenta, () => director.Retake());
-            playbackCategory.CreateFunctionElement("Stop", Color.red, () => director.Stop());
-
-            actorCategory.CreateFunctionElement("Remove All Actors", Color.red, () => director.RemoveAllActors(), "Are you sure? This cannot be undone.");
-            actorCategory.CreateFunctionElement("Clear Scene", Color.red, () => director.ClearScene(), "Are you sure? This cannot be undone.");
-
-            settingsCategory.CreateBoolElement("Use Microphone", Color.white, false, (value) => Settings.World.useMicrophone = value);
-            settingsCategory.CreateBoolElement("Mic Playback", Color.white, false, (value) => Settings.World.micPlayback = value);
-            settingsCategory.CreateBoolElement("Spawn Gun Sets Props", Color.white, false, (value) => Settings.World.spawnGunProps = value);
-            settingsCategory.CreateBoolElement("Spawn Gun Sets NPCs", Color.white, false, (value) => Settings.World.spawnGunNPCs = value);
-            settingsCategory.CreateFloatElement("Playback Speed", Color.white, 1f, 0.1f, float.NegativeInfinity, float.PositiveInfinity, (value) => Playback.instance.SetPlaybackRate(value));
-            settingsCategory.CreateFunctionElement("Spectator Head Mode", Color.white, () => Director.instance.Camera.TrackHeadCamera());
-
             var debug = settingsCategory.CreateCategory("Debug", Color.green);
 
-            debug.CreateBoolElement("Debug Mode", Color.white, false, (value) => Settings.Debug.debugEnabled = value);
-            debug.CreateBoolElement("Use Debug Keys", Color.white, false, (value) => Settings.Debug.useKeys = value);
+            BuildPlaybackMenu(playbackCategory);
+            BuildActorMenu(actorCategory);
+            BuildSettingsMenu(settingsCategory);
+            BuildDebugCategory(debug);
+        }
+
+        private void BuildPlaybackMenu(MenuCategory category)
+        {
+            category.CreateFunctionElement("Record", Color.red, () => director.Record());
+            category.CreateFunctionElement("Play", Color.green, () => director.Play());
+            category.CreateFunctionElement("Pause", Color.yellow, () => director.Pause());
+            category.CreateFunctionElement("Retake Shot", Color.magenta, () => director.Retake());
+            category.CreateFunctionElement("Stop", Color.red, () => director.Stop());
+        }
+
+        private void BuildActorMenu(MenuCategory category)
+        {
+            category.CreateFunctionElement("Remove All Actors", Color.red, () => director.RemoveAllActors(), "Are you sure? This cannot be undone.");
+            category.CreateFunctionElement("Clear Scene", Color.red, () => director.ClearScene(), "Are you sure? This cannot be undone.");
+        }
+
+        private void BuildSettingsMenu(MenuCategory category)
+        {
+            var audioCategory = category.CreateCategory("Audio", Color.white);
+            var cameraCategory = category.CreateCategory("Camera", Color.white);
+            var toolCategory = category.CreateCategory("Tools", Color.white);
+
+            audioCategory.CreateBoolElement("Use Microphone", Color.white, false, (value) => Settings.World.useMicrophone = value);
+            audioCategory.CreateBoolElement("Mic Playback", Color.white, false, (value) => Settings.World.micPlayback = value);
+
+            toolCategory.CreateBoolElement("Spawn Gun Sets Props", Color.white, false, (value) => Settings.World.spawnGunProps = value);
+            toolCategory.CreateBoolElement("Spawn Gun Sets NPCs", Color.white, false, (value) => Settings.World.spawnGunNPCs = value);
+            toolCategory.CreateFloatElement("Playback Speed", Color.white, 1f, 0.1f, float.NegativeInfinity, float.PositiveInfinity, (value) => Playback.instance.SetPlaybackRate(value));
+            toolCategory.CreateFunctionElement("Spectator Head Mode", Color.white, () => Director.instance.Camera.TrackHeadCamera());
+        }
+
+        private void BuildDebugCategory(MenuCategory category)
+        {
+            category.CreateBoolElement("Debug Mode", Color.white, false, (value) => Settings.Debug.debugEnabled = value);
+            category.CreateBoolElement("Use Debug Keys", Color.white, false, (value) => Settings.Debug.useKeys = value);
         }
     }
 }

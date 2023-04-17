@@ -36,9 +36,10 @@ namespace NEP.MonoDirector.Cameras
         private bool smoothRotation = true;
         public float smoothDamp = 4f;
 
-        private float fovChangeMultiplier = 12f;
-        private float fovChangeLerp = 2f;
-        private float fovChange = 0f;
+        private float fovChangeMultiplier = 10f;
+        private float fovChangeLerp = 6f;
+        private float fovChange = 85f;
+        private float lastFov = 0f;
 
         private Vector3 cameraPosition;
         private Vector3 cameraInput;
@@ -63,13 +64,20 @@ namespace NEP.MonoDirector.Cameras
             // may affect performance 
             _camera.useOcclusionCulling = false;
 
-            headCameraTracker = GetComponent<SmoothFollower>();
-
             GameObject test = GameObject.Instantiate(Main.bundle.LoadAsset("md_camera").Cast<GameObject>());
             test.transform.parent = transform;
             test.transform.localPosition = Vector3.forward * -0.1f;
             test.transform.eulerAngles = Vector3.zero;
             test.transform.localScale = new Vector3(0.075f, 0.075f, -0.075f);
+        }
+
+        private void Start()
+        {
+            headCameraTracker = GetComponent<SmoothFollower>();
+            headCameraTracker.enabled = false;
+
+            var cameraDamp = gameObject.AddComponent<CameraDamp>();
+            cameraDamp.SetFollowTarget(headCameraTracker.targetTransform);
         }
 
         public void TrackHeadCamera()
@@ -92,8 +100,20 @@ namespace NEP.MonoDirector.Cameras
 
         protected override void Update()
         {
-            MoveUpdate();
-            MouseUpdate();
+            //MoveUpdate();
+            //MouseUpdate();
+            UpdateFOV();
+        }
+
+        private void LateUpdate()
+        {
+            _camera.fieldOfView = Mathf.Lerp(lastFov, fovChange, fovChangeLerp * Time.deltaTime);
+        }
+
+        private void UpdateFOV()
+        {
+            lastFov = _camera.fieldOfView;
+            fovChange -= Input.GetAxisRaw("Mouse ScrollWheel") * fovChangeMultiplier;
         }
 
         private void MouseUpdate()
