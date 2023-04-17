@@ -42,7 +42,9 @@ namespace NEP.MonoDirector.Actors
 
         public override void Act()
         {
-            previousFrame = new FrameGroup();
+            
+
+            /*previousFrame = new FrameGroup();
             nextFrame = new FrameGroup();
 
             foreach (var frame in avatarFrames)
@@ -91,8 +93,8 @@ namespace NEP.MonoDirector.Actors
 
                 bone.position = Vector3.Lerp(previousBonePosition, nextBonePosition, delta);
                 bone.rotation = Quaternion.Slerp(previousBoneRotation, nextBoneRotation, delta);
-            }
-
+            }*/
+            
             microphone?.UpdateJaw();
         }
 
