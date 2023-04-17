@@ -6,6 +6,7 @@ using NEP.MonoDirector.State;
 using System.Collections.Generic;
 using NEP.MonoDirector.Actors;
 using UnityEngine.Splines;
+using BoneLib;
 
 namespace NEP.MonoDirector.Core
 {
@@ -24,7 +25,7 @@ namespace NEP.MonoDirector.Core
         public static PlayState PlayState { get => playState; }
         public static CaptureState CaptureState { get => captureState; }
 
-        public List<Actor> Cast;
+        public List<ActorPlayer> Cast;
         public List<ActorNPC> NPCCast;
         public List<ActorProp> WorldProps;
         public List<ActorProp> RecordingProps;
@@ -45,7 +46,7 @@ namespace NEP.MonoDirector.Core
             playback = new Playback();
             recorder = new Recorder();
 
-            Cast = new List<Actor>();
+            Cast = new List<ActorPlayer>();
             NPCCast = new List<ActorNPC>();
             WorldProps = new List<ActorProp>();
             RecordingProps = new List<ActorProp>();
@@ -127,14 +128,7 @@ namespace NEP.MonoDirector.Core
 
         public void RemoveActorPlayer(ActorPlayer actor)
         {
-            for(int i = 0; i < Cast.Count; i++)
-            {
-                if (Cast[i] is ActorPlayer player && player == actor)
-                {
-                    player.Delete();
-                    Cast.Remove(actor);
-                }
-            }
+            actor.Delete();
         }
 
         public void RemoveAllActors()
@@ -143,11 +137,10 @@ namespace NEP.MonoDirector.Core
 
             for (int i = 0; i < Cast.Count; i++)
             {
-                RemoveActorPlayer(Cast[i] as ActorPlayer);
+                RemoveActorPlayer(Cast[i]);
             }
 
             Cast.Clear();
-            worldTick = 0;
         }
         
         public void ClearScene()

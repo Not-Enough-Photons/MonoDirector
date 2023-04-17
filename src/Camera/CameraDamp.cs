@@ -11,9 +11,6 @@ namespace NEP.MonoDirector.Cameras
 
         private Transform followTarget;
 
-        private Vector3 lastPosition;
-        private Quaternion lastRotation;
-
         public void SetFollowTarget(Transform target)
         {
             followTarget = target;

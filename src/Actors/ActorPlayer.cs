@@ -134,11 +134,12 @@ namespace NEP.MonoDirector.Actors
             Events.OnActorCasted?.Invoke(this);
         }
 
-        public override void Delete()
+        public void Delete()
         {
-            avatarFrames.Clear();
             GameObject.Destroy(clonedAvatar.gameObject);
-            transform = null;
+            GameObject.Destroy(microphone.gameObject);
+            microphone = null;
+            avatarFrames.Clear();
         }
 
         private void ShowHairMeshes(SLZ.VRMK.Avatar avatar)

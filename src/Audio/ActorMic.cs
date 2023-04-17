@@ -40,11 +40,6 @@ namespace NEP.MonoDirector.Audio
             head = avatar.animator.GetBoneTransform(HumanBodyBones.Head);
             jaw = avatar.animator.GetBoneTransform(HumanBodyBones.Jaw);
 
-            Main.Logger.Msg("Initial jaw rotations: ");
-            Main.Logger.Msg(jaw.localEulerAngles.x);
-            Main.Logger.Msg(jaw.localEulerAngles.y);
-            Main.Logger.Msg(jaw.localEulerAngles.z);
-
             initialJawRotation = new Vector3(jaw.localEulerAngles.x, jaw.localEulerAngles.y, jaw.localEulerAngles.z);
 
             transform.parent = jaw != null ? jaw : head;
