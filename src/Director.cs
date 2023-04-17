@@ -126,18 +126,13 @@ namespace NEP.MonoDirector.Core
             this.camera = camera;
         }
 
-        public void RemoveActorPlayer(ActorPlayer actor)
-        {
-            actor.Delete();
-        }
-
         public void RemoveAllActors()
         {
             playState = PlayState.Stopped;
 
             for (int i = 0; i < Cast.Count; i++)
             {
-                RemoveActorPlayer(Cast[i]);
+                Cast[i].Delete();
             }
 
             Cast.Clear();
