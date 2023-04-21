@@ -88,7 +88,7 @@ namespace NEP.MonoDirector.Core
         {
             foreach(var actor in Director.instance.Cast)
             {
-                if(actor is ActorPlayer actorPlayer)
+                if(actor is Actor actorPlayer)
                 {
                     actorPlayer?.Microphone?.Playback();
                 }
@@ -110,9 +110,9 @@ namespace NEP.MonoDirector.Core
 
         public void OnStopPlayback()
         {
-            foreach (Actor castMember in Director.instance.Cast)
+            foreach (Trackable castMember in Director.instance.Cast)
             {
-                if (castMember != null && castMember is ActorPlayer actorPlayer)
+                if (castMember != null && castMember is Actor actorPlayer)
                 {
                     actorPlayer?.Microphone?.StopPlayback();
                 }
@@ -169,7 +169,7 @@ namespace NEP.MonoDirector.Core
             }
         }
 
-        public void AnimateActor(Actor actor)
+        public void AnimateActor(Trackable actor)
         {
             if(actor == null)
             {
@@ -179,7 +179,7 @@ namespace NEP.MonoDirector.Core
             actor.Act();
         }
 
-        public void AnimateProp( ActorProp prop)
+        public void AnimateProp( Prop prop)
         {
             if(prop == null)
             {

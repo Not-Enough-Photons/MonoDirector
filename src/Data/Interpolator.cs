@@ -50,13 +50,13 @@ namespace NEP.MonoDirector.Data
                 previousFrame = nextFrame;
                 nextFrame = frame;
 
-                if (frame.frameTime > playbackTime)
+                if (frame.frameTime > GetPlaybackTime())
                 {
                     break;
                 }
             }
 
-            float delta = GetFrameDelta(nextFrame.frameTime, previousFrame.frameTime, Playback.instance.PlaybackTime);
+            float delta = GetFrameDelta(nextFrame.frameTime, previousFrame.frameTime);
 
             return Quaternion.Slerp(previousFrame.rotation, nextFrame.rotation, delta);
         }
@@ -114,7 +114,7 @@ namespace NEP.MonoDirector.Data
             GetSteppedPosition(previous, next, out previousPosition, out nextPosition);
             GetSteppedRotation(previous, next, out previousRotation, out nextRotation);
 
-            float delta = GetFrameDelta(next.frameTime, previous.frameTime, Playback.instance.PlaybackTime);
+            float delta = GetFrameDelta(next.frameTime, previous.frameTime);
 
             transform.position = Vector3.Lerp(previousPosition, nextPosition, delta);
             transform.rotation = Quaternion.Slerp(previousRotation, nextRotation, delta);

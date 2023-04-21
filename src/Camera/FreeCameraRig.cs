@@ -1,4 +1,5 @@
-﻿using BoneLib;
+﻿ using BoneLib;
+using NEP.MonoDirector.Core;
 using SLZ.Bonelab;
 using System.Collections;
 using System.Collections.Generic;
@@ -34,7 +35,11 @@ namespace NEP.MonoDirector.Cameras
         private bool fastCamera => Input.GetKey(KeyCode.LeftShift);
         private bool lockCursor => Input.GetMouseButton(1);
         private bool smoothRotation = true;
-        public float smoothDamp = 4f;
+
+        private bool enableKeyboardMovement = false;
+        private bool enableMouseMovement = false;
+
+        private float smoothDamp = 4f;
 
         private float fovChangeMultiplier = 10f;
         private float fovChangeLerp = 6f;
@@ -69,6 +74,10 @@ namespace NEP.MonoDirector.Cameras
             test.transform.localPosition = Vector3.forward * -0.1f;
             test.transform.eulerAngles = Vector3.zero;
             test.transform.localScale = new Vector3(0.075f, 0.075f, -0.075f);
+
+            Director.instance.SetCamera(this);
+
+            gameObject.AddComponent<CameraVolume>();
         }
 
         private void Start()
@@ -85,23 +94,11 @@ namespace NEP.MonoDirector.Cameras
             headCameraTracker.enabled = !headCameraTracker.enabled;
         }
 
-        protected void OnEnable()
-        {
-            float deg2Rad = 0.0174532924f;
-
-            Vector3 position = Player.rigManager.physicsRig.m_head.position;
-
-            float x = position.x + Mathf.Sin(Random.Range(0f, 360f) * deg2Rad) * 0.5f;
-            float z = position.z + Mathf.Cos(Random.Range(0f, 360f) * deg2Rad) * 0.5f;
-
-            transform.position = new Vector3(x, Random.Range(0.25f, 1f), z);
-            transform.rotation = Quaternion.LookRotation(position);
-        }
-
         protected override void Update()
         {
-            //MoveUpdate();
-            //MouseUpdate();
+            MoveUpdate();
+            MouseUpdate();
+
             UpdateFOV();
         }
 
@@ -118,6 +115,11 @@ namespace NEP.MonoDirector.Cameras
 
         private void MouseUpdate()
         {
+            if (!enableMouseMovement)
+            {
+                return;
+            }
+
             if (xMouseMove > 0f || xMouseMove < 0f)
             {
                 xMouseMove = Mathf.Lerp(xMouseMove, 0f, smoothDamp * Time.deltaTime);
@@ -174,6 +176,11 @@ namespace NEP.MonoDirector.Cameras
 
         private void MoveUpdate()
         {
+            if (!enableMouseMovement)
+            {
+                return;
+            }
+
             Vector3.ClampMagnitude(wishDir, maxLength);
 
             int yNeg = Input.GetKey(KeyCode.Q) ? -1 : 0;

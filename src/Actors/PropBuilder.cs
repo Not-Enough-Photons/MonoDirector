@@ -22,7 +22,7 @@ namespace NEP.MonoDirector.Actors
             var rigidbody = gameObject.GetComponent<Rigidbody>();
 
             bool hasRigidbody = rigidbody != null;
-            bool isProp = gameObject.GetComponent<ActorProp>() != null;
+            bool isProp = gameObject.GetComponent<Prop>() != null;
 
             if (!hasRigidbody)
             {
@@ -36,11 +36,11 @@ namespace NEP.MonoDirector.Actors
 
             var vfxBlip = rigidbody.GetComponent<Blip>();
 
-            if (ActorProp.EligibleWithType<SLZ.Props.Weapons.Gun>(rigidbody))
+            if (Prop.EligibleWithType<SLZ.Props.Weapons.Gun>(rigidbody))
             {
                 Main.Logger.Msg($"Adding gun component to {gameObject.name}");
 
-                var actorProp = gameObject.AddComponent<ActorGunProp>();
+                var actorProp = gameObject.AddComponent<GunProp>();
                 actorProp.SetRigidbody(rigidbody);
                 actorProp.SetGun(gameObject.GetComponent<SLZ.Props.Weapons.Gun>());
                 Director.instance.RecordingProps.Add(actorProp);
@@ -49,11 +49,11 @@ namespace NEP.MonoDirector.Actors
                 return;
             }
 
-            if (ActorProp.EligibleWithType<SLZ.Props.ObjectDestructable>(rigidbody))
+            if (Prop.EligibleWithType<SLZ.Props.ObjectDestructable>(rigidbody))
             {
                 Main.Logger.Msg($"Adding destructable component to {gameObject.name}");
 
-                var destructableProp = gameObject.AddComponent<ActorBreakableProp>();
+                var destructableProp = gameObject.AddComponent<BreakableProp>();
                 destructableProp.SetRigidbody(rigidbody);
                 destructableProp.SetBreakableObject(gameObject.GetComponent<SLZ.Props.ObjectDestructable>());
 
@@ -63,11 +63,11 @@ namespace NEP.MonoDirector.Actors
                 return;
             }
 
-            if (ActorProp.EligibleWithType<SLZ.Props.Weapons.Magazine>(rigidbody))
+            if (Prop.EligibleWithType<SLZ.Props.Weapons.Magazine>(rigidbody))
             {
                 Main.Logger.Msg($"Adding magazine component to {gameObject.name}");
 
-                var magazineProp = gameObject.AddComponent<ActorProp>();
+                var magazineProp = gameObject.AddComponent<Prop>();
                 magazineProp.SetRigidbody(rigidbody);
 
                 Director.instance.RecordingProps.Add(magazineProp);
@@ -76,7 +76,7 @@ namespace NEP.MonoDirector.Actors
                 return;
             }
 
-            if (ActorProp.EligibleWithType<Atv>(rigidbody))
+            if (Prop.EligibleWithType<Atv>(rigidbody))
             {
                 /*Main.Logger.Msg($"Adding vehicle component to {gameObject.name}");
 
@@ -90,11 +90,11 @@ namespace NEP.MonoDirector.Actors
                 //return;
             }
 
-            if (ActorProp.IsActorProp(rigidbody))
+            if (Prop.IsActorProp(rigidbody))
             {
                 Main.Logger.Msg($"Adding prop component to {rigidbody.name}");
 
-                var actorProp = gameObject.AddComponent<ActorProp>();
+                var actorProp = gameObject.AddComponent<Prop>();
                 actorProp.SetRigidbody(rigidbody);
                 Director.instance.RecordingProps.Add(actorProp);
 
@@ -107,7 +107,7 @@ namespace NEP.MonoDirector.Actors
             var gameObject = pooleeObject.gameObject;
             var vfxBlip = gameObject.GetComponent<Blip>();
 
-            ActorProp actorProp = gameObject.GetComponent<ActorProp>();
+            Prop actorProp = gameObject.GetComponent<Prop>();
             bool isProp = actorProp != null;
 
             if (isProp && Director.PlayState == State.PlayState.Stopped)

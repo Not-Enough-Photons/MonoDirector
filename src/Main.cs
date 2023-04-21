@@ -53,8 +53,8 @@ namespace NEP.MonoDirector
         private void MonoDirectorInitialize()
         {
             ResetInstances();
-            CreateDirector();
             CreateCamera();
+            CreateDirector();
             CreateSFX();
         }
 
@@ -62,6 +62,7 @@ namespace NEP.MonoDirector
         {
             Events.FlushActions();
             director = null;
+            camera = null;
             feedbackSFX = null;
         }
 
@@ -70,7 +71,6 @@ namespace NEP.MonoDirector
             SLZ.Rig.RigManager rigManager = BoneLib.Player.rigManager;
             GameObject gameObject = rigManager.transform.Find("Spectator Camera").gameObject;
             camera = gameObject.AddComponent<FreeCameraRig>();
-            gameObject.AddComponent<SplinePlacer>();
         }
 
         private void CreateDirector()
@@ -122,12 +122,12 @@ namespace NEP.MonoDirector
             category.CreateFunctionElement("Record", Color.red, () => director.Record());
             category.CreateFunctionElement("Play", Color.green, () => director.Play());
             category.CreateFunctionElement("Pause", Color.yellow, () => director.Pause());
-            category.CreateFunctionElement("Retake Shot", Color.magenta, () => director.Retake());
             category.CreateFunctionElement("Stop", Color.red, () => director.Stop());
         }
 
         private void BuildActorMenu(MenuCategory category)
         {
+            category.CreateFunctionElement("Delete Last Actor", Color.red, () => director.RemoveActor(Recorder.instance.LastActor), "Are you sure? This cannot be undone.");
             category.CreateFunctionElement("Remove All Actors", Color.red, () => director.RemoveAllActors(), "Are you sure? This cannot be undone.");
             category.CreateFunctionElement("Clear Scene", Color.red, () => director.ClearScene(), "Are you sure? This cannot be undone.");
         }
@@ -140,6 +140,15 @@ namespace NEP.MonoDirector
 
             audioCategory.CreateBoolElement("Use Microphone", Color.white, false, (value) => Settings.World.useMicrophone = value);
             audioCategory.CreateBoolElement("Mic Playback", Color.white, false, (value) => Settings.World.micPlayback = value);
+
+            var vfxCategory = cameraCategory.CreateCategory("VFX", Color.white);
+
+            vfxCategory.CreateBoolElement("Lens Distortion", Color.white, true, (value) => Director.instance.Volume.LensDistortion.active = value);
+            vfxCategory.CreateBoolElement("Motion Blur", Color.white, true, (value) => Director.instance.Volume.MotionBlur.active = value);
+            vfxCategory.CreateBoolElement("Chromatic Abberation", Color.white, true, (value) => Director.instance.Volume.ChromaticAberration.active = value);
+            vfxCategory.CreateBoolElement("Vignette", Color.white, true, (value) => Director.instance.Volume.Vignette.active = true);
+            vfxCategory.CreateBoolElement("Bloom", Color.white, true, (value) => Director.instance.Volume.Bloom.active = true);
+            vfxCategory.CreateBoolElement("MK Glow", Color.white, true, (value) => Director.instance.Volume.MKGlow.active = true);
 
             toolCategory.CreateBoolElement("Spawn Gun Sets Props", Color.white, false, (value) => Settings.World.spawnGunProps = value);
             toolCategory.CreateBoolElement("Spawn Gun Sets NPCs", Color.white, false, (value) => Settings.World.spawnGunNPCs = value);

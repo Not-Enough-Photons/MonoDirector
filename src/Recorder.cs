@@ -25,9 +25,11 @@ namespace NEP.MonoDirector.Core
 
         public int RecordTick { get => recordTick; }
 
-        public ActorPlayer ActiveActor { get => activeActor; }
+        public Actor ActiveActor { get => activeActor; }
+        public Actor LastActor { get => lastActor; }
 
-        private ActorPlayer activeActor;
+        private Actor activeActor;
+        private Actor lastActor;
 
         private Coroutine recordRoutine;
 
@@ -101,7 +103,7 @@ namespace NEP.MonoDirector.Core
 
             recordingTime = 0f;
 
-            activeActor = new ActorPlayer(Constants.rigManager.avatar);
+            activeActor = new Actor(Constants.rigManager.avatar);
 
             foreach (var castMember in Director.instance.Cast)
             {
@@ -116,9 +118,9 @@ namespace NEP.MonoDirector.Core
         {
             activeActor?.Microphone?.RecordMicrophone();
 
-            foreach (Actor castMember in Director.instance.Cast)
+            foreach (Trackable castMember in Director.instance.Cast)
             {
-                if (castMember != null && castMember is ActorPlayer actorPlayer)
+                if (castMember != null && castMember is Actor actorPlayer)
                 {
                     actorPlayer?.Microphone?.Playback();
                 }
@@ -162,9 +164,9 @@ namespace NEP.MonoDirector.Core
             {
                 activeActor?.Microphone?.StopRecordingMicrophone();
 
-                foreach (Actor castMember in Director.instance.Cast)
+                foreach (Trackable castMember in Director.instance.Cast)
                 {
-                    if (castMember != null && castMember is ActorPlayer actorPlayer)
+                    if (castMember != null && castMember is Actor actorPlayer)
                     {
                         actorPlayer?.Microphone?.StopPlayback();
                     }
@@ -172,6 +174,7 @@ namespace NEP.MonoDirector.Core
 
                 activeActor.CloneAvatar();
                 Director.instance.Cast.Add(activeActor);
+                lastActor = activeActor;
 
                 activeActor = null;
 

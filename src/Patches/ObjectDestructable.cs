@@ -15,7 +15,7 @@ namespace NEP.MonoDirector.Patches
 
             static void OnObjectDestroyed(SLZ.Props.ObjectDestructable destructable)
             {
-                var prop = destructable.GetComponent<ActorBreakableProp>();
+                var prop = destructable.GetComponent<BreakableProp>();
 
                 if(prop != null && Director.PlayState == State.PlayState.Recording)
                 {

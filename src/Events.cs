@@ -28,7 +28,7 @@ namespace NEP.MonoDirector
             OnPreSnapshot = null;
         }
 
-        public static Action<Actor> OnActorCasted;
+        public static Action<Trackable> OnActorCasted;
 
         public static Action OnSessionBegin;
         public static Action OnSessionEnd;

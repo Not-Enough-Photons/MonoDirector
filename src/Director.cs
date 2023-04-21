@@ -21,14 +21,15 @@ namespace NEP.MonoDirector.Core
         public Recorder recorder;
 
         public FreeCameraRig Camera { get => camera; }
+        public CameraVolume Volume { get => camera.GetComponent<CameraVolume>(); }
 
         public static PlayState PlayState { get => playState; }
         public static CaptureState CaptureState { get => captureState; }
 
-        public List<ActorPlayer> Cast;
+        public List<Actor> Cast;
         public List<ActorNPC> NPCCast;
-        public List<ActorProp> WorldProps;
-        public List<ActorProp> RecordingProps;
+        public List<Prop> WorldProps;
+        public List<Prop> RecordingProps;
 
         public int WorldTick { get => worldTick; }
 
@@ -46,10 +47,10 @@ namespace NEP.MonoDirector.Core
             playback = new Playback();
             recorder = new Recorder();
 
-            Cast = new List<ActorPlayer>();
+            Cast = new List<Actor>();
             NPCCast = new List<ActorNPC>();
-            WorldProps = new List<ActorProp>();
-            RecordingProps = new List<ActorProp>();
+            WorldProps = new List<Prop>();
+            RecordingProps = new List<Prop>();
         }
 
         private void Start()
@@ -124,6 +125,12 @@ namespace NEP.MonoDirector.Core
         public void SetCamera(FreeCameraRig camera)
         {
             this.camera = camera;
+        }
+
+        public void RemoveActor(Actor actor)
+        {
+            actor.Delete();
+            Cast.Remove(actor);
         }
 
         public void RemoveAllActors()

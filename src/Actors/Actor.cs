@@ -1,46 +1,51 @@
 ﻿using System;
 using System.Collections.Generic;
-
-using NEP.MonoDirector.Data;
+using NEP.MonoDirector.Audio;
 using NEP.MonoDirector.Core;
+using NEP.MonoDirector.Data;
+
+using SLZ.Props;
 
 using UnityEngine;
 
 namespace NEP.MonoDirector.Actors
 {
-    public class Actor
+    public class Actor : Trackable
     {
-        public Actor()
+        public Actor(SLZ.VRMK.Avatar avatar) : base()
         {
-            objectFrames = new List<ObjectFrame>();
-            actionFrames = new Dictionary<int, Action>();
+            playerAvatar = avatar;
+            avatarBones = GetAvatarBones(playerAvatar);
+            avatarFrames = new List<FrameGroup>();
+
+            GameObject micObject = new GameObject("Actor Microphone");
+            microphone = micObject.AddComponent<ActorMic>();
         }
 
-        public string ActorName { get => actorName; }
-        public int ActorId { get => actorId; }
+        public SLZ.VRMK.Avatar PlayerAvatar { get => playerAvatar; }
+        public Transform[] AvatarBones { get => avatarBones; }
 
-        protected string actorName;
-        protected int actorId;
+        public ActorMic Microphone { get => microphone; }
 
-        protected Transform transform;
-        protected List<ObjectFrame> objectFrames;
-        protected Dictionary<int, Action> actionFrames;
+        protected List<FrameGroup> avatarFrames;
 
-        protected int stateTick;
-        protected int recordedTicks;
+        private ActorMic microphone;
 
-        private ObjectFrame previousFrame;
-        private ObjectFrame nextFrame;
+        private SLZ.VRMK.Avatar playerAvatar;
+        private SLZ.VRMK.Avatar clonedAvatar;
 
-        /// <summary>
-        /// Updates the actor's pose on this recorded frame.
-        /// </summary>
-        public virtual void Act()
+        private Transform[] avatarBones;
+        private Transform[] clonedRigBones;
+
+        private FrameGroup previousFrame;
+        private FrameGroup nextFrame;
+
+        public override void Act()
         {
-            previousFrame = new ObjectFrame();
-            nextFrame = new ObjectFrame();
+            previousFrame = new FrameGroup();
+            nextFrame = new FrameGroup();
 
-            foreach (var frame in objectFrames)
+            foreach (var frame in avatarFrames)
             {
                 previousFrame = nextFrame;
                 nextFrame = frame;
@@ -56,28 +61,129 @@ namespace NEP.MonoDirector.Actors
 
             float delta = head / gap;
 
-            transform.position = Vector3.Lerp(previousFrame.position, nextFrame.position, delta);
-            transform.rotation = Quaternion.Slerp(previousFrame.rotation, nextFrame.rotation, delta);
-        }
+            List<ObjectFrame> previousTransformFrames = previousFrame.transformFrames;
+            List<ObjectFrame> nextTransformFrames = nextFrame.transformFrames;
 
-        public virtual void RecordFrame()
-        {
-            ObjectFrame objectFrame = new ObjectFrame()
+            for (int i = 0; i < 55; i++)
             {
-                transform = transform
-            };
+                if(i == (int)HumanBodyBones.Jaw)
+                {
+                    continue;
+                }
 
-            objectFrames.Add(objectFrame);
-        }
+                var bone = clonedRigBones[i];
 
-        public void SetTransform(Transform transform)
-        {
-            this.transform = transform;
-        }
+                if (bone == null)
+                {
+                    continue;
+                }
 
-        public virtual void Delete()
-        {
+                if (previousTransformFrames == null)
+                {
+                    continue;
+                }
+
+                Vector3 previousBonePosition = previousTransformFrames[i].position;
+                Vector3 nextBonePosition = nextTransformFrames[i].position;
+
+                Quaternion previousBoneRotation = previousTransformFrames[i].rotation;
+                Quaternion nextBoneRotation = nextTransformFrames[i].rotation;
+
+                bone.position = Vector3.Lerp(previousBonePosition, nextBonePosition, delta);
+                bone.rotation = Quaternion.Slerp(previousBoneRotation, nextBoneRotation, delta);
+            }
             
+            microphone?.UpdateJaw();
+        }
+
+        /// <summary>
+        /// Records the actor's bones, positons, and rotations for this frame.
+        /// </summary>
+        /// <param name="index">The frame to record the bones.</param>
+        public override void RecordFrame()
+        {
+            FrameGroup frameGroup = new FrameGroup();
+            frameGroup.SetFrames(CaptureBoneFrames(avatarBones), Recorder.instance.RecordingTime);
+            avatarFrames.Add(frameGroup);
+        }
+
+        public void CaptureAvatarAction(int frame, Action action)
+        {
+            if (Director.PlayState == State.PlayState.Recording && !actionFrames.ContainsKey(frame))
+            {
+                actionFrames.Add(frame, action);
+            }
+        }
+
+        public void CloneAvatar()
+        {
+            GameObject clonedAvatarObject = GameObject.Instantiate(playerAvatar.gameObject);
+            clonedAvatar = clonedAvatarObject.GetComponent<SLZ.VRMK.Avatar>();
+
+            clonedRigBones = GetAvatarBones(clonedAvatar);
+            GameObject.Destroy(clonedAvatar.GetComponent<LODGroup>());
+
+            actorName = $"Actor - {Constants.rigManager.AvatarCrate.Crate.Title}";
+            clonedAvatar.name = actorName;
+            ShowHairMeshes(clonedAvatar);
+
+            GameObject.FindObjectOfType<PullCordDevice>().PlayAvatarParticleEffects();
+
+            microphone.SetAvatar(clonedAvatar);
+
+            Events.OnActorCasted?.Invoke(this);
+        }
+
+        public void Delete()
+        {
+            GameObject.Destroy(clonedAvatar.gameObject);
+            GameObject.Destroy(microphone.gameObject);
+            microphone = null;
+            avatarFrames.Clear();
+        }
+
+        private void ShowHairMeshes(SLZ.VRMK.Avatar avatar)
+        {
+            foreach (var mesh in avatar.hairMeshes)
+            {
+                mesh.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.TwoSided;
+            }
+        }
+
+        private List<ObjectFrame> CaptureBoneFrames(Transform[] boneList)
+        {
+            List<ObjectFrame> frames = new List<ObjectFrame>();
+
+            for (int i = 0; i < boneList.Length; i++)
+            {
+                ObjectFrame frame = new ObjectFrame(boneList[i]);
+                //frame.currentTime = Recorder.instance.RecordingTime;
+                frames.Add(frame);
+            }
+
+            return frames;
+        }
+
+        private Transform[] GetAvatarBones(SLZ.VRMK.Avatar avatar)
+        {
+            Transform[] bones = new Transform[(int)HumanBodyBones.LastBone];
+
+            for (int i = 0; i < bones.Length; i++)
+            {
+                var currentBone = (HumanBodyBones)i;
+
+                if (avatar.animator.GetBoneTransform(currentBone) == null)
+                {
+                    continue;
+                }
+                else
+                {
+                    var boneTransform = avatar.animator.GetBoneTransform(currentBone);
+                    bones[i] = boneTransform;
+                }
+            }
+
+            return bones;
         }
     }
 }

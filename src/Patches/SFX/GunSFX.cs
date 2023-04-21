@@ -10,7 +10,7 @@ namespace NEP.MonoDirector.Patches
         {
             internal static void Postfix(SLZ.SFX.GunSFX __instance)
             {
-                var gunProp = __instance.gameObject.GetComponent<ActorGunProp>();
+                var gunProp = __instance.gameObject.GetComponent<GunProp>();
 
                 if(Director.PlayState == State.PlayState.Recording)
                 {
@@ -24,7 +24,7 @@ namespace NEP.MonoDirector.Patches
         {
             internal static void Postfix(SLZ.SFX.GunSFX __instance)
             {
-                var gunProp = __instance.gameObject.GetComponent<ActorGunProp>();
+                var gunProp = __instance.gameObject.GetComponent<GunProp>();
 
                 if(Director.PlayState == State.PlayState.Recording)
                 {

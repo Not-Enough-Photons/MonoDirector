@@ -16,9 +16,9 @@ using UnityEngine;
 namespace NEP.MonoDirector.Actors
 {
     [MelonLoader.RegisterTypeInIl2Cpp]
-    public class ActorGunProp : ActorProp
+    public class GunProp : Prop
     {
-        public ActorGunProp(IntPtr ptr) : base(ptr) { }
+        public GunProp(IntPtr ptr) : base(ptr) { }
 
         public Gun Gun { get => gun; }
 

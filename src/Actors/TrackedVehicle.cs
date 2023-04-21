@@ -6,9 +6,9 @@ using UnityEngine;
 namespace NEP.MonoDirector.Actors
 {
     [MelonLoader.RegisterTypeInIl2Cpp]
-    public class ActorVehicle : ActorProp
+    public class TrackedVehicle : Prop
     {
-        public ActorVehicle(IntPtr ptr) : base(ptr) { }
+        public TrackedVehicle(IntPtr ptr) : base(ptr) { }
 
         public Atv Vehicle { get => vehicle; }
 

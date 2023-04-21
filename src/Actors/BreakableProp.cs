@@ -6,9 +6,9 @@ using UnityEngine;
 namespace NEP.MonoDirector.Actors
 {
     [MelonLoader.RegisterTypeInIl2Cpp]
-    public class ActorBreakableProp : ActorProp
+    public class BreakableProp : Prop
     {
-        public ActorBreakableProp(IntPtr ptr) : base(ptr) { }
+        public BreakableProp(IntPtr ptr) : base(ptr) { }
 
         public ObjectDestructable breakableProp;
 

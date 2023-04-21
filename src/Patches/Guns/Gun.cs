@@ -10,7 +10,7 @@ namespace NEP.MonoDirector.Patches
         {
             internal static void Postfix(SLZ.Props.Weapons.Gun __instance)
             {
-                var gunProp = __instance.gameObject.GetComponent<ActorGunProp>();
+                var gunProp = __instance.gameObject.GetComponent<GunProp>();
 
                 if (gunProp != null)
                 {

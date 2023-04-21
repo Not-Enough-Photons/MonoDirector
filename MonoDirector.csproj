@@ -41,9 +41,11 @@
     <Compile Include="src\Audio\Spectrum.cs" />
     <Compile Include="src\Camera\CameraDamp.cs" />
     <Compile Include="src\Camera\CameraRigManager.cs" />
+    <Compile Include="src\Camera\CameraVolume.cs" />
     <Compile Include="src\Camera\DollyRig.cs" />
     <Compile Include="src\Camera\FollowCameraRig.cs" />
     <Compile Include="src\Data\FrameGroup.cs" />
+    <Compile Include="src\Data\Interpolator.cs" />
     <Compile Include="src\Data\ObjectFrame.cs" />
     <Compile Include="src\Audio\FeedbackSFX.cs" />
     <Compile Include="src\Camera\CameraRig.cs" />
@@ -69,6 +71,7 @@
     <Compile Include="src\Recorder.cs" />
     <Compile Include="src\Settings.cs" />
     <Compile Include="src\Spline\SplinePlacer.cs" />
+    <Compile Include="src\State\CameraMode.cs" />
     <Compile Include="src\State\CaptureState.cs" />
     <Compile Include="src\State\PlayState.cs" />
   </ItemGroup>
@@ -122,6 +125,14 @@
     <Reference Include="Unity.Mathematics">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\BONELAB\MelonLoader\Managed\Unity.Mathematics.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.RenderPipelines.Core.Runtime, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\BONELAB\MelonLoader\Managed\Unity.RenderPipelines.Core.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.RenderPipelines.Universal.Runtime, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\BONELAB\MelonLoader\Managed\Unity.RenderPipelines.Universal.Runtime.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.Splines">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\BONELAB\MelonLoader\Managed\Unity.Splines.dll</HintPath>
     </Reference>
@@ -167,6 +178,10 @@
     <Reference Include="UnityEngine.UIModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\BONELAB\MelonLoader\Managed\UnityEngine.UIModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.VFXModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\BONELAB\MelonLoader\Managed\UnityEngine.VFXModule.dll</HintPath>
     </Reference>
     <Reference Include="UniverseLib.IL2CPP.Unhollower">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\BONELAB\Mods\UniverseLib.IL2CPP.Unhollower.dll</HintPath>

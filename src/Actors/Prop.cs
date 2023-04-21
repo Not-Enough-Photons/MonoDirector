@@ -16,11 +16,11 @@ using NEP.MonoDirector.Core;
 namespace NEP.MonoDirector.Actors
 {
     [MelonLoader.RegisterTypeInIl2Cpp]
-    public class ActorProp : MonoBehaviour
+    public class Prop : MonoBehaviour
     {
-        public ActorProp(System.IntPtr ptr) : base(ptr) { }
+        public Prop(System.IntPtr ptr) : base(ptr) { }
 
-        public Actor Actor { get => actor; }
+        public Trackable Actor { get => actor; }
 
         public List<ObjectFrame> PropFrames { get => propFrames; }
         public Rigidbody InteractableRigidbody { get => interactableRigidbody; }
@@ -34,7 +34,7 @@ namespace NEP.MonoDirector.Actors
             UnhollowerRuntimeLib.Il2CppType.Of<Atv>()
         };
 
-        private Actor actor;
+        private Trackable actor;
         private Rigidbody interactableRigidbody;
 
         protected int stateTick;
@@ -72,7 +72,7 @@ namespace NEP.MonoDirector.Actors
                 return false;
             }
 
-            if (rigidbody.GetComponent<ActorProp>() != null || rigidbody.GetComponent<WorldGrip>() != null)
+            if (rigidbody.GetComponent<Prop>() != null || rigidbody.GetComponent<WorldGrip>() != null)
             {
                 return false;
             }
@@ -90,7 +90,7 @@ namespace NEP.MonoDirector.Actors
             interactableRigidbody = rigidbody;
         }
 
-        public void SetActor(Actor actor)
+        public void SetActor(Trackable actor)
         {
             this.actor = actor;
         }

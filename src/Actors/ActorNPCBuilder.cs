@@ -20,7 +20,7 @@ namespace NEP.MonoDirector.Actors
             var gameObject = pooleeObject.gameObject;
             var vfxBlip = gameObject.GetComponent<Blip>();
 
-            ActorProp actorProp = gameObject.GetComponent<ActorProp>();
+            Prop actorProp = gameObject.GetComponent<Prop>();
             bool isProp = actorProp != null;
 
             if (isProp && Director.PlayState == State.PlayState.Stopped)
