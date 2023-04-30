@@ -113,27 +113,8 @@ namespace NEP.MonoDirector.Actors
                 interactableRigidbody.isKinematic = true;
             }
 
-            previousFrame = new ObjectFrame();
-            nextFrame = new ObjectFrame();
-
-            foreach (var frame in propFrames)
-            {
-                previousFrame = nextFrame;
-                nextFrame = frame;
-
-                if (frame.frameTime > Playback.instance.PlaybackTime)
-                {
-                    break;
-                }
-            }
-
-            float gap = nextFrame.frameTime - previousFrame.frameTime;
-            float head = Playback.instance.PlaybackTime - previousFrame.frameTime;
-
-            float delta = head / gap;
-
-            transform.position = Vector3.Lerp(previousFrame.position, nextFrame.position, delta);
-            transform.rotation = Quaternion.Slerp(previousFrame.rotation, nextFrame.rotation, delta);
+            transform.position = Interpolator.InterpolatePosition(PropFrames.ToArray());
+            transform.rotation = Interpolator.InterpolateRotation(PropFrames.ToArray());
         }
 
         public virtual void Record(int frame)

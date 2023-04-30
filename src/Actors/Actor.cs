@@ -23,12 +23,15 @@ namespace NEP.MonoDirector.Actors
         }
 
         public SLZ.VRMK.Avatar PlayerAvatar { get => playerAvatar; }
+        public SLZ.VRMK.Avatar ClonedAvatar { get => clonedAvatar; }
         public Transform[] AvatarBones { get => avatarBones; }
 
+        public ActorBody ActorBody { get => actorBody; }
         public ActorMic Microphone { get => microphone; }
 
         protected List<FrameGroup> avatarFrames;
 
+        private ActorBody actorBody;
         private ActorMic microphone;
 
         private SLZ.VRMK.Avatar playerAvatar;
@@ -157,7 +160,6 @@ namespace NEP.MonoDirector.Actors
             for (int i = 0; i < boneList.Length; i++)
             {
                 ObjectFrame frame = new ObjectFrame(boneList[i]);
-                //frame.currentTime = Recorder.instance.RecordingTime;
                 frames.Add(frame);
             }
 

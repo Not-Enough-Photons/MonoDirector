@@ -28,14 +28,14 @@
     <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="src\Actors\Actor.cs" />
-    <Compile Include="src\Actors\ActorBreakableProp.cs" />
-    <Compile Include="src\Actors\ActorGunProp.cs" />
-    <Compile Include="src\Actors\ActorProp.cs" />
+    <Compile Include="src\Actors\Trackable.cs" />
+    <Compile Include="src\Actors\BreakableProp.cs" />
+    <Compile Include="src\Actors\GunProp.cs" />
+    <Compile Include="src\Actors\Prop.cs" />
     <Compile Include="src\Actors\ActorNPC.cs" />
     <Compile Include="src\Actors\ActorNPCBuilder.cs" />
-    <Compile Include="src\Actors\ActorPlayer.cs" />
-    <Compile Include="src\Actors\ActorVehicle.cs" />
+    <Compile Include="src\Actors\Actor.cs" />
+    <Compile Include="src\Actors\TrackedVehicle.cs" />
     <Compile Include="src\Actors\PropBuilder.cs" />
     <Compile Include="src\Audio\ActorMic.cs" />
     <Compile Include="src\Audio\Spectrum.cs" />
@@ -44,6 +44,7 @@
     <Compile Include="src\Camera\CameraVolume.cs" />
     <Compile Include="src\Camera\DollyRig.cs" />
     <Compile Include="src\Camera\FollowCameraRig.cs" />
+    <Compile Include="src\Actors\ActorBody.cs" />
     <Compile Include="src\Data\FrameGroup.cs" />
     <Compile Include="src\Data\Interpolator.cs" />
     <Compile Include="src\Data\ObjectFrame.cs" />
