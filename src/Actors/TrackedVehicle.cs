@@ -33,7 +33,13 @@ namespace NEP.MonoDirector.Actors
                 return;
             }
 
-            InteractableRigidbody.isKinematic = true;
+            vehicle.mainBody.isKinematic = true;
+            vehicle.steeringWheel.isKinematic = true;
+            vehicle.frontAxle.isKinematic = true;
+            vehicle._backLfRb.isKinematic = true;
+            vehicle._backRtRb.isKinematic = true;
+            vehicle._frontLfRb.isKinematic = true;
+            vehicle._frontRtRb.isKinematic = true;
 
             InteractableRigidbody.position = PropFrames[0].position;
             InteractableRigidbody.rotation = PropFrames[0].rotation;
@@ -43,7 +49,13 @@ namespace NEP.MonoDirector.Actors
         {
             gameObject.SetActive(true);
 
-            InteractableRigidbody.isKinematic = false;
+            vehicle.mainBody.isKinematic = true;
+            vehicle.steeringWheel.isKinematic = true;
+            vehicle.frontAxle.isKinematic = true;
+            vehicle._backLfRb.isKinematic = true;
+            vehicle._backRtRb.isKinematic = true;
+            vehicle._frontLfRb.isKinematic = true;
+            vehicle._frontRtRb.isKinematic = true;
 
             vehicle.mainBody.velocity = Interpolator.InterpolateVelocity(PropFrames);
             vehicle.mainBody.rotation = Interpolator.InterpolateRotation(PropFrames);

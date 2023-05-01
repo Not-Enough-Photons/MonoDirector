@@ -70,6 +70,10 @@ namespace NEP.MonoDirector.Cameras
             _camera.useOcclusionCulling = false;
 
             GameObject test = GameObject.Instantiate(Main.bundle.LoadAsset("md_camera").Cast<GameObject>());
+            MeshRenderer renderer = test.transform.Find("geo").GetComponent<MeshRenderer>();
+
+            renderer.castShadows = false;
+
             test.transform.parent = transform;
             test.transform.localPosition = Vector3.forward * -0.1f;
             test.transform.eulerAngles = Vector3.zero;
