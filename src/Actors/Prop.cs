@@ -113,8 +113,8 @@ namespace NEP.MonoDirector.Actors
                 interactableRigidbody.isKinematic = true;
             }
 
-            transform.position = Interpolator.InterpolatePosition(PropFrames.ToArray());
-            transform.rotation = Interpolator.InterpolateRotation(PropFrames.ToArray());
+            transform.position = Interpolator.InterpolatePosition(PropFrames);
+            transform.rotation = Interpolator.InterpolateRotation(PropFrames);
         }
 
         public virtual void Record(int frame)

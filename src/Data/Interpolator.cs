@@ -19,7 +19,7 @@ namespace NEP.MonoDirector.Data
             return head / gap;
         }
 
-        public static Vector3 InterpolatePosition(ObjectFrame[] frames)
+        public static Vector3 InterpolatePosition(List<ObjectFrame> frames)
         {
             ObjectFrame previousFrame = new ObjectFrame();
             ObjectFrame nextFrame = new ObjectFrame();
@@ -40,7 +40,7 @@ namespace NEP.MonoDirector.Data
             return Vector3.Lerp(previousFrame.position, nextFrame.position, delta);
         }
 
-        public static Quaternion InterpolateRotation(ObjectFrame[] frames)
+        public static Quaternion InterpolateRotation(List<ObjectFrame> frames)
         {
             ObjectFrame previousFrame = new ObjectFrame();
             ObjectFrame nextFrame = new ObjectFrame();
