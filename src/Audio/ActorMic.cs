@@ -73,9 +73,10 @@ namespace NEP.MonoDirector.Audio
             {
                 source.Play();
                 beginPlay = true;
+                return;
             }
 
-            source.time = Core.Playback.instance.PlaybackTime / source.timeSamples;
+            source.time = Core.Playback.instance.PlaybackTime;
         }
 
         public void StopPlayback()
