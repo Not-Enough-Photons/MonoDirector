@@ -78,16 +78,16 @@ namespace NEP.MonoDirector.Actors
 
             if (Prop.EligibleWithType<Atv>(rigidbody))
             {
-                /*Main.Logger.Msg($"Adding vehicle component to {gameObject.name}");
+                Main.Logger.Msg($"Adding vehicle component to {gameObject.name}");
 
-                var vehicle = gameObject.AddComponent<ActorVehicle>();
+                var vehicle = gameObject.AddComponent<TrackedVehicle>();
                 vehicle.SetRigidbody(rigidbody);
                 vehicle.SetVehicle(rigidbody.GetComponent<Atv>());
 
                 Director.instance.RecordingProps.Add(vehicle);
 
-                vfxBlip?.CallSpawnEffect();*/
-                //return;
+                vfxBlip?.CallSpawnEffect();
+                return;
             }
 
             if (Prop.IsActorProp(rigidbody))

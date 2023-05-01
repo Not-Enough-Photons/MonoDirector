@@ -1,4 +1,5 @@
-﻿using SLZ.VRMK;
+﻿using NEP.MonoDirector.Core;
+using SLZ.VRMK;
 using UnityEngine;
 
 using Avatar = SLZ.VRMK.Avatar;
@@ -21,6 +22,8 @@ namespace NEP.MonoDirector.Audio
         private Vector3 initialJawRotation;
 
         private Spectrum spectrum;
+
+        private bool beginPlay;
 
         private void Awake()
         {
@@ -66,16 +69,19 @@ namespace NEP.MonoDirector.Audio
                 return;
             }
 
-            if (clip != null)
+            if (!beginPlay)
             {
-                source.clip = clip;
                 source.Play();
+                beginPlay = true;
             }
+
+            source.time = Core.Playback.instance.PlaybackTime / source.timeSamples;
         }
 
         public void StopPlayback()
         {
             source.Stop();
+            beginPlay = false;
         }
 
         public void RecordMicrophone()
@@ -91,6 +97,7 @@ namespace NEP.MonoDirector.Audio
         public void StopRecordingMicrophone()
         {
             Microphone.End(null);
+            source.clip = clip;
         }
     }
 }

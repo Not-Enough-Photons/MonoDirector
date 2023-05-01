@@ -67,6 +67,7 @@
     <Compile Include="src\Patches\SFX\GunSFX.cs" />
     <Compile Include="src\Patches\ObjectDestructable.cs" />
     <Compile Include="src\Patches\Guns\SpawnGun.cs" />
+    <Compile Include="src\Patches\Vehicles\Atv.cs" />
     <Compile Include="src\Patches\VRGraphicRaycaster.cs" />
     <Compile Include="src\Playback.cs" />
     <Compile Include="src\Recorder.cs" />

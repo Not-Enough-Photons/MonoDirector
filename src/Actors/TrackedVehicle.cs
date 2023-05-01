@@ -1,5 +1,7 @@
-﻿using NEP.MonoDirector.Data;
+﻿using NEP.MonoDirector.Core;
+using NEP.MonoDirector.Data;
 using SLZ.Vehicle;
+using SLZ.VFX;
 using System;
 using UnityEngine;
 
@@ -19,14 +21,46 @@ namespace NEP.MonoDirector.Actors
             this.vehicle = vehicle;
         }
 
-        public void Act()
+        public override void OnSceneBegin()
         {
+            if (PropFrames == null)
+            {
+                return;
+            }
 
+            if (PropFrames.Count == 0)
+            {
+                return;
+            }
+
+            InteractableRigidbody.isKinematic = true;
+
+            InteractableRigidbody.position = PropFrames[0].position;
+            InteractableRigidbody.rotation = PropFrames[0].rotation;
+        }
+
+        public override void Act()
+        {
+            gameObject.SetActive(true);
+
+            InteractableRigidbody.isKinematic = false;
+
+            vehicle.mainBody.velocity = Interpolator.InterpolateVelocity(PropFrames);
+            vehicle.mainBody.rotation = Interpolator.InterpolateRotation(PropFrames);
         }
 
         public override void Record(int frame)
         {
-            isRecording = true;
+            ObjectFrame objectFrame = new ObjectFrame()
+            {
+                transform = InteractableRigidbody.transform,
+                position = InteractableRigidbody.position,
+                rotation = InteractableRigidbody.rotation,
+                rigidbodyVelocity = InteractableRigidbody.velocity,
+                frameTime = Recorder.instance.RecordingTime
+            };
+
+            propFrames.Add(objectFrame);
         }
     }
 }

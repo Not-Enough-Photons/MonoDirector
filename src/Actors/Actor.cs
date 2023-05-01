@@ -5,7 +5,7 @@ using NEP.MonoDirector.Core;
 using NEP.MonoDirector.Data;
 
 using SLZ.Props;
-
+using SLZ.Vehicle;
 using UnityEngine;
 
 namespace NEP.MonoDirector.Actors
@@ -29,10 +29,14 @@ namespace NEP.MonoDirector.Actors
         public ActorBody ActorBody { get => actorBody; }
         public ActorMic Microphone { get => microphone; }
 
+        public bool Seated { get => activeSeat != null; }
+
         protected List<FrameGroup> avatarFrames;
 
         private ActorBody actorBody;
         private ActorMic microphone;
+
+        private SLZ.Vehicle.Seat activeSeat;
 
         private SLZ.VRMK.Avatar playerAvatar;
         private SLZ.VRMK.Avatar clonedAvatar;
@@ -43,8 +47,35 @@ namespace NEP.MonoDirector.Actors
         private FrameGroup previousFrame;
         private FrameGroup nextFrame;
 
+        private Transform lastPelvisParent;
+
+        public override void OnSceneBegin()
+        {
+            for (int i = 0; i < 55; i++)
+            {
+                var bone = clonedRigBones[i];
+
+                if (bone == null)
+                {
+                    continue;
+                }
+
+                bone.position = avatarFrames[0].transformFrames[i].position;
+                bone.rotation = avatarFrames[0].transformFrames[i].rotation;
+            }
+        }
+
         public override void Act()
         {
+            if (actionFrames.ContainsKey(Playback.instance.PlaybackTick))
+            {
+                actionFrames[Playback.instance.PlaybackTick]?.Invoke();
+            }
+            else if (actionFrames.ContainsKey(Recorder.instance.RecordTick))
+            {
+                actionFrames[Recorder.instance.RecordTick]?.Invoke();
+            }
+
             previousFrame = new FrameGroup();
             nextFrame = new FrameGroup();
 
@@ -92,10 +123,18 @@ namespace NEP.MonoDirector.Actors
                 Quaternion previousBoneRotation = previousTransformFrames[i].rotation;
                 Quaternion nextBoneRotation = nextTransformFrames[i].rotation;
 
-                bone.position = Vector3.Lerp(previousBonePosition, nextBonePosition, delta);
+                // seat hack for now until i code a better way to do actor parenting/unparenting
+
+                if (!Seated)
+                {
+                    bone.position = Vector3.Lerp(previousBonePosition, nextBonePosition, delta);
+                }
+
+                // still want to update rotations 
                 bone.rotation = Quaternion.Slerp(previousBoneRotation, nextBoneRotation, delta);
             }
-            
+
+            microphone?.Playback();
             microphone?.UpdateJaw();
         }
 
@@ -110,11 +149,11 @@ namespace NEP.MonoDirector.Actors
             avatarFrames.Add(frameGroup);
         }
 
-        public void CaptureAvatarAction(int frame, Action action)
+        public void CaptureAvatarAction(int tick, Action action)
         {
-            if (Director.PlayState == State.PlayState.Recording && !actionFrames.ContainsKey(frame))
+            if (Director.PlayState == State.PlayState.Recording && !actionFrames.ContainsKey(tick))
             {
-                actionFrames.Add(frame, action);
+                actionFrames.Add(tick, action);
             }
         }
 
@@ -143,6 +182,29 @@ namespace NEP.MonoDirector.Actors
             GameObject.Destroy(microphone.gameObject);
             microphone = null;
             avatarFrames.Clear();
+        }
+
+        public void ParentToSeat(SLZ.Vehicle.Seat seat)
+        {
+            activeSeat = seat;
+
+            Transform pelvis = clonedAvatar.animator.GetBoneTransform(HumanBodyBones.Hips);
+
+            lastPelvisParent = pelvis.GetParent();
+
+            Vector3 seatOffset = new Vector3(seat._buttOffset.x, Mathf.Abs(seat._buttOffset.y) * clonedAvatar.heightPercent, seat._buttOffset.z);
+
+            pelvis.SetParent(seat.transform);
+
+            pelvis.position = seat.buttTargetInWorld;
+            pelvis.localPosition = seatOffset;
+        }
+
+        public void UnparentSeat()
+        {
+            activeSeat = null;
+            Transform pelvis = clonedAvatar.animator.GetBoneTransform(HumanBodyBones.Hips);
+            pelvis.SetParent(lastPelvisParent);
         }
 
         private void ShowHairMeshes(SLZ.VRMK.Avatar avatar)

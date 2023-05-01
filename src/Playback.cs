@@ -78,7 +78,7 @@ namespace NEP.MonoDirector.Core
                 }
                 else
                 {
-                    AnimateProp(prop);
+                    prop.OnSceneBegin();
                     prop.gameObject.SetActive(true);
                 }
             }

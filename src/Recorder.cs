@@ -107,10 +107,13 @@ namespace NEP.MonoDirector.Core
 
             foreach (var castMember in Director.instance.Cast)
             {
-                if (castMember != null)
-                {
-                    castMember.Act();
-                }
+                castMember.OnSceneBegin();
+            }
+
+            foreach(var prop in Director.instance.WorldProps)
+            {
+                prop.OnSceneBegin();
+                prop.gameObject.SetActive(true);
             }
         }
 
@@ -179,6 +182,7 @@ namespace NEP.MonoDirector.Core
                 activeActor = null;
 
                 Director.instance.WorldProps.AddRange(Director.instance.RecordingProps);
+                Director.instance.LastRecordedProps = Director.instance.RecordingProps;
                 Director.instance.RecordingProps.Clear();
             }
             else

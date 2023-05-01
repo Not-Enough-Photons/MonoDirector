@@ -32,6 +32,11 @@ namespace NEP.MonoDirector.Actors
         private ObjectFrame previousFrame;
         private ObjectFrame nextFrame;
 
+        public virtual void OnSceneBegin()
+        {
+
+        }
+
         /// <summary>
         /// Updates the actor's pose on this recorded frame.
         /// </summary>

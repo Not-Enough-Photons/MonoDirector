@@ -103,6 +103,27 @@ namespace NEP.MonoDirector.Data
             return Quaternion.Slerp(previousFrame.transformFrames[frameIndex].rotation, nextFrame.transformFrames[frameIndex].rotation, delta);
         }
 
+        public static Vector3 InterpolateVelocity(List<ObjectFrame> frames)
+        {
+            ObjectFrame previousFrame = new ObjectFrame();
+            ObjectFrame nextFrame = new ObjectFrame();
+
+            foreach (var frame in frames)
+            {
+                previousFrame = nextFrame;
+                nextFrame = frame;
+
+                if (frame.frameTime > GetPlaybackTime())
+                {
+                    break;
+                }
+            }
+
+            float delta = GetFrameDelta(nextFrame.frameTime, previousFrame.frameTime);
+
+            return Vector3.Lerp(previousFrame.rigidbodyVelocity, nextFrame.rigidbodyVelocity, delta);
+        }
+
         public static void InterpolateTransform(Transform transform, ObjectFrame previous, ObjectFrame next)
         {
             Vector3 previousPosition;

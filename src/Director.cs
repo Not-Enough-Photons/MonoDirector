@@ -28,8 +28,10 @@ namespace NEP.MonoDirector.Core
 
         public List<Actor> Cast;
         public List<ActorNPC> NPCCast;
+
         public List<Prop> WorldProps;
         public List<Prop> RecordingProps;
+        public List<Prop> LastRecordedProps;
 
         public int WorldTick { get => worldTick; }
 
@@ -131,6 +133,18 @@ namespace NEP.MonoDirector.Core
         {
             actor.Delete();
             Cast.Remove(actor);
+        }
+
+        public void RemoveLastActor()
+        {
+            RemoveActor(Recorder.instance.LastActor);
+
+            foreach(var prop in LastRecordedProps)
+            {
+                WorldProps.Remove(prop);
+                prop.InteractableRigidbody.isKinematic = false;
+                GameObject.Destroy(prop);
+            }
         }
 
         public void RemoveAllActors()

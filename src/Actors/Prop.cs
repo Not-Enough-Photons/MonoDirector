@@ -100,6 +100,23 @@ namespace NEP.MonoDirector.Actors
             interactableRigidbody.isKinematic = enable;
         }
 
+        public virtual void OnSceneBegin()
+        {
+            if(PropFrames == null)
+            {
+                return;
+            }
+
+            if(PropFrames.Count == 0)
+            {
+                return;
+            }
+
+            transform.position = PropFrames[0].position;
+            transform.rotation = PropFrames[0].rotation;
+            transform.localScale = PropFrames[0].scale;
+        }
+
         public virtual void Act()
         {
             gameObject.SetActive(true);
