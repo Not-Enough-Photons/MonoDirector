@@ -23,6 +23,8 @@ namespace NEP.MonoDirector.Audio
 
         private Spectrum spectrum;
 
+        private float desyncTolerance = 3f;
+
         private bool beginPlay;
 
         private void Awake()
@@ -76,7 +78,14 @@ namespace NEP.MonoDirector.Audio
                 return;
             }
 
-            source.time = Core.Playback.instance.PlaybackTime;
+            float tolerance = Time.deltaTime * desyncTolerance;
+            float time = Mathf.Abs(source.time - Core.Playback.instance.PlaybackTime);
+
+            if(time > tolerance)
+            {
+                source.time = Core.Playback.instance.PlaybackTime;
+                source.pitch = Time.timeScale * Core.Playback.instance.PlaybackRate;
+            }
         }
 
         public void StopPlayback()
