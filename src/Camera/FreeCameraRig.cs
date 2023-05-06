@@ -12,7 +12,7 @@ namespace NEP.MonoDirector.Cameras
     /// </summary>
     /// 
     [MelonLoader.RegisterTypeInIl2Cpp]
-    public class FreeCameraRig : CameraRig
+    public class FreeCameraRig : MonoBehaviour
     {
         public FreeCameraRig(System.IntPtr ptr) : base(ptr) { }
 
@@ -57,17 +57,17 @@ namespace NEP.MonoDirector.Cameras
 
         private Rigidbody rigidbody;
 
-        protected override void Awake()
-        {
-            base.Awake();
+        private Camera camera;
 
+        protected void Awake()
+        {
             rigidbody = gameObject.AddComponent<Rigidbody>();
             rigidbody.useGravity = false;
 
-            _camera = GetComponent<UnityEngine.Camera>();
+            camera = GetComponent<UnityEngine.Camera>();
 
             // may affect performance 
-            _camera.useOcclusionCulling = false;
+            camera.useOcclusionCulling = false;
 
             GameObject test = GameObject.Instantiate(Main.bundle.LoadAsset("md_camera").Cast<GameObject>());
             MeshRenderer renderer = test.transform.Find("geo").GetComponent<MeshRenderer>();
@@ -98,7 +98,7 @@ namespace NEP.MonoDirector.Cameras
             headCameraTracker.enabled = !headCameraTracker.enabled;
         }
 
-        protected override void Update()
+        protected void Update()
         {
             MoveUpdate();
             MouseUpdate();
@@ -108,12 +108,12 @@ namespace NEP.MonoDirector.Cameras
 
         private void LateUpdate()
         {
-            _camera.fieldOfView = Mathf.Lerp(lastFov, fovChange, fovChangeLerp * Time.deltaTime);
+            camera.fieldOfView = Mathf.Lerp(lastFov, fovChange, fovChangeLerp * Time.deltaTime);
         }
 
         private void UpdateFOV()
         {
-            lastFov = _camera.fieldOfView;
+            lastFov = camera.fieldOfView;
             fovChange -= Input.GetAxisRaw("Mouse ScrollWheel") * fovChangeMultiplier;
         }
 
@@ -156,7 +156,7 @@ namespace NEP.MonoDirector.Cameras
 
             bool rollCam = Input.GetKey(KeyCode.LeftControl) && Input.GetMouseButton(1);
 
-            _camera.fieldOfView -= Input.GetAxisRaw("Mouse ScrollWheel") * fovChangeMultiplier;
+            camera.fieldOfView -= Input.GetAxisRaw("Mouse ScrollWheel") * fovChangeMultiplier;
 
             if (rollCam)
             {
@@ -228,7 +228,7 @@ namespace NEP.MonoDirector.Cameras
 
             cameraInput.y = yNeg + yPos;
 
-            Transform t = _camera.transform;
+            Transform t = camera.transform;
 
             currentSpeed = fastCamera ? fastSpeed : slowSpeed;
 

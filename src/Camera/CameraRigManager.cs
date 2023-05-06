@@ -26,10 +26,5 @@ namespace NEP.MonoDirector.Cameras
                 instance = null;
             }
         }
-
-        public void SetRig(CameraRig rig)
-        {
-
-        }
     }
 }

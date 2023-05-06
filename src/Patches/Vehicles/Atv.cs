@@ -21,7 +21,7 @@ public static class Seat
             {
                 return;
             }
-
+            
             activeActor.CaptureAvatarAction(Recorder.instance.RecordTick, () => activeActor.ParentToSeat(__instance));
         }
     }

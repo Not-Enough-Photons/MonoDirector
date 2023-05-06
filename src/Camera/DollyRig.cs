@@ -16,14 +16,14 @@ namespace NEP.MonoDirector.Cameras
         private int currentFrame;
         private int recordedFrames;
 
-        protected override void Awake()
+        protected new void Awake()
         {
             splineAnimator = gameObject.AddComponent<SplineAnimate>();
 
             InitializeSpline();
         }
 
-        protected override void Update()
+        protected new void Update()
         {
             if(Director.PlayState == State.PlayState.Playing)
             {

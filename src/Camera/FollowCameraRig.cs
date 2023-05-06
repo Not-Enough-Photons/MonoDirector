@@ -4,7 +4,7 @@ using UnityEngine;
 namespace NEP.MonoDirector.Cameras
 {
     [MelonLoader.RegisterTypeInIl2Cpp]
-    public class FollowCameraRig : CameraRig
+    public class FollowCameraRig : MonoBehaviour
     {
         public FollowCameraRig(System.IntPtr ptr) : base(ptr) { }
 
@@ -12,7 +12,7 @@ namespace NEP.MonoDirector.Cameras
 
         private Transform followTarget;
 
-        protected override void Update()
+        protected void Update()
         {
             if(followTarget == null)
             {

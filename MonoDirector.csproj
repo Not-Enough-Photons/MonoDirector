@@ -40,18 +40,18 @@
     <Compile Include="src\Audio\ActorMic.cs" />
     <Compile Include="src\Audio\Spectrum.cs" />
     <Compile Include="src\Camera\CameraDamp.cs" />
+    <Compile Include="src\Camera\CameraInput.cs" />
     <Compile Include="src\Camera\CameraRigManager.cs" />
     <Compile Include="src\Camera\CameraVolume.cs" />
     <Compile Include="src\Camera\DollyRig.cs" />
     <Compile Include="src\Camera\FollowCameraRig.cs" />
     <Compile Include="src\Actors\ActorBody.cs" />
+    <Compile Include="src\Data\ActionFrame.cs" />
     <Compile Include="src\Data\FrameGroup.cs" />
     <Compile Include="src\Data\Interpolator.cs" />
     <Compile Include="src\Data\ObjectFrame.cs" />
     <Compile Include="src\Audio\FeedbackSFX.cs" />
-    <Compile Include="src\Camera\CameraRig.cs" />
     <Compile Include="src\Camera\CameraRigPlacer.cs" />
-    <Compile Include="src\Camera\HandheldCamera.cs" />
     <Compile Include="src\Constants.cs" />
     <Compile Include="src\Data\CompressedVector3.cs" />
     <Compile Include="src\Data\CompressedQuaternion.cs" />
@@ -194,6 +194,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\Patches\UI\" />
+    <Folder Include="src\Tools\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

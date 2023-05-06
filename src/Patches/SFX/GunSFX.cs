@@ -11,11 +11,17 @@ namespace NEP.MonoDirector.Patches
             internal static void Postfix(SLZ.SFX.GunSFX __instance)
             {
                 var gunProp = __instance.gameObject.GetComponent<GunProp>();
+                gunProp?.RecordAction(gunProp.Gun.gunSFX.MagazineInsert);
+            }
+        }
 
-                if(Director.PlayState == State.PlayState.Recording)
-                {
-                    gunProp?.RecordAction(Recorder.instance.RecordTick, gunProp.Gun.gunSFX.MagazineInsert);
-                }
+        [HarmonyLib.HarmonyPatch(typeof(SLZ.SFX.GunSFX), nameof(SLZ.SFX.GunSFX.MagazineDrop))]
+        internal static class MagazineDrop
+        {
+            internal static void Postfix(SLZ.SFX.GunSFX __instance)
+            {
+                var gunProp = __instance.gameObject.GetComponent<GunProp>();
+                gunProp?.RecordAction(gunProp.Gun.gunSFX.MagazineDrop);
             }
         }
 
@@ -25,11 +31,27 @@ namespace NEP.MonoDirector.Patches
             internal static void Postfix(SLZ.SFX.GunSFX __instance)
             {
                 var gunProp = __instance.gameObject.GetComponent<GunProp>();
+                gunProp?.RecordAction(gunProp.Gun.gunSFX.SlidePull);
+            }
+        }
 
-                if(Director.PlayState == State.PlayState.Recording)
-                {
-                    gunProp?.RecordAction(Recorder.instance.RecordTick, gunProp.Gun.gunSFX.SlidePull);
-                }
+        [HarmonyLib.HarmonyPatch(typeof(SLZ.SFX.GunSFX), nameof(SLZ.SFX.GunSFX.SlideRelease))]
+        internal static class SlideRelease
+        {
+            internal static void Postfix(SLZ.SFX.GunSFX __instance)
+            {
+                var gunProp = __instance.gameObject.GetComponent<GunProp>();
+                gunProp?.RecordAction(gunProp.Gun.gunSFX.SlideRelease);
+            }
+        }
+
+        [HarmonyLib.HarmonyPatch(typeof(SLZ.SFX.GunSFX), nameof(SLZ.SFX.GunSFX.SlideLock))]
+        internal static class SlideLock
+        {
+            internal static void Postfix(SLZ.SFX.GunSFX __instance)
+            {
+                var gunProp = __instance.gameObject.GetComponent<GunProp>();
+                gunProp?.RecordAction(gunProp.Gun.gunSFX.SlideLock);
             }
         }
     }

@@ -63,24 +63,18 @@ namespace NEP.MonoDirector.Core
         public void OnPrePlayback()
         {
             playbackTick = 0;
-            playbackTime = 0f;
+
+            ResetPlayhead();
 
             foreach (var castMember in Director.instance.Cast)
             {
-                AnimateActor(castMember);
+                castMember.OnSceneBegin();
             }
 
             foreach (var prop in Director.instance.WorldProps)
             {
-                if (prop == null)
-                {
-                    continue;
-                }
-                else
-                {
-                    prop.OnSceneBegin();
-                    prop.gameObject.SetActive(true);
-                }
+                prop.OnSceneBegin();
+                prop.gameObject.SetActive(true);
             }
         }
 
@@ -125,11 +119,21 @@ namespace NEP.MonoDirector.Core
             }
         }
 
-        public void Seek(int rate)
+        public void Seek(float rate)
         {
             if(Director.PlayState != PlayState.Stopped)
             {
                 return;
+            }
+
+            if(playbackTime <= 0f)
+            {
+                playbackTime = 0f;
+            }
+
+            if(playbackTime >= Recorder.instance.RecordingTime)
+            {
+                playbackTime = Recorder.instance.RecordingTime;
             }
 
             if(playbackTick <= 0)
@@ -143,7 +147,9 @@ namespace NEP.MonoDirector.Core
             }
 
             AnimateAll();
-            playbackTick += rate;
+
+            playbackTime += rate;
+            playbackTick += Mathf.RoundToInt(rate);
         }
 
         public void ResetPlayhead()

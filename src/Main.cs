@@ -148,7 +148,7 @@ namespace NEP.MonoDirector
             vfxCategory.CreateBoolElement("Chromatic Abberation", Color.white, true, (value) => Director.instance.Volume.ChromaticAberration.active = value);
             vfxCategory.CreateBoolElement("Vignette", Color.white, true, (value) => Director.instance.Volume.Vignette.active = true);
             vfxCategory.CreateBoolElement("Bloom", Color.white, true, (value) => Director.instance.Volume.Bloom.active = true);
-            vfxCategory.CreateBoolElement("MK Glow", Color.white, true, (value) => Director.instance.Volume.MKGlow.active = true);
+            vfxCategory.CreateBoolElement("MK Glow", Color.white, true, (value) => Director.instance.Volume.MkGlow.active = true);
 
             toolCategory.CreateBoolElement("Spawn Gun Sets Props", Color.white, false, (value) => Settings.World.spawnGunProps = value);
             toolCategory.CreateBoolElement("Spawn Gun Sets NPCs", Color.white, false, (value) => Settings.World.spawnGunNPCs = value);

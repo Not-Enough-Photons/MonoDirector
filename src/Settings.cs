@@ -13,15 +13,15 @@
         public static class World
         {
             public static bool useMicrophone = false;
-            public static bool micPlayback = true;
+            public static bool micPlayback = false;
             public static bool spawnGunProps = false;
             public static bool spawnGunNPCs = false;
         }
 
         public static class Debug
         {
-            public static bool debugEnabled;
-            public static bool useKeys;
+            public static bool debugEnabled = true;
+            public static bool useKeys = true;
         }
     }
 }

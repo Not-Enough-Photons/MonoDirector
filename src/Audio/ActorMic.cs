@@ -1,6 +1,7 @@
-﻿using NEP.MonoDirector.Core;
-using SLZ.VRMK;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.Audio;
+
+using System.Linq;
 
 using Avatar = SLZ.VRMK.Avatar;
 
@@ -78,6 +79,8 @@ namespace NEP.MonoDirector.Audio
                 return;
             }
 
+            // special thanks to wnp and someone somewhere for this suggestion
+            // stops desyncs of mic recordings, and also allows for slow motion playback!
             float tolerance = Time.deltaTime * desyncTolerance;
             float time = Mathf.Abs(source.time - Core.Playback.instance.PlaybackTime);
 
