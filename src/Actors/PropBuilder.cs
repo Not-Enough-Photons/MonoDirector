@@ -6,6 +6,7 @@ using UnityEngine;
 using SLZ.VFX;
 using NEP.MonoDirector.Patches.Guns;
 using SLZ.Vehicle;
+using static NEP.MonoDirector.Patches.GunSFX;
 
 namespace NEP.MonoDirector.Actors
 {
@@ -46,6 +47,8 @@ namespace NEP.MonoDirector.Actors
                 Director.instance.RecordingProps.Add(actorProp);
 
                 vfxBlip?.CallSpawnEffect();
+
+                Events.OnPropCreated?.Invoke(actorProp);
                 return;
             }
 
@@ -60,6 +63,8 @@ namespace NEP.MonoDirector.Actors
                 Director.instance.RecordingProps.Add(destructableProp);
 
                 vfxBlip?.CallSpawnEffect();
+
+                Events.OnPropCreated?.Invoke(destructableProp);
                 return;
             }
 
@@ -73,6 +78,8 @@ namespace NEP.MonoDirector.Actors
                 Director.instance.RecordingProps.Add(magazineProp);
 
                 vfxBlip?.CallSpawnEffect();
+
+                Events.OnPropCreated?.Invoke(magazineProp);
                 return;
             }
 
@@ -85,8 +92,9 @@ namespace NEP.MonoDirector.Actors
                 vehicle.SetVehicle(rigidbody.GetComponent<Atv>());
 
                 Director.instance.RecordingProps.Add(vehicle);
-
                 vfxBlip?.CallSpawnEffect();
+
+                Events.OnPropCreated?.Invoke(vehicle);
                 return;
             }
 
@@ -99,6 +107,8 @@ namespace NEP.MonoDirector.Actors
                 Director.instance.RecordingProps.Add(actorProp);
 
                 vfxBlip?.CallSpawnEffect();
+
+                Events.OnPropCreated?.Invoke(actorProp);
             }
         }
 
@@ -119,6 +129,8 @@ namespace NEP.MonoDirector.Actors
                 Director.instance.RecordingProps.Remove(prop);
                 GameObject.Destroy(prop);
                 vfxBlip?.CallDespawnEffect();
+
+                Events.OnPropRemoved?.Invoke(prop);
             }
         }
     }

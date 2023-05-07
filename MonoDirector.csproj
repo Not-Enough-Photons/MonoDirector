@@ -76,6 +76,8 @@
     <Compile Include="src\State\CameraMode.cs" />
     <Compile Include="src\State\CaptureState.cs" />
     <Compile Include="src\State\PlayState.cs" />
+    <Compile Include="src\Tools\Propifier.cs" />
+    <Compile Include="src\UI\PropMarkerManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
@@ -123,6 +125,10 @@
     <Reference Include="UnhollowerRuntimeLib, Version=0.4.10.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\BONELAB\MelonLoader\Managed\UnhollowerRuntimeLib.dll</HintPath>
+    </Reference>
+    <Reference Include="UniTask, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\BONELAB\MelonLoader\Managed\UniTask.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Mathematics">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\BONELAB\MelonLoader\Managed\Unity.Mathematics.dll</HintPath>
@@ -194,7 +200,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\Patches\UI\" />
-    <Folder Include="src\Tools\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

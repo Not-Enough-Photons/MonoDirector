@@ -40,9 +40,6 @@ namespace NEP.MonoDirector.Actors
         protected int stateTick;
         protected int recordedTicks;
 
-        private ObjectFrame previousFrame;
-        private ObjectFrame nextFrame;
-
         protected List<ObjectFrame> propFrames;
 
         protected virtual void Awake()

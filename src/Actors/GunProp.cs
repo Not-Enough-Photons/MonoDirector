@@ -12,6 +12,7 @@ using SLZ.Marrow.Warehouse;
 using SLZ.Props.Weapons;
 
 using UnityEngine;
+using SLZ.Interaction;
 
 namespace NEP.MonoDirector.Actors
 {

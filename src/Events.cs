@@ -30,6 +30,9 @@ namespace NEP.MonoDirector
 
         public static Action<Trackable> OnActorCasted;
 
+        public static Action<Prop> OnPropCreated;
+        public static Action<Prop> OnPropRemoved;
+
         public static Action OnSessionBegin;
         public static Action OnSessionEnd;
 

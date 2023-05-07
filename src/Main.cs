@@ -10,6 +10,7 @@ using NEP.MonoDirector.Audio;
 using NEP.MonoDirector.Cameras;
 using NEP.MonoDirector.Core;
 using BoneLib.BoneMenu.Elements;
+using NEP.MonoDirector.UI;
 
 namespace NEP.MonoDirector
 {
@@ -56,6 +57,7 @@ namespace NEP.MonoDirector
             CreateCamera();
             CreateDirector();
             CreateSFX();
+            //CreateUI();
         }
 
         private void ResetInstances()
@@ -64,6 +66,7 @@ namespace NEP.MonoDirector
             director = null;
             camera = null;
             feedbackSFX = null;
+            //PropMarkerManager.CleanUp();
         }
 
         private void CreateCamera()
@@ -84,6 +87,11 @@ namespace NEP.MonoDirector
         {
             GameObject feedback = new GameObject("Feedback SFX");
             feedbackSFX = feedback.AddComponent<FeedbackSFX>();
+        }
+
+        private void CreateUI()
+        {
+            PropMarkerManager.Initialize();
         }
 
         private static AssetBundle GetEmbeddedBundle()
@@ -150,8 +158,6 @@ namespace NEP.MonoDirector
             vfxCategory.CreateBoolElement("Bloom", Color.white, true, (value) => Director.instance.Volume.Bloom.active = true);
             vfxCategory.CreateBoolElement("MK Glow", Color.white, true, (value) => Director.instance.Volume.MkGlow.active = true);
 
-            toolCategory.CreateBoolElement("Spawn Gun Sets Props", Color.white, false, (value) => Settings.World.spawnGunProps = value);
-            toolCategory.CreateBoolElement("Spawn Gun Sets NPCs", Color.white, false, (value) => Settings.World.spawnGunNPCs = value);
             toolCategory.CreateFloatElement("Playback Speed", Color.white, 1f, 0.1f, float.NegativeInfinity, float.PositiveInfinity, (value) => Playback.instance.SetPlaybackRate(value));
             toolCategory.CreateFunctionElement("Spectator Head Mode", Color.white, () => Director.instance.Camera.TrackHeadCamera());
         }
