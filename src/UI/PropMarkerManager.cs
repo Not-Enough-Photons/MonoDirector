@@ -82,6 +82,7 @@ namespace NEP.MonoDirector.UI
 
             AssetPoolee marker = markers[prop];
             marker.Despawn();
+            marker.transform.parent = null;
 
             markers.Remove(prop);
             activeMarkers.Remove(marker);

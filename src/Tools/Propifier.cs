@@ -61,7 +61,7 @@ namespace NEP.MonoDirector.Tools
         private void PrimaryButtonDown()
         {
             gunSFX.GunShot();
-            rigidbody.AddForce(rigidbody.transform.up - firePoint.forward * 25f, ForceMode.Impulse);
+            rigidbody.AddForce(rigidbody.transform.up - firePoint.forward * 10f, ForceMode.Impulse);
 
             if(Physics.Raycast(firePoint.position, firePoint.forward * maxRange, out RaycastHit hit))
             {

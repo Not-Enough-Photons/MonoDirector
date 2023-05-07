@@ -53,47 +53,12 @@ namespace NEP.MonoDirector.Cameras
         private float xMouseMove = 0f;
         private float yMouseMove = 0f;
 
-        private SmoothFollower headCameraTracker;
-
         private Rigidbody rigidbody;
-
-        private Camera camera;
 
         protected void Awake()
         {
             rigidbody = gameObject.AddComponent<Rigidbody>();
             rigidbody.useGravity = false;
-
-            camera = GetComponent<UnityEngine.Camera>();
-
-            GameObject test = GameObject.Instantiate(Main.bundle.LoadAsset("md_camera").Cast<GameObject>());
-            MeshRenderer renderer = test.transform.Find("geo").GetComponent<MeshRenderer>();
-
-            renderer.castShadows = false;
-            renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
-
-            test.transform.parent = transform;
-            test.transform.localPosition = Vector3.forward * -0.1f;
-            test.transform.eulerAngles = Vector3.zero;
-            test.transform.localScale = new Vector3(0.075f, 0.075f, -0.075f);
-
-            Director.instance.SetCamera(this);
-
-            gameObject.AddComponent<CameraVolume>();
-        }
-
-        private void Start()
-        {
-            headCameraTracker = GetComponent<SmoothFollower>();
-            headCameraTracker.enabled = false;
-
-            var cameraDamp = gameObject.AddComponent<CameraDamp>();
-            cameraDamp.SetFollowTarget(headCameraTracker.targetTransform);
-        }
-
-        public void TrackHeadCamera()
-        {
-            headCameraTracker.enabled = !headCameraTracker.enabled;
         }
 
         protected void Update()
@@ -104,14 +69,26 @@ namespace NEP.MonoDirector.Cameras
             UpdateFOV();
         }
 
+        private void OnEnable()
+        {
+            enableKeyboardMovement = true;
+            enableMouseMovement = true;
+        }
+
+        private void OnDisable()
+        {
+            enableKeyboardMovement = false;
+            enableMouseMovement = false;
+        }
+
         private void LateUpdate()
         {
-            camera.fieldOfView = Mathf.Lerp(lastFov, fovChange, fovChangeLerp * Time.deltaTime);
+            CameraRigManager.Instance.Camera.fieldOfView = Mathf.Lerp(lastFov, fovChange, fovChangeLerp * Time.deltaTime);
         }
 
         private void UpdateFOV()
         {
-            lastFov = camera.fieldOfView;
+            lastFov = CameraRigManager.Instance.Camera.fieldOfView;
             fovChange -= Input.GetAxisRaw("Mouse ScrollWheel") * fovChangeMultiplier;
         }
 
@@ -153,8 +130,6 @@ namespace NEP.MonoDirector.Cameras
             float y = Input.GetAxisRaw("Mouse Y");
 
             bool rollCam = Input.GetKey(KeyCode.LeftControl) && Input.GetMouseButton(1);
-
-            camera.fieldOfView -= Input.GetAxisRaw("Mouse ScrollWheel") * fovChangeMultiplier;
 
             if (rollCam)
             {
@@ -226,7 +201,7 @@ namespace NEP.MonoDirector.Cameras
 
             cameraInput.y = yNeg + yPos;
 
-            Transform t = camera.transform;
+            Transform t = CameraRigManager.Instance.Camera.transform;
 
             currentSpeed = fastCamera ? fastSpeed : slowSpeed;
 

@@ -11,6 +11,7 @@ using NEP.MonoDirector.Cameras;
 using NEP.MonoDirector.Core;
 using BoneLib.BoneMenu.Elements;
 using NEP.MonoDirector.UI;
+using NEP.MonoDirector.State;
 
 namespace NEP.MonoDirector
 {
@@ -54,7 +55,7 @@ namespace NEP.MonoDirector
         private void MonoDirectorInitialize()
         {
             ResetInstances();
-            CreateCamera();
+            CreateCameraManager();
             CreateDirector();
             CreateSFX();
             CreateUI();
@@ -69,15 +70,11 @@ namespace NEP.MonoDirector
             PropMarkerManager.CleanUp();
         }
 
-        private void CreateCamera()
+        private void CreateCameraManager()
         {
             SLZ.Rig.RigManager rigManager = BoneLib.Player.rigManager;
             GameObject gameObject = rigManager.transform.Find("Spectator Camera").gameObject;
-            
-            // Detach the parent from the rig, so the camera is independent
-            gameObject.transform.parent = null;
-
-            camera = gameObject.AddComponent<FreeCameraRig>();
+            new CameraRigManager(gameObject);
         }
 
         private void CreateDirector()
@@ -153,17 +150,24 @@ namespace NEP.MonoDirector
             audioCategory.CreateBoolElement("Use Microphone", Color.white, false, (value) => Settings.World.useMicrophone = value);
             audioCategory.CreateBoolElement("Mic Playback", Color.white, false, (value) => Settings.World.micPlayback = value);
 
+            cameraCategory.CreateEnumElement<CameraMode>("Camera Mode", Color.white, CameraMode.Head, (mode) => CameraRigManager.Instance.SetCameraMode(mode));
+            
+            var headModeCategory = cameraCategory.CreateCategory("Head Mode Settings", Color.white);
+            var freeCamCategory = cameraCategory.CreateCategory("Free Camera Settings", Color.white);
+
+            headModeCategory.CreateFloatElement("Interpolation", Color.white, 4f, 1f, 0f, 64f, (value) => CameraRigManager.Instance.CameraDamp.delta = value);
+            headModeCategory.CreateEnumElement<BodyPart>("Position", Color.white, BodyPart.Head, (bone) => CameraRigManager.Instance.CameraDamp.SetFollowBone(bone));
+
             var vfxCategory = cameraCategory.CreateCategory("VFX", Color.white);
 
-            vfxCategory.CreateBoolElement("Lens Distortion", Color.white, true, (value) => Director.instance.Volume.LensDistortion.active = value);
-            vfxCategory.CreateBoolElement("Motion Blur", Color.white, true, (value) => Director.instance.Volume.MotionBlur.active = value);
-            vfxCategory.CreateBoolElement("Chromatic Abberation", Color.white, true, (value) => Director.instance.Volume.ChromaticAberration.active = value);
-            vfxCategory.CreateBoolElement("Vignette", Color.white, true, (value) => Director.instance.Volume.Vignette.active = true);
-            vfxCategory.CreateBoolElement("Bloom", Color.white, true, (value) => Director.instance.Volume.Bloom.active = true);
-            vfxCategory.CreateBoolElement("MK Glow", Color.white, true, (value) => Director.instance.Volume.MkGlow.active = true);
+            vfxCategory.CreateBoolElement("Lens Distortion", Color.white, true, (value) => CameraRigManager.Instance.CameraVolume.LensDistortion.active = value);
+            vfxCategory.CreateBoolElement("Motion Blur", Color.white, true, (value) => CameraRigManager.Instance.CameraVolume.MotionBlur.active = value);
+            vfxCategory.CreateBoolElement("Chromatic Abberation", Color.white, true, (value) => CameraRigManager.Instance.CameraVolume.ChromaticAberration.active = value);
+            vfxCategory.CreateBoolElement("Vignette", Color.white, true, (value) => CameraRigManager.Instance.CameraVolume.Vignette.active = true);
+            vfxCategory.CreateBoolElement("Bloom", Color.white, true, (value) => CameraRigManager.Instance.CameraVolume.Bloom.active = true);
+            vfxCategory.CreateBoolElement("MK Glow", Color.white, true, (value) => CameraRigManager.Instance.CameraVolume.MkGlow.active = true);
 
             toolCategory.CreateFloatElement("Playback Speed", Color.white, 1f, 0.1f, float.NegativeInfinity, float.PositiveInfinity, (value) => Playback.instance.SetPlaybackRate(value));
-            toolCategory.CreateFunctionElement("Spectator Head Mode", Color.white, () => Director.instance.Camera.TrackHeadCamera());
         }
 
         private void BuildDebugCategory(MenuCategory category)

@@ -14,8 +14,6 @@
         {
             public static bool useMicrophone = false;
             public static bool micPlayback = false;
-            public static bool spawnGunProps = false;
-            public static bool spawnGunNPCs = false;
         }
 
         public static class Debug
