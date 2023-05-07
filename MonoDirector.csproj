@@ -40,7 +40,7 @@
     <Compile Include="src\Audio\ActorMic.cs" />
     <Compile Include="src\Audio\Spectrum.cs" />
     <Compile Include="src\Camera\CameraDamp.cs" />
-    <Compile Include="src\Camera\CameraInput.cs" />
+    <Compile Include="src\Camera\InputController.cs" />
     <Compile Include="src\Camera\CameraRigManager.cs" />
     <Compile Include="src\Camera\CameraVolume.cs" />
     <Compile Include="src\Camera\DollyRig.cs" />
@@ -66,7 +66,6 @@
     <Compile Include="src\Patches\SFX\HandSFX.cs" />
     <Compile Include="src\Patches\SFX\GunSFX.cs" />
     <Compile Include="src\Patches\ObjectDestructable.cs" />
-    <Compile Include="src\Patches\Guns\SpawnGun.cs" />
     <Compile Include="src\Patches\Vehicles\Atv.cs" />
     <Compile Include="src\Patches\VRGraphicRaycaster.cs" />
     <Compile Include="src\Playback.cs" />

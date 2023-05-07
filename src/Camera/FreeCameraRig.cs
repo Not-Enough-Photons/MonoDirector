@@ -36,9 +36,6 @@ namespace NEP.MonoDirector.Cameras
         private bool lockCursor => Input.GetMouseButton(1);
         private bool smoothRotation = true;
 
-        private bool enableKeyboardMovement = false;
-        private bool enableMouseMovement = false;
-
         private float smoothDamp = 4f;
 
         private float fovChangeMultiplier = 10f;
@@ -47,13 +44,10 @@ namespace NEP.MonoDirector.Cameras
         private float lastFov = 0f;
 
         private Vector3 cameraPosition;
-        private Vector3 cameraInput;
-        private Vector3 mouseInput;
-
-        private float xMouseMove = 0f;
-        private float yMouseMove = 0f;
 
         private Rigidbody rigidbody;
+
+        private InputController inputController = CameraRigManager.Instance.InputController;
 
         protected void Awake()
         {
@@ -69,18 +63,6 @@ namespace NEP.MonoDirector.Cameras
             UpdateFOV();
         }
 
-        private void OnEnable()
-        {
-            enableKeyboardMovement = true;
-            enableMouseMovement = true;
-        }
-
-        private void OnDisable()
-        {
-            enableKeyboardMovement = false;
-            enableMouseMovement = false;
-        }
-
         private void LateUpdate()
         {
             CameraRigManager.Instance.Camera.fieldOfView = Mathf.Lerp(lastFov, fovChange, fovChangeLerp * Time.deltaTime);
@@ -94,28 +76,15 @@ namespace NEP.MonoDirector.Cameras
 
         private void MouseUpdate()
         {
-            if (!enableMouseMovement)
-            {
-                return;
-            }
-
-            if (xMouseMove > 0f || xMouseMove < 0f)
-            {
-                xMouseMove = Mathf.Lerp(xMouseMove, 0f, smoothDamp * Time.deltaTime);
-            }
-
-            if (yMouseMove > 0f || yMouseMove < 0f)
-            {
-                yMouseMove = Mathf.Lerp(yMouseMove, 0f, smoothDamp * Time.deltaTime);
-            }
+            Vector3 mouseVector = inputController.MouseMove();
 
             float shakeX = Mathf.Sin(Time.time) + Mathf.PerlinNoise(xFactor * Time.time, yFactor) * shakeVector.x;
             float shakeY = Mathf.Sin(Time.time) + Mathf.PerlinNoise(xFactor, 1f - yFactor * Time.time) * shakeVector.y;
             float shakeZ = shakeY * shakeVector.z;
 
-            Vector3 rightVector = (Vector3.right * (mouseInput.y + (shakeX * multiplier)));
-            Vector3 upVector = (Vector3.up * (mouseInput.x + (shakeY * multiplier)));
-            Vector3 forwardVector = (Vector3.forward * (mouseInput.z + (shakeZ * multiplier)));
+            Vector3 rightVector = (Vector3.right * (mouseVector.y + (shakeX * multiplier)));
+            Vector3 upVector = (Vector3.up * (mouseVector.x + (shakeY * multiplier)));
+            Vector3 forwardVector = (Vector3.forward * (mouseVector.z + (shakeZ * multiplier)));
 
             transform.rotation = Quaternion.Euler(rightVector + upVector + forwardVector);
 
@@ -125,91 +94,23 @@ namespace NEP.MonoDirector.Cameras
             }
 
             rigidbody.drag = friction;
-
-            float x = Input.GetAxisRaw("Mouse X");
-            float y = Input.GetAxisRaw("Mouse Y");
-
-            bool rollCam = Input.GetKey(KeyCode.LeftControl) && Input.GetMouseButton(1);
-
-            if (rollCam)
-            {
-                mouseInput.z -= x;
-            }
-
-            if (smoothRotation)
-            {
-                xMouseMove += x * delta;
-                yMouseMove += y * delta;
-
-                mouseInput.x += xMouseMove;
-                mouseInput.y -= yMouseMove;
-            }
-            else
-            {
-                mouseInput.x += x;
-                mouseInput.y -= y;
-            }
         }
 
         private void MoveUpdate()
         {
-            if (!enableKeyboardMovement)
-            {
-                return;
-            }
+            Vector3 inputVector = inputController.KeyboardMove();
 
             Vector3.ClampMagnitude(wishDir, maxLength);
-
-            int yNeg = Input.GetKey(KeyCode.Q) ? -1 : 0;
-            int yPos = Input.GetKey(KeyCode.E) ? 1 : 0;
-
-            if (Input.GetKey(KeyCode.A))
-            {
-                cameraInput.x = -1f;
-            }
-            else if (Input.GetKeyUp(KeyCode.A))
-            {
-                cameraInput.x = 0f;
-            }
-
-            if (Input.GetKey(KeyCode.D))
-            {
-                cameraInput.x = 1f;
-            }
-            else if (Input.GetKeyUp(KeyCode.D))
-            {
-                cameraInput.x = 0f;
-            }
-
-            if (Input.GetKey(KeyCode.W))
-            {
-                cameraInput.z = 1f;
-            }
-            else if (Input.GetKeyUp(KeyCode.W))
-            {
-                cameraInput.z = 0f;
-            }
-
-            if (Input.GetKey(KeyCode.S))
-            {
-                cameraInput.z = -1f;
-            }
-            else if (Input.GetKeyUp(KeyCode.S))
-            {
-                cameraInput.z = 0f;
-            }
-
-            cameraInput.y = yNeg + yPos;
 
             Transform t = CameraRigManager.Instance.Camera.transform;
 
             currentSpeed = fastCamera ? fastSpeed : slowSpeed;
 
-            cameraPosition = cameraInput * currentSpeed;
+            cameraPosition = inputVector * currentSpeed;
 
-            cameraInput = Vector3.ClampMagnitude(cameraInput, maxLength);
+            inputVector = Vector3.ClampMagnitude(inputVector, maxLength);
 
-            wishDir = ((t.right * cameraInput.x) + (t.up * cameraInput.y) + (t.forward * cameraInput.z));
+            wishDir = ((t.right * inputVector.x) + (t.up * inputVector.y) + (t.forward * inputVector.z));
             rigidbody.AddForce(wishDir * currentSpeed);
         }
     }

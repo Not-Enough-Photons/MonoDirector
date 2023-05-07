@@ -18,6 +18,7 @@ namespace NEP.MonoDirector.Cameras
 
         public Camera Camera { get; private set; }
 
+        public InputController InputController { get; private set; }
         public FreeCameraRig FreeCamera { get; private set; }
         public FollowCameraRig FollowCamera { get; private set; }
 
@@ -48,6 +49,8 @@ namespace NEP.MonoDirector.Cameras
             Camera = cameraObject.GetComponent<Camera>();
 
             SmoothFollower = cameraObject.GetComponent<SmoothFollower>();
+
+            InputController = cameraObject.AddComponent<InputController>();
 
             FreeCamera = cameraObject.AddComponent<FreeCameraRig>();
             FollowCamera = cameraObject.AddComponent<FollowCameraRig>();
