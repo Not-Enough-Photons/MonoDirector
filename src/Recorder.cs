@@ -115,6 +115,8 @@ namespace NEP.MonoDirector.Core
                 prop.OnSceneBegin();
                 prop.gameObject.SetActive(true);
             }
+
+            Constants.rigManager.bodyVitals.bodyLogEnabled = false;
         }
 
         public void OnStartRecording()
@@ -195,6 +197,8 @@ namespace NEP.MonoDirector.Core
                 MelonCoroutines.Stop(recordRoutine);
                 recordRoutine = null;
             }
+
+            Constants.rigManager.bodyVitals.bodyLogEnabled = true;
         }
 
         public IEnumerator RecordRoutine()

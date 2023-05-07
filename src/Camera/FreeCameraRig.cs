@@ -66,13 +66,11 @@ namespace NEP.MonoDirector.Cameras
 
             camera = GetComponent<UnityEngine.Camera>();
 
-            // may affect performance 
-            camera.useOcclusionCulling = false;
-
             GameObject test = GameObject.Instantiate(Main.bundle.LoadAsset("md_camera").Cast<GameObject>());
             MeshRenderer renderer = test.transform.Find("geo").GetComponent<MeshRenderer>();
 
             renderer.castShadows = false;
+            renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
 
             test.transform.parent = transform;
             test.transform.localPosition = Vector3.forward * -0.1f;
@@ -180,7 +178,7 @@ namespace NEP.MonoDirector.Cameras
 
         private void MoveUpdate()
         {
-            if (!enableMouseMovement)
+            if (!enableKeyboardMovement)
             {
                 return;
             }

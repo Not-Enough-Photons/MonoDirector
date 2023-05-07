@@ -57,7 +57,7 @@ namespace NEP.MonoDirector
             CreateCamera();
             CreateDirector();
             CreateSFX();
-            //CreateUI();
+            CreateUI();
         }
 
         private void ResetInstances()
@@ -66,13 +66,17 @@ namespace NEP.MonoDirector
             director = null;
             camera = null;
             feedbackSFX = null;
-            //PropMarkerManager.CleanUp();
+            PropMarkerManager.CleanUp();
         }
 
         private void CreateCamera()
         {
             SLZ.Rig.RigManager rigManager = BoneLib.Player.rigManager;
             GameObject gameObject = rigManager.transform.Find("Spectator Camera").gameObject;
+            
+            // Detach the parent from the rig, so the camera is independent
+            gameObject.transform.parent = null;
+
             camera = gameObject.AddComponent<FreeCameraRig>();
         }
 

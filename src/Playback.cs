@@ -76,6 +76,8 @@ namespace NEP.MonoDirector.Core
                 prop.OnSceneBegin();
                 prop.gameObject.SetActive(true);
             }
+
+            Constants.rigManager.bodyVitals.bodyLogEnabled = false;
         }
 
         public void OnPlay()
@@ -117,6 +119,8 @@ namespace NEP.MonoDirector.Core
                 MelonCoroutines.Stop(playRoutine);
                 playRoutine = null;
             }
+
+            Constants.rigManager.bodyVitals.bodyLogEnabled = true;
         }
 
         public void Seek(float rate)

@@ -3,6 +3,9 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+using NEP.MonoDirector.Data;
+using NEP.MonoDirector.Core;
+
 namespace NEP.MonoDirector.Actors
 {
     [MelonLoader.RegisterTypeInIl2Cpp]
@@ -12,13 +15,13 @@ namespace NEP.MonoDirector.Actors
 
         public ObjectDestructable breakableProp;
 
-        private Dictionary<int, Action> eventDictionary;
+        private List<ActionFrame> actionFrames;
 
         protected override void Awake()
         {
             base.Awake();
 
-            eventDictionary = new Dictionary<int, Action>();
+            actionFrames = new List<ActionFrame>();
         }
 
         public void SetBreakableObject(ObjectDestructable destructable)
@@ -29,14 +32,33 @@ namespace NEP.MonoDirector.Actors
         public override void Act()
         {
             base.Act();
+
+            foreach (ActionFrame actionFrame in actionFrames)
+            {
+                if (Playback.instance.PlaybackTime < actionFrame.timestamp)
+                {
+                    continue;
+                }
+                else
+                {
+                    actionFrame.Run();
+                }
+            }
         }
 
-        public void RecordDestructionEvent(int timeStamp, Action action)
+        public override void OnSceneBegin()
         {
-            if (!eventDictionary.ContainsKey(timeStamp))
+            base.OnSceneBegin();
+
+            foreach (ActionFrame actionFrame in actionFrames)
             {
-                eventDictionary.Add(timeStamp, action);
+                actionFrame.Reset();
             }
+        }
+
+        public void RecordDestructionEvent(float timeStamp, Action action)
+        {
+            actionFrames.Add(new ActionFrame(action, timeStamp));
         }
 
         public void DestructionEvent()

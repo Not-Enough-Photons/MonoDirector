@@ -19,7 +19,7 @@ namespace NEP.MonoDirector.Patches
 
                 if(prop != null && Director.PlayState == State.PlayState.Recording)
                 {
-                    prop.RecordDestructionEvent(Recorder.instance.RecordTick, prop.DestructionEvent);
+                    prop.RecordDestructionEvent(Recorder.instance.RecordingTime, prop.DestructionEvent);
                 }
             }
         }
