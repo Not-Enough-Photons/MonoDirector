@@ -175,6 +175,7 @@ namespace NEP.MonoDirector.Core
         private void SetPlayState(PlayState state)
         {
             playState = state;
+            Events.OnPlayStateSet?.Invoke(state);
         }
     }
 }

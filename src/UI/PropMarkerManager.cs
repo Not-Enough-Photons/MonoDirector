@@ -4,6 +4,7 @@ using System.Linq;
 
 using BoneLib.Nullables;
 using NEP.MonoDirector.Actors;
+using NEP.MonoDirector.State;
 using SLZ.Bonelab;
 using SLZ.Marrow.Data;
 using SLZ.Marrow.Pool;
@@ -25,12 +26,16 @@ namespace NEP.MonoDirector.UI
 
             Events.OnPropCreated += AddMarkerToProp;
             Events.OnPropRemoved += RemoveMarkerFromProp;
+
+            Events.OnPlayStateSet += ShowMarkers;
         }
 
         public static void CleanUp()
         {
             Events.OnPropCreated -= AddMarkerToProp;
             Events.OnPropRemoved -= RemoveMarkerFromProp;
+
+            Events.OnPlayStateSet -= ShowMarkers;
 
             markers.Clear();
             loadedMarkerObjects.Clear();
@@ -80,6 +85,25 @@ namespace NEP.MonoDirector.UI
 
             markers.Remove(prop);
             activeMarkers.Remove(marker);
+        }
+
+        private static void ShowMarkers(PlayState playState)
+        {
+            if(playState == PlayState.Preplaying || playState == PlayState.Prerecording)
+            {
+                foreach (var marker in activeMarkers)
+                {
+                    marker.gameObject.SetActive(false);
+                }
+            }
+
+            if(playState == PlayState.Stopped)
+            {
+                foreach (var marker in activeMarkers)
+                {
+                    marker.gameObject.SetActive(true);
+                }
+            }
         }
 
         private static void Warmup(int size)

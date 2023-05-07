@@ -1,4 +1,6 @@
 ﻿using NEP.MonoDirector.Actors;
+using NEP.MonoDirector.State;
+
 using System;
 
 namespace NEP.MonoDirector
@@ -48,6 +50,8 @@ namespace NEP.MonoDirector
 
         public static Action OnPlaybackTick;
         public static Action OnRecordTick;
+
+        public static Action<PlayState> OnPlayStateSet;
 
         public static Action OnPreSnapshot;
     }
