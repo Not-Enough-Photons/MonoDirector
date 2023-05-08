@@ -51,6 +51,8 @@ namespace NEP.MonoDirector.Actors
 
         public override void OnSceneBegin()
         {
+            base.OnSceneBegin();
+
             for (int i = 0; i < 55; i++)
             {
                 var bone = clonedRigBones[i];
@@ -67,15 +69,6 @@ namespace NEP.MonoDirector.Actors
 
         public override void Act()
         {
-            if (actionFrames.ContainsKey(Playback.instance.PlaybackTick))
-            {
-                actionFrames[Playback.instance.PlaybackTick]?.Invoke();
-            }
-            else if (actionFrames.ContainsKey(Recorder.instance.RecordTick))
-            {
-                actionFrames[Recorder.instance.RecordTick]?.Invoke();
-            }
-
             previousFrame = new FrameGroup();
             nextFrame = new FrameGroup();
 
@@ -134,6 +127,18 @@ namespace NEP.MonoDirector.Actors
                 bone.rotation = Quaternion.Slerp(previousBoneRotation, nextBoneRotation, delta);
             }
 
+            foreach (ActionFrame actionFrame in actionFrames)
+            {
+                if (Playback.instance.PlaybackTime < actionFrame.timestamp)
+                {
+                    continue;
+                }
+                else
+                {
+                    actionFrame.Run();
+                }
+            }
+
             microphone?.Playback();
             microphone?.UpdateJaw();
         }
@@ -147,14 +152,6 @@ namespace NEP.MonoDirector.Actors
             FrameGroup frameGroup = new FrameGroup();
             frameGroup.SetFrames(CaptureBoneFrames(avatarBones), Recorder.instance.RecordingTime);
             avatarFrames.Add(frameGroup);
-        }
-
-        public void CaptureAvatarAction(int tick, Action action)
-        {
-            if (Director.PlayState == State.PlayState.Recording && !actionFrames.ContainsKey(tick))
-            {
-                actionFrames.Add(tick, action);
-            }
         }
 
         public void CloneAvatar()

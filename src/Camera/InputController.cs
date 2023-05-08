@@ -10,11 +10,11 @@ namespace NEP.MonoDirector.Cameras
     {
         public InputController(System.IntPtr ptr) : base(ptr) { }
 
+        public float mouseSensitivity = 1f;
+        public float mouseSmoothness = 4f;
+
         private Vector3 keyboardInput;
         private Vector3 mouseInput;
-
-        private float mouseSensitivity = 1f;
-        private float mouseSmoothness = 4f;
 
         private float xMouseMove = 0f;
         private float yMouseMove = 0f;

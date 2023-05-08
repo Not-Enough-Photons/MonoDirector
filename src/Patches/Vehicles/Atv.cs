@@ -22,7 +22,7 @@ public static class Seat
                 return;
             }
             
-            activeActor.CaptureAvatarAction(Recorder.instance.RecordTick, () => activeActor.ParentToSeat(__instance));
+            activeActor.RecordAction(() => activeActor.ParentToSeat(__instance));
         }
     }
 
@@ -41,7 +41,7 @@ public static class Seat
                 return;
             }
 
-            activeActor.CaptureAvatarAction(Recorder.instance.RecordTick, () => activeActor.UnparentSeat());
+            activeActor.RecordAction(() => activeActor.UnparentSeat());
         }
     }
 }

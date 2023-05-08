@@ -24,7 +24,6 @@ namespace NEP.MonoDirector.Actors
         public Gun Gun { get => gun; }
 
         private Gun gun;
-        private List<ActionFrame> actionFrames;
 
         protected override void Awake()
         {
@@ -44,14 +43,6 @@ namespace NEP.MonoDirector.Actors
             }
         }
 
-        public void RecordAction(Action action)
-        {
-            if (Director.PlayState == State.PlayState.Recording)
-            {
-                actionFrames.Add(new ActionFrame(action, Recorder.instance.RecordingTime));
-            }
-        }
-
         public void GunFakeFire()
         {
             MuzzleFlash();
@@ -62,23 +53,6 @@ namespace NEP.MonoDirector.Actors
         public void SetGun(Gun gun)
         {
             this.gun = gun;
-        }
-
-        public override void Act()
-        {
-            base.Act();
-
-            foreach(ActionFrame actionFrame in actionFrames)
-            {
-                if(Playback.instance.PlaybackTime < actionFrame.timestamp)
-                {
-                    continue;
-                }
-                else
-                {
-                    actionFrame.Run();
-                }
-            }
         }
 
         private void MuzzleFlash()

@@ -150,22 +150,17 @@ namespace NEP.MonoDirector
             audioCategory.CreateBoolElement("Use Microphone", Color.white, false, (value) => Settings.World.useMicrophone = value);
             audioCategory.CreateBoolElement("Mic Playback", Color.white, false, (value) => Settings.World.micPlayback = value);
 
-            cameraCategory.CreateEnumElement<CameraMode>("Camera Mode", Color.white, CameraMode.Head, (mode) => CameraRigManager.Instance.SetCameraMode(mode));
+            cameraCategory.CreateEnumElement("Camera Mode", Color.white, CameraMode.Head, (mode) => CameraRigManager.Instance.SetCameraMode(mode));
             
             var headModeCategory = cameraCategory.CreateCategory("Head Mode Settings", Color.white);
             var freeCamCategory = cameraCategory.CreateCategory("Free Camera Settings", Color.white);
 
-            headModeCategory.CreateFloatElement("Interpolation", Color.white, 4f, 1f, 0f, 64f, (value) => CameraRigManager.Instance.CameraDamp.delta = value);
-            headModeCategory.CreateEnumElement<BodyPart>("Position", Color.white, BodyPart.Head, (bone) => CameraRigManager.Instance.CameraDamp.SetFollowBone(bone));
+            BuildHeadModeCategory(headModeCategory);
+            BuildFreeModeCategory(freeCamCategory);
 
             var vfxCategory = cameraCategory.CreateCategory("VFX", Color.white);
 
-            vfxCategory.CreateBoolElement("Lens Distortion", Color.white, true, (value) => CameraRigManager.Instance.CameraVolume.LensDistortion.active = value);
-            vfxCategory.CreateBoolElement("Motion Blur", Color.white, true, (value) => CameraRigManager.Instance.CameraVolume.MotionBlur.active = value);
-            vfxCategory.CreateBoolElement("Chromatic Abberation", Color.white, true, (value) => CameraRigManager.Instance.CameraVolume.ChromaticAberration.active = value);
-            vfxCategory.CreateBoolElement("Vignette", Color.white, true, (value) => CameraRigManager.Instance.CameraVolume.Vignette.active = true);
-            vfxCategory.CreateBoolElement("Bloom", Color.white, true, (value) => CameraRigManager.Instance.CameraVolume.Bloom.active = true);
-            vfxCategory.CreateBoolElement("MK Glow", Color.white, true, (value) => CameraRigManager.Instance.CameraVolume.MkGlow.active = true);
+            BuildVFXCategory(vfxCategory);
 
             toolCategory.CreateFloatElement("Playback Speed", Color.white, 1f, 0.1f, float.NegativeInfinity, float.PositiveInfinity, (value) => Playback.instance.SetPlaybackRate(value));
         }
@@ -174,6 +169,79 @@ namespace NEP.MonoDirector
         {
             category.CreateBoolElement("Debug Mode", Color.white, false, (value) => Settings.Debug.debugEnabled = value);
             category.CreateBoolElement("Use Debug Keys", Color.white, false, (value) => Settings.Debug.useKeys = value);
+        }
+
+        private void BuildHeadModeCategory(MenuCategory headModeCategory)
+        {
+            headModeCategory.CreateFloatElement("Interpolation", Color.white, 4f, 1f, 0f, 64f, (value) => CameraRigManager.Instance.CameraDamp.delta = value);
+            headModeCategory.CreateEnumElement("Position", Color.white, BodyPart.Head, (bone) => CameraRigManager.Instance.CameraDamp.SetFollowBone(bone));
+        }
+
+        private void BuildFreeModeCategory(MenuCategory freeModeCategory)
+        {
+            freeModeCategory.CreateFloatElement(
+                "Mouse Sens.",
+                Color.white,
+                1f,
+                0.5f,
+                0f,
+                float.PositiveInfinity,
+                (value) => CameraRigManager.Instance?.SetMouseSensitivity(value));
+
+            freeModeCategory.CreateFloatElement(
+                "Mouse Smoothing",
+                Color.white,
+                1f,
+                0.5f,
+                0f,
+                float.PositiveInfinity,
+                (value) => CameraRigManager.Instance?.SetMouseSmoothness(value));
+
+            freeModeCategory.CreateFloatElement(
+                "Slow Speed", 
+                Color.white,
+                5f,
+                1f,
+                0f,
+                float.PositiveInfinity,
+                (value) => CameraRigManager.Instance?.SetSlowSpeed(value));
+
+            freeModeCategory.CreateFloatElement(
+                "Fast Speed",
+                Color.white,
+                10f,
+                1f,
+                0f,
+                float.PositiveInfinity,
+                (value) => CameraRigManager.Instance?.SetFastSpeed(value));
+
+            freeModeCategory.CreateFloatElement(
+                "Max Speed",
+                Color.white,
+                15f,
+                1f,
+                0f,
+                float.PositiveInfinity,
+                (value) => CameraRigManager.Instance?.SetMaxSpeed(value));
+
+            freeModeCategory.CreateFloatElement(
+                "Friction",
+                Color.white,
+                5f,
+                1f,
+                0f,
+                float.PositiveInfinity,
+                (value) => CameraRigManager.Instance?.SetFriction(value));
+        }
+
+        private void BuildVFXCategory(MenuCategory vfxCategory)
+        {
+            vfxCategory.CreateBoolElement("Lens Distortion", Color.white, true, (value) => CameraRigManager.Instance.CameraVolume.LensDistortion.active = value);
+            vfxCategory.CreateBoolElement("Motion Blur", Color.white, true, (value) => CameraRigManager.Instance.CameraVolume.MotionBlur.active = value);
+            vfxCategory.CreateBoolElement("Chromatic Abberation", Color.white, true, (value) => CameraRigManager.Instance.CameraVolume.ChromaticAberration.active = value);
+            vfxCategory.CreateBoolElement("Vignette", Color.white, true, (value) => CameraRigManager.Instance.CameraVolume.Vignette.active = true);
+            vfxCategory.CreateBoolElement("Bloom", Color.white, true, (value) => CameraRigManager.Instance.CameraVolume.Bloom.active = true);
+            vfxCategory.CreateBoolElement("MK Glow", Color.white, true, (value) => CameraRigManager.Instance.CameraVolume.MkGlow.active = true);
         }
     }
 }

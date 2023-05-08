@@ -12,7 +12,7 @@ namespace NEP.MonoDirector.Patches
             internal static void Postfix(SLZ.Props.Weapons.Gun __instance)
             {
                 var gunProp = __instance.gameObject.GetComponent<GunProp>();
-                gunProp.RecordAction(gunProp.GunFakeFire);
+                gunProp?.RecordAction(new System.Action(() => gunProp.GunFakeFire()));
             }
         }
 

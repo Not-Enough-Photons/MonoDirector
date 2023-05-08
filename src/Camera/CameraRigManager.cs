@@ -22,6 +22,7 @@ namespace NEP.MonoDirector.Cameras
         public FreeCameraRig FreeCamera { get; private set; }
         public FollowCameraRig FollowCamera { get; private set; }
 
+        public FOVController FOVController { get; private set; }
         public CameraDamp CameraDamp { get; private set; }
         public CameraVolume CameraVolume { get; private set; }
         public SmoothFollower SmoothFollower { get; private set; }
@@ -49,10 +50,11 @@ namespace NEP.MonoDirector.Cameras
             Camera = cameraObject.GetComponent<Camera>();
 
             SmoothFollower = cameraObject.GetComponent<SmoothFollower>();
-
             InputController = cameraObject.AddComponent<InputController>();
 
             FreeCamera = cameraObject.AddComponent<FreeCameraRig>();
+
+            FOVController = cameraObject.AddComponent<FOVController>();
             FollowCamera = cameraObject.AddComponent<FollowCameraRig>();
             CameraDamp = cameraObject.AddComponent<CameraDamp>();
             CameraVolume = cameraObject.AddComponent<CameraVolume>();
@@ -97,6 +99,36 @@ namespace NEP.MonoDirector.Cameras
                 FreeCamera.enabled = false;
                 CameraDamp.enabled = true;
             }
+        }
+
+        public void SetMouseSensitivity(float mouseSensitivity)
+        {
+            InputController.mouseSensitivity = mouseSensitivity;
+        }
+
+        public void SetMouseSmoothness(float smoothness)
+        {
+            InputController.mouseSmoothness = smoothness;
+        }
+
+        public void SetSlowSpeed(float slowSpeed)
+        {
+            FreeCamera.CameraSettings.slowSpeed = slowSpeed;
+        }
+
+        public void SetFastSpeed(float fastSpeed)
+        {
+            FreeCamera.CameraSettings.fastSpeed = fastSpeed;
+        }
+
+        public void SetMaxSpeed(float maxSpeed)
+        {
+            FreeCamera.CameraSettings.maxSpeed = maxSpeed;
+        }
+
+        public void SetFriction(float friction)
+        {
+            FreeCamera.CameraSettings.friction = friction;
         }
     }
 }

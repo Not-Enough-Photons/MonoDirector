@@ -8,7 +8,7 @@ using SLZ.Props.Weapons;
 
 using UnityEngine;
 
-using Il2CppSystem;
+using System;
 
 using SLZ.Vehicle;
 using NEP.MonoDirector.Core;
@@ -26,7 +26,7 @@ namespace NEP.MonoDirector.Actors
         public Rigidbody InteractableRigidbody { get => interactableRigidbody; }
         public bool isRecording;
 
-        public static readonly Type[] whitelistedTypes = new Type[]
+        public static readonly Il2CppSystem.Type[] whitelistedTypes = new Il2CppSystem.Type[]
         {
             UnhollowerRuntimeLib.Il2CppType.Of<Gun>(),
             UnhollowerRuntimeLib.Il2CppType.Of<Magazine>(),
@@ -41,10 +41,12 @@ namespace NEP.MonoDirector.Actors
         protected int recordedTicks;
 
         protected List<ObjectFrame> propFrames;
+        protected List<ActionFrame> actionFrames;
 
         protected virtual void Awake()
         {
             propFrames = new List<ObjectFrame>();
+            actionFrames = new List<ActionFrame>();
         }
 
         public static bool IsActorProp(Rigidbody rigidbody)
@@ -112,6 +114,11 @@ namespace NEP.MonoDirector.Actors
             transform.position = PropFrames[0].position;
             transform.rotation = PropFrames[0].rotation;
             transform.localScale = PropFrames[0].scale;
+
+            if(interactableRigidbody != null)
+            {
+                interactableRigidbody.isKinematic = true;
+            }
         }
 
         public virtual void Act()
@@ -129,6 +136,18 @@ namespace NEP.MonoDirector.Actors
 
             transform.position = Interpolator.InterpolatePosition(PropFrames);
             transform.rotation = Interpolator.InterpolateRotation(PropFrames);
+
+            foreach(var actionFrame in actionFrames)
+            {
+                if (Playback.instance.PlaybackTime < actionFrame.timestamp)
+                {
+                    continue;
+                }
+                else
+                {
+                    actionFrame.Run();
+                }
+            }
         }
 
         public virtual void Record(int frame)
@@ -152,6 +171,19 @@ namespace NEP.MonoDirector.Actors
             {
                 propFrames.Add(objectFrame);
                 recordedTicks++;
+            }
+        }
+
+        public virtual void RecordAction(Action action)
+        {
+            if (Director.PlayState == State.PlayState.Recording)
+            {
+                if (!Director.instance.RecordingProps.Contains(this))
+                {
+                    return;
+                }
+
+                actionFrames.Add(new ActionFrame(action, Recorder.instance.RecordingTime));
             }
         }
 

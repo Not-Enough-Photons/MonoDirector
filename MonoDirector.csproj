@@ -28,6 +28,7 @@
     <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="src\Actors\GripEventListener.cs" />
     <Compile Include="src\Actors\Trackable.cs" />
     <Compile Include="src\Actors\BreakableProp.cs" />
     <Compile Include="src\Actors\GunProp.cs" />
@@ -40,6 +41,7 @@
     <Compile Include="src\Audio\ActorMic.cs" />
     <Compile Include="src\Audio\Spectrum.cs" />
     <Compile Include="src\Camera\CameraDamp.cs" />
+    <Compile Include="src\Camera\FOVController.cs" />
     <Compile Include="src\Camera\InputController.cs" />
     <Compile Include="src\Camera\CameraRigManager.cs" />
     <Compile Include="src\Camera\CameraVolume.cs" />
@@ -61,6 +63,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\Main.cs" />
     <Compile Include="src\Patches\Guns\InventoryAmmoReciever.cs" />
+    <Compile Include="src\Patches\Interaction\SimpleGripEvents.cs" />
     <Compile Include="src\Patches\SFX\FootstepSFX.cs" />
     <Compile Include="src\Patches\Guns\Gun.cs" />
     <Compile Include="src\Patches\SFX\HandSFX.cs" />

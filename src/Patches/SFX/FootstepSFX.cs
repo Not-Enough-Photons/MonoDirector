@@ -19,7 +19,7 @@ namespace NEP.MonoDirector.Patches
                     return;
                 }
 
-                activeActor.CaptureAvatarAction(Recorder.instance.RecordTick, () => PlayFootstep(__instance, velocitySqr));
+                activeActor.RecordAction(() => PlayFootstep(__instance, velocitySqr));
             }
 
             internal static void PlayFootstep(SLZ.SFX.FootstepSFX footstep, float velocitySqr)

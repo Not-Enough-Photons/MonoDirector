@@ -13,7 +13,7 @@ namespace NEP.MonoDirector.Actors
         public Trackable()
         {
             objectFrames = new List<ObjectFrame>();
-            actionFrames = new Dictionary<int, Action>();
+            actionFrames = new List<ActionFrame>();
         }
 
         public string ActorName { get => actorName; }
@@ -24,7 +24,7 @@ namespace NEP.MonoDirector.Actors
 
         protected Transform transform;
         protected List<ObjectFrame> objectFrames;
-        protected Dictionary<int, Action> actionFrames;
+        protected List<ActionFrame> actionFrames;
 
         protected int stateTick;
         protected int recordedTicks;
@@ -34,7 +34,10 @@ namespace NEP.MonoDirector.Actors
 
         public virtual void OnSceneBegin()
         {
-
+            foreach (ActionFrame actionFrame in actionFrames)
+            {
+                actionFrame.Reset();
+            }
         }
 
         /// <summary>
@@ -63,6 +66,18 @@ namespace NEP.MonoDirector.Actors
 
             transform.position = Vector3.Lerp(previousFrame.position, nextFrame.position, delta);
             transform.rotation = Quaternion.Slerp(previousFrame.rotation, nextFrame.rotation, delta);
+
+            foreach (ActionFrame actionFrame in actionFrames)
+            {
+                if (Playback.instance.PlaybackTime < actionFrame.timestamp)
+                {
+                    continue;
+                }
+                else
+                {
+                    actionFrame.Run();
+                }
+            }
         }
 
         public virtual void RecordFrame()
@@ -73,6 +88,14 @@ namespace NEP.MonoDirector.Actors
             };
 
             objectFrames.Add(objectFrame);
+        }
+
+        public virtual void RecordAction(Action action)
+        {
+            if (Director.PlayState == State.PlayState.Recording)
+            {
+                actionFrames.Add(new ActionFrame(action, Recorder.instance.RecordingTime));
+            }
         }
 
         public void SetTransform(Transform transform)
