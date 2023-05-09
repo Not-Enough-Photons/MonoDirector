@@ -100,7 +100,6 @@ namespace NEP.MonoDirector.Core
 
             AnimateAll();
 
-            playbackTick++;
             playbackTime += Time.deltaTime * playbackRate;
         }
 
@@ -140,20 +139,9 @@ namespace NEP.MonoDirector.Core
                 playbackTime = Recorder.instance.RecordingTime;
             }
 
-            if(playbackTick <= 0)
-            {
-                playbackTick = 0;
-            }
-
-            if(playbackTick > Recorder.instance.RecordTick)
-            {
-                playbackTick = Recorder.instance.RecordTick;
-            }
-
             AnimateAll();
 
-            playbackTime += rate;
-            playbackTick += Mathf.RoundToInt(rate);
+            playbackTime += playbackRate * Time.deltaTime;
         }
 
         public void ResetPlayhead()

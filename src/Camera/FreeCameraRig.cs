@@ -108,7 +108,7 @@ namespace NEP.MonoDirector.Cameras
             wishDir = ((t.right * inputVector.x) + (t.up * inputVector.y) + (t.forward * inputVector.z));
             rigidbody.AddForce(wishDir * currentSpeed);
 
-            rigidbody.drag = CameraSettings.shakeMultiplier;
+            rigidbody.drag = CameraSettings.friction;
         }
     }
 }

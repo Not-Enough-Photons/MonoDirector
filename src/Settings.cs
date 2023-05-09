@@ -14,6 +14,7 @@
         {
             public static bool useMicrophone = false;
             public static bool micPlayback = false;
+            public static float playbackRate = 1f;
         }
 
         public static class Debug
