@@ -141,7 +141,7 @@ namespace NEP.MonoDirector.Core
 
             AnimateAll();
 
-            playbackTime += playbackRate * Time.deltaTime;
+            playbackTime += rate * Time.deltaTime;
         }
 
         public void ResetPlayhead()

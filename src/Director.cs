@@ -73,12 +73,12 @@ namespace NEP.MonoDirector.Core
 
             if (Input.GetKey(KeyCode.LeftArrow))
             {
-                Playback.instance.Seek(-1);
+                Playback.instance.Seek(-Playback.instance.PlaybackRate);
             }
 
             if (Input.GetKey(KeyCode.RightArrow))
             {
-                Playback.instance.Seek(1);
+                Playback.instance.Seek(Playback.instance.PlaybackRate);
             }
 
             if (Input.GetKeyDown(KeyCode.P))
