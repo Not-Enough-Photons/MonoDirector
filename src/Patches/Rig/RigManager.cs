@@ -18,11 +18,11 @@ namespace NEP.MonoDirector.Patches
                     return;
                 }
 
-                Recorder.instance.SetActor(newAvatar);
-                var lastActor = Recorder.instance.LastActor;
+                var activeActor = Recorder.instance.ActiveActor;
+                activeActor.CloneAvatar();
+                Recorder.instance.ActiveActors.Add(activeActor);
 
-                lastActor.CloneAvatar();
-                Recorder.instance.ActiveActors.Add(lastActor);
+                Recorder.instance.SetActor(newAvatar);
             }
         }
     }

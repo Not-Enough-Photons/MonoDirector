@@ -116,8 +116,6 @@ namespace NEP.MonoDirector.Core
                 MelonCoroutines.Stop(playRoutine);
                 playRoutine = null;
             }
-
-            Constants.rigManager.bodyVitals.bodyLogEnabled = true;
         }
 
         public void Seek(float rate)
