@@ -76,8 +76,6 @@ namespace NEP.MonoDirector.Core
                 prop.OnSceneBegin();
                 prop.gameObject.SetActive(true);
             }
-
-            Constants.rigManager.bodyVitals.bodyLogEnabled = false;
         }
 
         public void OnPlay()
@@ -177,7 +175,7 @@ namespace NEP.MonoDirector.Core
             actor.Act();
         }
 
-        public void AnimateProp( Prop prop)
+        public void AnimateProp(Prop prop)
         {
             if(prop == null)
             {

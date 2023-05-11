@@ -62,6 +62,7 @@
     <Compile Include="src\Main.cs" />
     <Compile Include="src\Patches\Guns\InventoryAmmoReciever.cs" />
     <Compile Include="src\Patches\Interaction\SimpleGripEvents.cs" />
+    <Compile Include="src\Patches\Rig\RigManager.cs" />
     <Compile Include="src\Patches\SFX\FootstepSFX.cs" />
     <Compile Include="src\Patches\Guns\Gun.cs" />
     <Compile Include="src\Patches\SFX\HandSFX.cs" />

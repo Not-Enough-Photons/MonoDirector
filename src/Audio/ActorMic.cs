@@ -107,7 +107,7 @@ namespace NEP.MonoDirector.Audio
             clip = Microphone.Start(null, false, 60 * 4, 44100);
         }
 
-        public void StopRecordingMicrophone()
+        public void StopRecording()
         {
             Microphone.End(null);
             source.clip = clip;

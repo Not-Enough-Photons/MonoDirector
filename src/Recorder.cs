@@ -1,9 +1,12 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using MelonLoader;
 using NEP.MonoDirector.Actors;
 using NEP.MonoDirector.State;
 
 using UnityEngine;
+
+using Avatar = SLZ.VRMK.Avatar;
 
 namespace NEP.MonoDirector.Core
 {
@@ -14,7 +17,7 @@ namespace NEP.MonoDirector.Core
             instance = this;
 
             Events.OnPreRecord += OnPreRecord;
-            Events.OnStartRecording += OnStartRecording;
+            Events.OnStartRecording += OnPostRecord;
             Events.OnRecordTick += OnRecordTick;
             Events.OnStopRecording += OnStopRecording;
         }
@@ -24,6 +27,8 @@ namespace NEP.MonoDirector.Core
         public float RecordingTime { get => recordingTime; }
 
         public int RecordTick { get => recordTick; }
+
+        public List<Actor> ActiveActors = new List<Actor>();
 
         public Actor ActiveActor { get => activeActor; }
         public Actor LastActor { get => lastActor; }
@@ -37,9 +42,13 @@ namespace NEP.MonoDirector.Core
 
         private int recordTick;
 
-        private bool retake = false;
+        public void SetActor(Avatar avatar)
+        {
+            lastActor = activeActor;
+            activeActor = new Actor(avatar);
+        }
 
-        public void LateUpdate()
+        public void Tick()
         {
             if (Director.PlayState != PlayState.Recording)
             {
@@ -49,12 +58,7 @@ namespace NEP.MonoDirector.Core
             Events.OnRecordTick?.Invoke();
         }
 
-        public void RetakeRecording()
-        {
-            retake = true;
-        }
-
-        public void BeginRecording()
+        public void StartRecordRoutine()
         {
             if (recordRoutine == null)
             {
@@ -90,10 +94,11 @@ namespace NEP.MonoDirector.Core
             }
         }
 
+        /// <summary>
+        /// Called when we first hit the record button.
+        /// </summary>
         public void OnPreRecord()
         {
-            retake = false;
-
             if (recordTick > 0)
             {
                 recordTick = 0;
@@ -103,7 +108,7 @@ namespace NEP.MonoDirector.Core
 
             recordingTime = 0f;
 
-            activeActor = new Actor(Constants.rigManager.avatar);
+            SetActor(Constants.rigManager.avatar);
 
             foreach (var castMember in Director.instance.Cast)
             {
@@ -115,11 +120,12 @@ namespace NEP.MonoDirector.Core
                 prop.OnSceneBegin();
                 prop.gameObject.SetActive(true);
             }
-
-            Constants.rigManager.bodyVitals.bodyLogEnabled = false;
         }
 
-        public void OnStartRecording()
+        /// <summary>
+        /// Called the moment the recording begins.
+        /// </summary>
+        public void OnPostRecord()
         {
             activeActor?.Microphone?.RecordMicrophone();
 
@@ -132,6 +138,9 @@ namespace NEP.MonoDirector.Core
             }
         }
 
+        /// <summary>
+        /// Called every frame.
+        /// </summary>
         public void OnRecordTick()
         {
             if (Director.PlayState == PlayState.Paused)
@@ -163,42 +172,39 @@ namespace NEP.MonoDirector.Core
             }
         }
 
+        /// <summary>
+        /// Called when the recording stops.
+        /// </summary>
         public void OnStopRecording()
         {
-            if (!retake)
-            {
-                activeActor?.Microphone?.StopRecordingMicrophone();
+            activeActor?.Microphone?.StopRecording();
 
-                foreach (Trackable castMember in Director.instance.Cast)
+            foreach (Trackable castMember in Director.instance.Cast)
+            {
+                if (castMember != null && castMember is Actor actorPlayer)
                 {
-                    if (castMember != null && castMember is Actor actorPlayer)
-                    {
-                        actorPlayer?.Microphone?.StopPlayback();
-                    }
+                    actorPlayer?.Microphone?.StopPlayback();
                 }
-
-                activeActor.CloneAvatar();
-                Director.instance.Cast.Add(activeActor);
-                lastActor = activeActor;
-
-                activeActor = null;
-
-                Director.instance.WorldProps.AddRange(Director.instance.RecordingProps);
-                Director.instance.LastRecordedProps = Director.instance.RecordingProps;
-                Director.instance.RecordingProps.Clear();
             }
-            else
-            {
-                activeActor = null;
-            }
+
+            activeActor.CloneAvatar();
+            Director.instance.Cast.Add(activeActor);
+            lastActor = activeActor;
+
+            activeActor = null;
+
+            Director.instance.Cast.AddRange(ActiveActors);
+            ActiveActors.Clear();
+
+            Director.instance.WorldProps.AddRange(Director.instance.RecordingProps);
+            Director.instance.LastRecordedProps = Director.instance.RecordingProps;
+            Director.instance.RecordingProps.Clear();
 
             if (recordRoutine != null)
             {
                 MelonCoroutines.Stop(recordRoutine);
                 recordRoutine = null;
             }
-
-            Constants.rigManager.bodyVitals.bodyLogEnabled = true;
         }
 
         public IEnumerator RecordRoutine()
@@ -209,7 +215,7 @@ namespace NEP.MonoDirector.Core
 
             while (Director.PlayState == PlayState.Recording || Director.PlayState == PlayState.Paused)
             {
-                LateUpdate();
+                Tick();
                 yield return null;
             }
             
