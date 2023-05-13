@@ -16,7 +16,6 @@ namespace NEP.MonoDirector.Cameras
         public LensDistortion LensDistortion { get; private set; }
         public ChromaticAberration ChromaticAberration { get; private set; }
         public MKGlow MkGlow { get; private set; }
-        public MotionBlur MotionBlur { get; private set; }
         public Vignette Vignette { get; private set; }
         public Bloom Bloom { get; private set; }
 
@@ -28,7 +27,6 @@ namespace NEP.MonoDirector.Cameras
             ChromaticAberration = RenderingVolume.profile.components[1].Cast<ChromaticAberration>();
             MkGlow = RenderingVolume.profile.components[4].Cast<MKGlow>();
 
-            MotionBlur = RenderingVolume.profile.Add<MotionBlur>(true);
             Vignette = RenderingVolume.profile.Add<Vignette>(true);
             Bloom = RenderingVolume.profile.Add<Bloom>(true);
         }
@@ -39,6 +37,16 @@ namespace NEP.MonoDirector.Cameras
             {
                 component.SetAllOverridesTo(enabled);
             }
+        }
+
+        public void SetValue(FloatParameter parameter, float value)
+        {
+            if(parameter == null)
+            {
+                return;
+            }
+
+            parameter.value = value;
         }
     }
 }

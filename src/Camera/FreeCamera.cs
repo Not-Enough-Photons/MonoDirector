@@ -11,7 +11,7 @@ namespace NEP.MonoDirector.Cameras
     /// Simple camera controller.
     /// </summary>
     [MelonLoader.RegisterTypeInIl2Cpp]
-    public class FreeCameraRig : MonoBehaviour
+    public class FreeCamera : MonoBehaviour
     {
         public class Settings
         {
@@ -31,22 +31,17 @@ namespace NEP.MonoDirector.Cameras
             public float shakeMultiplier;
         }
 
-        public FreeCameraRig(System.IntPtr ptr) : base(ptr) { }
+        public FreeCamera(System.IntPtr ptr) : base(ptr) { }
 
         public Settings CameraSettings;
 
         private Vector3 shakeVector;
 
         private Vector3 wishDir = Vector3.zero;
-        private Quaternion rot = Quaternion.identity;
 
         private bool fastCamera => Input.GetKey(KeyCode.LeftShift);
 
-        private bool smoothRotation = true;
-
         private float currentSpeed = 0f;
-
-        private Vector3 cameraPosition;
 
         private Rigidbody rigidbody;
 
@@ -100,8 +95,6 @@ namespace NEP.MonoDirector.Cameras
             Transform t = CameraRigManager.Instance.Camera.transform;
 
             currentSpeed = fastCamera ? CameraSettings.fastSpeed : CameraSettings.slowSpeed;
-
-            cameraPosition = inputVector * currentSpeed;
 
             inputVector = Vector3.ClampMagnitude(inputVector, CameraSettings.maxSpeed);
 

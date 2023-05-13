@@ -1,16 +1,21 @@
-﻿using NEP.MonoDirector.State;
+﻿using NEP.MonoDirector.Patches;
+using NEP.MonoDirector.State;
 
 using SLZ.Bonelab;
 
 using UnityEngine;
 
+using RigManager = SLZ.Rig.RigManager;
+
 namespace NEP.MonoDirector.Cameras
 {
     public class CameraRigManager
     {
-        public CameraRigManager(GameObject camera)
+        public CameraRigManager()
         {
-            this.cameraObject = camera;
+            RigManager rigManager = Constants.rigManager;
+            RigScreenOptions screenOptions = rigManager.GetComponent<RigScreenOptions>();
+            this.screenOptions = screenOptions;
             Start();
         }
 
@@ -19,8 +24,8 @@ namespace NEP.MonoDirector.Cameras
         public Camera Camera { get; private set; }
 
         public InputController InputController { get; private set; }
-        public FreeCameraRig FreeCamera { get; private set; }
-        public FollowCameraRig FollowCamera { get; private set; }
+        public FreeCamera FreeCamera { get; private set; }
+        public FollowCamera FollowCamera { get; private set; }
 
         public FOVController FOVController { get; private set; }
         public CameraDamp CameraDamp { get; private set; }
@@ -33,41 +38,33 @@ namespace NEP.MonoDirector.Cameras
         private GameObject cameraModel;
         private MeshRenderer cameraRenderer;
 
+        private RigScreenOptions screenOptions;
+
         private void Start()
         {
             Instance = this;
 
-            cameraObject.transform.parent = null;
-
-            InitializeCamera(cameraObject);
+            InitializeCamera(screenOptions);
             //InitializeCameraModel();
         }
 
-        private void InitializeCamera(GameObject cameraObject)
+        private void InitializeCamera(RigScreenOptions screenOptions)
         {
-            cameraObject.transform.parent = null;
-
-            Camera = cameraObject.GetComponent<Camera>();
+            Camera = screenOptions.cam;
 
             SmoothFollower = cameraObject.GetComponent<SmoothFollower>();
             InputController = cameraObject.AddComponent<InputController>();
 
-            FreeCamera = cameraObject.AddComponent<FreeCameraRig>();
+            FreeCamera = cameraObject.AddComponent<FreeCamera>();
 
             FOVController = cameraObject.AddComponent<FOVController>();
-            FollowCamera = cameraObject.AddComponent<FollowCameraRig>();
+            FollowCamera = cameraObject.AddComponent<FollowCamera>();
             CameraDamp = cameraObject.AddComponent<CameraDamp>();
             CameraVolume = cameraObject.AddComponent<CameraVolume>();
 
-            SmoothFollower.enabled = false;
+            SetCameraMode(CameraMode.None);
 
-            FreeCamera.enabled = false;
-            FollowCamera.enabled = false;
-
-            CameraDamp.enabled = true;
-            CameraVolume.enabled = true;
-
-            CameraDamp.SetFollowTarget(SmoothFollower.targetTransform);
+            FollowCamera.SetFollowTarget(SmoothFollower.targetTransform);
         }
 
         private void InitializeCameraModel()
@@ -88,17 +85,44 @@ namespace NEP.MonoDirector.Cameras
         {
             this.cameraMode = cameraMode;
 
-            if(cameraMode == CameraMode.Free)
+            // Default spectator camera mode
+            if(cameraMode == CameraMode.None)
             {
-                FreeCamera.enabled = true;
+                // Disable any effects that we have on the camera
+                FreeCamera.enabled = false;
                 CameraDamp.enabled = false;
+                FollowCamera.enabled = false;
+
+                // Override any effects
+                SmoothFollower.enabled = true;
             }
 
+            // Free camera mode using WASD and the mouse
+            if(cameraMode == CameraMode.Free)
+            {
+                SmoothFollower.enabled = false;
+
+                FreeCamera.enabled = true;
+
+                CameraDamp.enabled = false;
+                FollowCamera.enabled = false;
+            }
+
+            // Modified spectator camera with smooth rotations and custom targets
             if(cameraMode == CameraMode.Head)
             {
-                FreeCamera.enabled = false;
+                SmoothFollower.enabled = false;
+
                 CameraDamp.enabled = true;
+                FollowCamera.enabled = true;
+
+                FreeCamera.enabled = false;
             }
+        }
+
+        public void SetCameraSmoothness(float smoothness)
+        {
+            FollowCamera.delta = smoothness;
         }
 
         public void SetMouseSensitivity(float mouseSensitivity)
