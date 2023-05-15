@@ -48,6 +48,7 @@
     <Compile Include="src\Camera\FollowCamera.cs" />
     <Compile Include="src\Actors\ActorBody.cs" />
     <Compile Include="src\Data\ActionFrame.cs" />
+    <Compile Include="src\Data\BodyPartData.cs" />
     <Compile Include="src\Data\FrameGroup.cs" />
     <Compile Include="src\Data\Interpolator.cs" />
     <Compile Include="src\Data\ObjectFrame.cs" />

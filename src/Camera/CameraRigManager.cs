@@ -13,13 +13,15 @@ namespace NEP.MonoDirector.Cameras
     {
         public CameraRigManager()
         {
-            RigManager rigManager = Constants.rigManager;
+            RigManager rigManager = BoneLib.Player.rigManager;
             RigScreenOptions screenOptions = rigManager.GetComponent<RigScreenOptions>();
-            this.screenOptions = screenOptions;
+            RigScreenOptions = screenOptions;
             Start();
         }
 
         public static CameraRigManager Instance { get; private set; }
+
+        public RigScreenOptions RigScreenOptions { get; private set; }
 
         public Camera Camera { get; private set; }
 
@@ -32,25 +34,111 @@ namespace NEP.MonoDirector.Cameras
         public CameraVolume CameraVolume { get; private set; }
         public SmoothFollower SmoothFollower { get; private set; }
 
+        public CameraMode CameraMode
+        {
+            get => cameraMode;
+            set
+            {
+                cameraMode = value;
+
+                // Default spectator camera mode
+                if (cameraMode == CameraMode.None)
+                {
+                    // Disable any effects that we have on the camera
+                    FreeCamera.enabled = false;
+                    CameraDamp.enabled = false;
+                    FollowCamera.enabled = false;
+
+                    // Override any effects
+                    SmoothFollower.enabled = true;
+                }
+
+                // Free camera mode using WASD and the mouse
+                if (cameraMode == CameraMode.Free)
+                {
+                    SmoothFollower.enabled = false;
+
+                    FreeCamera.enabled = true;
+
+                    CameraDamp.enabled = false;
+                    FollowCamera.enabled = false;
+                }
+
+                // Modified spectator camera with smooth rotations and custom targets
+                if (cameraMode == CameraMode.Head)
+                {
+                    SmoothFollower.enabled = false;
+
+                    CameraDamp.enabled = false;
+                    FollowCamera.enabled = true;
+
+                    FreeCamera.enabled = false;
+                }
+            }
+        }
+
+        public float CameraSmoothness
+        {
+            get => FollowCamera.delta;
+            set => FollowCamera.delta = value;
+        }
+
+        public float MouseSensitivity
+        {
+            get => InputController.mouseSensitivity;
+            set => InputController.mouseSensitivity = value;
+        }
+        
+        public float MouseSmoothness
+        {
+            get => InputController.mouseSmoothness;
+            set => InputController.mouseSmoothness = value;
+        }
+
+        public float SlowSpeed
+        {
+            get => FreeCamera.CameraSettings.slowSpeed;
+            set => FreeCamera.CameraSettings.slowSpeed = value;
+        }
+
+        public float FastSpeed
+        {
+            get => FreeCamera.CameraSettings.fastSpeed;
+            set => FreeCamera.CameraSettings.fastSpeed = value;
+        }
+
+        public float MaxSpeed
+        {
+            get => FreeCamera.CameraSettings.maxSpeed;
+            set => FreeCamera.CameraSettings.maxSpeed = value;
+        }
+
+        public float Friction
+        {
+            get => FreeCamera.CameraSettings.friction;
+            set => FreeCamera.CameraSettings.friction = value;
+        }
+
         private GameObject cameraObject;
         private CameraMode cameraMode;
 
         private GameObject cameraModel;
         private MeshRenderer cameraRenderer;
 
-        private RigScreenOptions screenOptions;
-
         private void Start()
         {
             Instance = this;
 
-            InitializeCamera(screenOptions);
+            InitializeCamera(RigScreenOptions);
             //InitializeCameraModel();
         }
 
         private void InitializeCamera(RigScreenOptions screenOptions)
         {
             Camera = screenOptions.cam;
+            cameraObject = Camera.gameObject;
+
+            cameraObject.transform.parent = null;
 
             SmoothFollower = cameraObject.GetComponent<SmoothFollower>();
             InputController = cameraObject.AddComponent<InputController>();
@@ -62,7 +150,7 @@ namespace NEP.MonoDirector.Cameras
             CameraDamp = cameraObject.AddComponent<CameraDamp>();
             CameraVolume = cameraObject.AddComponent<CameraVolume>();
 
-            SetCameraMode(CameraMode.None);
+            CameraMode = CameraMode.None;
 
             FollowCamera.SetFollowTarget(SmoothFollower.targetTransform);
         }
@@ -79,80 +167,6 @@ namespace NEP.MonoDirector.Cameras
             cameraRenderer.transform.localPosition = Vector3.forward * -0.1f;
             cameraRenderer.transform.eulerAngles = Vector3.zero;
             cameraRenderer.transform.localScale = new Vector3(0.0075f, 0.0075f, -0.0075f);
-        }
-
-        public void SetCameraMode(CameraMode cameraMode)
-        {
-            this.cameraMode = cameraMode;
-
-            // Default spectator camera mode
-            if(cameraMode == CameraMode.None)
-            {
-                // Disable any effects that we have on the camera
-                FreeCamera.enabled = false;
-                CameraDamp.enabled = false;
-                FollowCamera.enabled = false;
-
-                // Override any effects
-                SmoothFollower.enabled = true;
-            }
-
-            // Free camera mode using WASD and the mouse
-            if(cameraMode == CameraMode.Free)
-            {
-                SmoothFollower.enabled = false;
-
-                FreeCamera.enabled = true;
-
-                CameraDamp.enabled = false;
-                FollowCamera.enabled = false;
-            }
-
-            // Modified spectator camera with smooth rotations and custom targets
-            if(cameraMode == CameraMode.Head)
-            {
-                SmoothFollower.enabled = false;
-
-                CameraDamp.enabled = true;
-                FollowCamera.enabled = true;
-
-                FreeCamera.enabled = false;
-            }
-        }
-
-        public void SetCameraSmoothness(float smoothness)
-        {
-            FollowCamera.delta = smoothness;
-        }
-
-        public void SetMouseSensitivity(float mouseSensitivity)
-        {
-            InputController.mouseSensitivity = mouseSensitivity;
-        }
-
-        public void SetMouseSmoothness(float smoothness)
-        {
-            InputController.mouseSmoothness = smoothness;
-        }
-
-        public void SetSlowSpeed(float slowSpeed)
-        {
-            FreeCamera.CameraSettings.slowSpeed = slowSpeed;
-        }
-
-        public void SetFastSpeed(float fastSpeed)
-        {
-            FreeCamera.CameraSettings.fastSpeed = fastSpeed;
-        }
-
-        public void SetMaxSpeed(float maxSpeed)
-        {
-            FreeCamera.CameraSettings.maxSpeed = maxSpeed;
-        }
-
-        public void SetFriction(float friction)
-        {
-            FreeCamera.CameraSettings.friction = friction;
         }
     }
 }

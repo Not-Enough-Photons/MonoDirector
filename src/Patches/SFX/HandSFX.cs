@@ -1,7 +1,7 @@
-﻿using NEP.MonoDirector.Actors;
-using NEP.MonoDirector.Core;
-using SLZ.Utilities;
+﻿using NEP.MonoDirector.Core;
 using UnityEngine;
+
+using BoneLib.Nullables;
 
 namespace NEP.MonoDirector.Patches
 {
@@ -28,7 +28,8 @@ namespace NEP.MonoDirector.Patches
             internal static void PlaySFX(SLZ.SFX.HandSFX hand)
             {
                 int rand = Random.Range(0, hand.grab.Count);
-                AudioSource.PlayClipAtPoint(hand.grab[rand], hand.transform.position);
+
+                NullableMethodExtensions.AudioPlayer_PlayAtPoint(hand.grab[rand], hand.transform.position);
             }
         }
     }

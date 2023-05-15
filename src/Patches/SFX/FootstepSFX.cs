@@ -1,7 +1,7 @@
-﻿using NEP.MonoDirector.Actors;
-using NEP.MonoDirector.Core;
-using SLZ.Utilities;
+﻿using NEP.MonoDirector.Core;
 using UnityEngine;
+
+using BoneLib.Nullables;
 
 namespace NEP.MonoDirector.Patches
 {
@@ -25,7 +25,7 @@ namespace NEP.MonoDirector.Patches
             internal static void PlayFootstep(SLZ.SFX.FootstepSFX footstep, float velocitySqr)
             {
                 int rand = Random.Range(0, footstep.walkConcrete.Count);
-                AudioSource.PlayClipAtPoint(footstep.walkConcrete[rand], footstep.transform.position, velocitySqr);
+                NullableMethodExtensions.AudioPlayer_PlayAtPoint(footstep.walkConcrete[rand], footstep.transform.position);
             }
         }
     }

@@ -17,8 +17,6 @@ namespace NEP.MonoDirector.UI
         internal static MenuCategory actorCategory;
         internal static MenuCategory settingsCategory;
 
-        internal static Director director = Director.instance;
-
         internal static void Initialize()
         {
             rootCategory = MenuManager.CreateCategory("Not Enough Photons", Color.white);
@@ -36,17 +34,17 @@ namespace NEP.MonoDirector.UI
 
         private static void BuildPlaybackMenu(MenuCategory category)
         {
-            category.CreateFunctionElement("Record", Color.red, () => director.Record());
-            category.CreateFunctionElement("Play", Color.green, () => director.Play());
-            category.CreateFunctionElement("Pause", Color.yellow, () => director.Pause());
-            category.CreateFunctionElement("Stop", Color.red, () => director.Stop());
+            category.CreateFunctionElement("Record", Color.red, () => Director.instance.Record());
+            category.CreateFunctionElement("Play", Color.green, () => Director.instance.Play());
+            category.CreateFunctionElement("Pause", Color.yellow, () => Director.instance.Pause());
+            category.CreateFunctionElement("Stop", Color.red, () => Director.instance.Stop());
         }
 
         private static void BuildActorMenu(MenuCategory category)
         {
-            category.CreateFunctionElement("Delete Last Actor", Color.red, () => director.RemoveActor(Recorder.instance.LastActor), "Are you sure? This cannot be undone.");
-            category.CreateFunctionElement("Remove All Actors", Color.red, () => director.RemoveAllActors(), "Are you sure? This cannot be undone.");
-            category.CreateFunctionElement("Clear Scene", Color.red, () => director.ClearScene(), "Are you sure? This cannot be undone.");
+            category.CreateFunctionElement("Delete Last Actor", Color.red, () => Director.instance.RemoveActor(Recorder.instance.LastActor), "Are you sure? This cannot be undone.");
+            category.CreateFunctionElement("Remove All Actors", Color.red, () => Director.instance.RemoveAllActors(), "Are you sure? This cannot be undone.");
+            category.CreateFunctionElement("Clear Scene", Color.red, () => Director.instance.ClearScene(), "Are you sure? This cannot be undone.");
         }
 
         private static void BuildSettingsMenu(MenuCategory category)
@@ -144,8 +142,6 @@ namespace NEP.MonoDirector.UI
 
         private static void BuildVFXCategory(MenuCategory vfxCategory)
         {
-            CameraVolume cameraVolume = CameraRigManager.Instance.CameraVolume;
-
             vfxCategory.CreateBoolElement("Lens Distortion", Color.white, true, (value) => CameraRigManager.Instance.CameraVolume.LensDistortion.active = value);
             //vfxCategory.CreateBoolElement("Motion Blur", Color.white, true, (value) => CameraRigManager.Instance.CameraVolume.MotionBlur.active = value);
             vfxCategory.CreateBoolElement("Chromatic Abberation", Color.white, true, (value) => CameraRigManager.Instance.CameraVolume.ChromaticAberration.active = value);

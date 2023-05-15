@@ -29,6 +29,8 @@ namespace NEP.MonoDirector.Tools
         public GameObject propModeIcon;
         public GameObject removeModeIcon;
 
+        public float fireForce = 5f;
+
         private GunSFX gunSFX;
 
         private void Awake()
@@ -61,7 +63,7 @@ namespace NEP.MonoDirector.Tools
         private void PrimaryButtonDown()
         {
             gunSFX.GunShot();
-            rigidbody.AddForce(rigidbody.transform.up - firePoint.forward * 10f, ForceMode.Impulse);
+            rigidbody.AddForce(rigidbody.transform.up - firePoint.forward * fireForce, ForceMode.Impulse);
 
             if(Physics.Raycast(firePoint.position, firePoint.forward * maxRange, out RaycastHit hit))
             {

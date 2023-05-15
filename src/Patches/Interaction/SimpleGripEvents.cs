@@ -12,11 +12,11 @@ namespace NEP.MonoDirector.Patches
         {
             internal static void Postfix(global::SimpleGripEvents __instance, Hand hand)
             {
-                /*if(__instance.GetComponent<GripEventListener>() == null)
-                {
+               if(__instance.GetComponent<GripEventListener>() == null)
+               {
                     var listener = __instance.gameObject.AddComponent<GripEventListener>();
                     listener.SetProp(__instance.Grips[0].Host.Rb.GetComponent<Prop>());
-                }*/
+               }
             }
         }
 
@@ -25,12 +25,12 @@ namespace NEP.MonoDirector.Patches
         {
             internal static void Postfix(global::SimpleGripEvents __instance, Hand hand)
             {
-                /*GripEventListener listener = __instance.GetComponent<GripEventListener>();
+                GripEventListener listener = __instance.GetComponent<GripEventListener>();
 
                 if (listener != null)
                 {
                     GameObject.Destroy(listener);
-                }*/
+                }
             }
         }
     }

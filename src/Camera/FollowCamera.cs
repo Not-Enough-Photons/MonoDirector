@@ -1,4 +1,5 @@
-﻿using NEP.MonoDirector.State;
+﻿using NEP.MonoDirector.Data;
+using NEP.MonoDirector.State;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,11 +10,11 @@ namespace NEP.MonoDirector.Cameras
     {
         public FollowCamera(System.IntPtr ptr) : base(ptr) { }
 
-        public readonly Dictionary<BodyPart, Vector3> FollowPoints = new Dictionary<BodyPart, Vector3>()
+        public readonly Dictionary<BodyPart, BodyPartData> FollowPoints = new Dictionary<BodyPart, BodyPartData>()
         {
-            { BodyPart.Head, new Vector3() },
-            { BodyPart.Chest, new Vector3() },
-            { BodyPart.Pelvis, new Vector3() }
+            { BodyPart.Head, new BodyPartData(CameraRigManager.Instance.RigScreenOptions.TargetTransform) },
+            { BodyPart.Chest, new BodyPartData(Constants.rigManager.physicsRig.m_chest) },
+            { BodyPart.Pelvis, new BodyPartData(Constants.rigManager.physicsRig.m_pelvis) }
         };
 
         public Transform FollowTarget { get => followTarget; }
@@ -33,10 +34,6 @@ namespace NEP.MonoDirector.Cameras
             }
 
             transform.position = followTarget.position;
-        }
-
-        private void LateUpdate()
-        {
             transform.rotation = Quaternion.Slerp(transform.rotation, followTarget.rotation, delta * Time.deltaTime);
         }
 
@@ -65,7 +62,7 @@ namespace NEP.MonoDirector.Cameras
             positionOffset = Vector3.zero;
             rotationEulerOffset = Vector3.zero;
 
-            Vector3 point = FollowPoints[part];
+            Vector3 point = FollowPoints[part].position;
 
             followTarget.position = point;
 

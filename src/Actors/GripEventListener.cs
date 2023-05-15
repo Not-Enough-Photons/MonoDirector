@@ -44,6 +44,11 @@ namespace NEP.MonoDirector.Actors
             });
         }
 
+        private void OnDestroy()
+        {
+
+        }
+
         public void SetProp(Prop prop)
         {
             this.prop = prop;
@@ -52,6 +57,13 @@ namespace NEP.MonoDirector.Actors
         private void OnAttach()
         {
             if(Director.PlayState != State.PlayState.Recording)
+            {
+                return;
+            }
+
+            Main.Logger.Msg("OnAttach");
+
+            if(prop == null)
             {
                 return;
             }
@@ -66,6 +78,13 @@ namespace NEP.MonoDirector.Actors
                 return;
             }
 
+            Main.Logger.Msg("OnDetach");
+
+            if (prop == null)
+            {
+                return;
+            }
+
             prop.RecordAction(new System.Action(() => gripEvents.OnDetach?.Invoke()));
         }
 
@@ -76,12 +95,26 @@ namespace NEP.MonoDirector.Actors
                 return;
             }
 
+            Main.Logger.Msg("OnIndexDown");
+
+            if (prop == null)
+            {
+                return;
+            }
+
             prop.RecordAction(new System.Action(() => gripEvents.OnIndexDown?.Invoke()));
         }
 
         private void OnMenuTapDown()
         {
             if (Director.PlayState != State.PlayState.Recording)
+            {
+                return;
+            }
+
+            Main.Logger.Msg("OnMenuTapDown");
+
+            if (prop == null)
             {
                 return;
             }
