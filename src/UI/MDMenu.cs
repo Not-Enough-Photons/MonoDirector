@@ -56,7 +56,7 @@ namespace NEP.MonoDirector.UI
             audioCategory.CreateBoolElement("Use Microphone", Color.white, false, (value) => Settings.World.useMicrophone = value);
             audioCategory.CreateBoolElement("Mic Playback", Color.white, false, (value) => Settings.World.micPlayback = value);
 
-            cameraCategory.CreateEnumElement("Camera Mode", Color.white, CameraMode.None, (mode) => CameraRigManager.Instance.SetCameraMode(mode));
+            cameraCategory.CreateEnumElement("Camera Mode", Color.white, CameraMode.None, (mode) => CameraRigManager.Instance.CameraMode = mode);
 
             var headModeCategory = cameraCategory.CreateCategory("Head Mode Settings", Color.white);
             var freeCamCategory = cameraCategory.CreateCategory("Free Camera Settings", Color.white);
@@ -79,7 +79,7 @@ namespace NEP.MonoDirector.UI
 
         private static void BuildHeadModeCategory(MenuCategory headModeCategory)
         {
-            headModeCategory.CreateFloatElement("Interpolation", Color.white, 4f, 1f, 0f, 64f, (value) => CameraRigManager.Instance.SetCameraSmoothness(value));
+            headModeCategory.CreateFloatElement("Interpolation", Color.white, 4f, 1f, 0f, 64f, (value) => CameraRigManager.Instance.CameraSmoothness = value);
             headModeCategory.CreateEnumElement("Position", Color.white, BodyPart.Head, (bone) => CameraRigManager.Instance.FollowCamera.SetFollowBone(bone));
         }
 
@@ -92,7 +92,7 @@ namespace NEP.MonoDirector.UI
                 0.5f,
                 0f,
                 float.PositiveInfinity,
-                (value) => CameraRigManager.Instance?.SetMouseSensitivity(value));
+                (value) => CameraRigManager.Instance.MouseSensitivity = value);
 
             freeModeCategory.CreateFloatElement(
                 "Mouse Smoothing",
@@ -101,7 +101,7 @@ namespace NEP.MonoDirector.UI
                 0.5f,
                 0f,
                 float.PositiveInfinity,
-                (value) => CameraRigManager.Instance?.SetMouseSmoothness(value));
+                (value) => CameraRigManager.Instance.MouseSmoothness = value);
 
             freeModeCategory.CreateFloatElement(
                 "Slow Speed",
@@ -110,7 +110,7 @@ namespace NEP.MonoDirector.UI
                 1f,
                 0f,
                 float.PositiveInfinity,
-                (value) => CameraRigManager.Instance?.SetSlowSpeed(value));
+                (value) => CameraRigManager.Instance.SlowSpeed = value);
 
             freeModeCategory.CreateFloatElement(
                 "Fast Speed",
@@ -119,7 +119,7 @@ namespace NEP.MonoDirector.UI
                 1f,
                 0f,
                 float.PositiveInfinity,
-                (value) => CameraRigManager.Instance?.SetFastSpeed(value));
+                (value) => CameraRigManager.Instance.FastSpeed = value);
 
             freeModeCategory.CreateFloatElement(
                 "Max Speed",
@@ -128,7 +128,7 @@ namespace NEP.MonoDirector.UI
                 1f,
                 0f,
                 float.PositiveInfinity,
-                (value) => CameraRigManager.Instance?.SetMaxSpeed(value));
+                (value) => CameraRigManager.Instance.MaxSpeed = value);
 
             freeModeCategory.CreateFloatElement(
                 "Friction",
@@ -137,7 +137,7 @@ namespace NEP.MonoDirector.UI
                 1f,
                 0f,
                 float.PositiveInfinity,
-                (value) => CameraRigManager.Instance?.SetFriction(value));
+                (value) => CameraRigManager.Instance.Friction = value);
         }
 
         private static void BuildVFXCategory(MenuCategory vfxCategory)
