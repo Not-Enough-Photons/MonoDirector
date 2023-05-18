@@ -24,6 +24,7 @@ namespace NEP.MonoDirector.Cameras
         public RigScreenOptions RigScreenOptions { get; private set; }
 
         public Camera Camera { get; private set; }
+        public Camera ClonedCamera { get; private set; }
 
         public InputController InputController { get; private set; }
         public FreeCamera FreeCamera { get; private set; }
@@ -32,7 +33,10 @@ namespace NEP.MonoDirector.Cameras
         public FOVController FOVController { get; private set; }
         public CameraDamp CameraDamp { get; private set; }
         public CameraVolume CameraVolume { get; private set; }
+        public CameraDisplay CameraDisplay { get; private set; }
         public SmoothFollower SmoothFollower { get; private set; }
+
+        public RenderTexture CameraDisplayTexture { get; private set; }
 
         public CameraMode CameraMode
         {
@@ -138,6 +142,9 @@ namespace NEP.MonoDirector.Cameras
             Camera = screenOptions.cam;
             cameraObject = Camera.gameObject;
 
+            ClonedCamera = GameObject.Instantiate(cameraObject).GetComponent<Camera>();
+            ClonedCamera.gameObject.SetActive(false);
+
             cameraObject.transform.parent = null;
 
             SmoothFollower = cameraObject.GetComponent<SmoothFollower>();
@@ -149,10 +156,15 @@ namespace NEP.MonoDirector.Cameras
             FollowCamera = cameraObject.AddComponent<FollowCamera>();
             CameraDamp = cameraObject.AddComponent<CameraDamp>();
             CameraVolume = cameraObject.AddComponent<CameraVolume>();
+            //CameraDisplay = cameraObject.AddComponent<CameraDisplay>();
+
+            FOVController.SetCamera(Camera);
 
             CameraMode = CameraMode.None;
 
             FollowCamera.SetFollowTarget(SmoothFollower.targetTransform);
+
+            CameraDisplay = ClonedCamera.gameObject.AddComponent<CameraDisplay>();
         }
 
         private void InitializeCameraModel()

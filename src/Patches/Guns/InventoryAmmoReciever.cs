@@ -16,7 +16,7 @@ namespace NEP.MonoDirector.Patches.Guns
                 if (Director.PlayState == State.PlayState.Recording)
                 {
                     HandReciever reciever = hand.AttachedReceiver;
-                    var poolee = reciever.Host.Rb.GetComponent<AssetPoolee>();
+                    var poolee = reciever.Host.Rb.GetComponent<InteractableHost>();
                     PropBuilder.BuildProp(poolee);
                 }
             }

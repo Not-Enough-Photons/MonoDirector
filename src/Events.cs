@@ -28,6 +28,12 @@ namespace NEP.MonoDirector
             OnRecordTick = null;
 
             OnPreSnapshot = null;
+
+            OnPrePhotograph = null;
+            OnPostPhotograph = null;
+            OnPhotograph = null;
+
+            OnTimerCountdown = null;
         }
 
         public static Action<Trackable> OnActorCasted;
@@ -50,6 +56,12 @@ namespace NEP.MonoDirector
 
         public static Action OnPlaybackTick;
         public static Action OnRecordTick;
+
+        public static Action OnPrePhotograph;
+        public static Action OnPhotograph;
+        public static Action OnPostPhotograph;
+
+        public static Action OnTimerCountdown;
 
         public static Action<PlayState> OnPlayStateSet;
 

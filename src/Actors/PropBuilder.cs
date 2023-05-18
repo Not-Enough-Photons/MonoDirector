@@ -1,26 +1,24 @@
-﻿using static MelonLoader.MelonLogger;
-
-using NEP.MonoDirector.Core;
+﻿using NEP.MonoDirector.Core;
 
 using UnityEngine;
+
+using SLZ.Interaction;
 using SLZ.VFX;
-using NEP.MonoDirector.Patches.Guns;
 using SLZ.Vehicle;
-using static NEP.MonoDirector.Patches.GunSFX;
 
 namespace NEP.MonoDirector.Actors
 {
     public static class PropBuilder
     {
-        public static void BuildProp(SLZ.Marrow.Pool.AssetPoolee pooleeObject)
+        public static void BuildProp(InteractableHost interactableHost)
         {
-            if (pooleeObject == null)
+            if (interactableHost == null)
             {
                 return;
             }
 
-            var gameObject = pooleeObject.gameObject;
-            var rigidbody = gameObject.GetComponent<Rigidbody>();
+            var gameObject = interactableHost.gameObject;
+            var rigidbody = interactableHost.Rb;
 
             bool hasRigidbody = rigidbody != null;
             bool isProp = gameObject.GetComponent<Prop>() != null;
@@ -112,9 +110,9 @@ namespace NEP.MonoDirector.Actors
             }
         }
 
-        public static void RemoveProp(SLZ.Marrow.Pool.AssetPoolee pooleeObject)
+        public static void RemoveProp(InteractableHost interactableHost)
         {
-            var gameObject = pooleeObject.gameObject;
+            var gameObject = interactableHost.gameObject;
             var vfxBlip = gameObject.GetComponent<Blip>();
 
             Prop actorProp = gameObject.GetComponent<Prop>();

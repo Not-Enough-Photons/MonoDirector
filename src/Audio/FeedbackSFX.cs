@@ -22,24 +22,28 @@ namespace NEP.MonoDirector.Audio
 
         private void OnEnable()
         {
-            Events.OnPreRecord += OnStartRecording;
-            Events.OnStopRecording += OnStopRecording;
+            Events.OnPreRecord += Preroll;
+            Events.OnStopRecording += Beep;
 
-            Events.OnPrePlayback += OnPrePlay;
-            Events.OnStopPlayback += OnStopPlayback;
+            Events.OnPrePlayback += Postroll;
+            Events.OnStopPlayback += Beep;
 
-            Events.OnPreSnapshot += OnStartRecording;
+            Events.OnPreSnapshot += Preroll;
+
+            Events.OnTimerCountdown += Beep;
         }
 
         private void OnDisable()
         {
-            Events.OnStartRecording -= OnStartRecording;
-            Events.OnStopRecording -= OnStopRecording;
+            Events.OnStartRecording -= Preroll;
+            Events.OnStopRecording -= Beep;
 
-            Events.OnPlay -= OnPrePlay;
-            Events.OnStopPlayback -= OnStopPlayback;
+            Events.OnPlay -= Postroll;
+            Events.OnStopPlayback -= Beep;
 
-            Events.OnPreSnapshot -= OnStartRecording;
+            Events.OnPreSnapshot -= Preroll;
+
+            Events.OnTimerCountdown -= Beep;
         }
 
         public void Play(AudioClip clip)
@@ -48,24 +52,19 @@ namespace NEP.MonoDirector.Audio
             source.PlayOneShot(clip);
         }
 
-        private void OnStartRecording()
+        private void Preroll()
         {
             Play(sfx_preroll);
         }
 
-        private void OnStopRecording()
+        private void Beep()
         {
             Play(sfx_beep);
         }
 
-        private void OnPrePlay() 
+        private void Postroll() 
         {
             Play(sfx_postroll);
-        }
-
-        private void OnStopPlayback()
-        {
-            Play(sfx_beep);
         }
     }
 }

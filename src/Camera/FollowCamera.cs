@@ -37,6 +37,11 @@ namespace NEP.MonoDirector.Cameras
             transform.rotation = Quaternion.Slerp(transform.rotation, followTarget.rotation, delta * Time.deltaTime);
         }
 
+        public void SetDefaultTarget()
+        {
+            SetFollowTarget(FollowPoints[BodyPart.Head].transform);
+        }
+
         public void SetFollowTarget(Transform target)
         {
             followTarget = target;

@@ -72,7 +72,7 @@ namespace NEP.MonoDirector.Tools
                     return;
                 }
 
-                AssetPoolee entity = hit.rigidbody.GetComponent<AssetPoolee>();
+                InteractableHost entity = hit.rigidbody.GetComponent<InteractableHost>();
 
                 if(entity == null)
                 {

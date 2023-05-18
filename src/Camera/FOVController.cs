@@ -10,14 +10,14 @@ namespace NEP.MonoDirector.Cameras
         public float fovChangeSmoothing = 10f;
         public float fovChangeRate = 4f;
 
-        private Camera camera => CameraRigManager.Instance.Camera;
+        private Camera camera;
 
         private float fieldOfView = 90f;
         private float lastFieldOfView = 0f;
 
         private void Update()
         {
-            UpdateFOV();
+            MouseFOV();
         }
 
         private void LateUpdate()
@@ -25,10 +25,20 @@ namespace NEP.MonoDirector.Cameras
             camera.fieldOfView = Mathf.Lerp(lastFieldOfView, fieldOfView, fovChangeSmoothing * Time.deltaTime);
         }
 
-        private void UpdateFOV()
+        private void MouseFOV()
         {
             lastFieldOfView = camera.fieldOfView;
-            fieldOfView -= Input.GetAxisRaw("Mouse ScrollWheel") * fovChangeRate;
+            //SetFOV(Input.GetAxisRaw("Mouse ScrollWheel") * fovChangeRate);
+        }
+
+        public void SetCamera(Camera camera)
+        {
+            this.camera = camera;
+        }
+
+        public void SetFOV(float fov)
+        {
+            fieldOfView -= fov;
         }
     }
 }
