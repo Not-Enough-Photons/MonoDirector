@@ -22,7 +22,7 @@ namespace NEP.MonoDirector.UI
 
         public static void Initialize()
         {
-            Warmup(32);
+            UIManager.Warmup(UIManager.propMarkerBarcode, 32);
 
             Events.OnPropCreated += AddMarkerToProp;
             Events.OnPropRemoved += RemoveMarkerFromProp;
@@ -105,29 +105,6 @@ namespace NEP.MonoDirector.UI
                     marker.gameObject.SetActive(true);
                 }
             }
-        }
-
-        private static void Warmup(int size)
-        {
-            for(int i = 0; i < size; i++)
-            {
-                string barcode = "NotEnoughPhotons.MonoDirector.Spawnable.UIPropMarker";
-                SpawnableCrateReference reference = new SpawnableCrateReference(barcode);
-
-                Spawnable icon = new Spawnable()
-                {
-                    crateRef = reference
-                };
-
-                AssetSpawner.Register(icon);
-                NullableMethodExtensions.PoolManager_Spawn(icon, default, default, null, false, null, new Action<GameObject>((obj) => CreateMarker(obj)));
-            }
-        }
-
-        private static void CreateMarker(GameObject obj)
-        {
-            obj.SetActive(false);
-            loadedMarkerObjects.Add(obj.GetComponent<AssetPoolee>());
         }
     }
 }

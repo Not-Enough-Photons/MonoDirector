@@ -33,6 +33,9 @@ namespace NEP.MonoDirector
             OnPostPhotograph = null;
             OnPhotograph = null;
 
+            OnPlayStateSet = null;
+            OnCameraModeSet = null;
+
             OnTimerCountdown = null;
         }
 
@@ -64,6 +67,7 @@ namespace NEP.MonoDirector
         public static Action OnTimerCountdown;
 
         public static Action<PlayState> OnPlayStateSet;
+        public static Action<CameraMode> OnCameraModeSet;
 
         public static Action OnPreSnapshot;
     }

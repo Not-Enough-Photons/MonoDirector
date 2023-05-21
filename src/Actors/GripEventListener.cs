@@ -61,8 +61,6 @@ namespace NEP.MonoDirector.Actors
                 return;
             }
 
-            Main.Logger.Msg("OnAttach");
-
             if(prop == null)
             {
                 return;
@@ -77,8 +75,6 @@ namespace NEP.MonoDirector.Actors
             {
                 return;
             }
-
-            Main.Logger.Msg("OnDetach");
 
             if (prop == null)
             {
@@ -95,8 +91,6 @@ namespace NEP.MonoDirector.Actors
                 return;
             }
 
-            Main.Logger.Msg("OnIndexDown");
-
             if (prop == null)
             {
                 return;
@@ -111,8 +105,6 @@ namespace NEP.MonoDirector.Actors
             {
                 return;
             }
-
-            Main.Logger.Msg("OnMenuTapDown");
 
             if (prop == null)
             {

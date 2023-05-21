@@ -15,50 +15,27 @@ namespace NEP.MonoDirector.Actors
 
         public ObjectDestructable breakableProp;
 
-        private List<ActionFrame> actionFrames;
-
         protected override void Awake()
         {
             base.Awake();
 
+            propFrames = new List<ObjectFrame>();
             actionFrames = new List<ActionFrame>();
-        }
-
-        public void SetBreakableObject(ObjectDestructable destructable)
-        {
-            this.breakableProp = destructable;
-        }
-
-        public override void Act()
-        {
-            base.Act();
-
-            foreach (ActionFrame actionFrame in actionFrames)
-            {
-                if (Playback.instance.PlaybackTime < actionFrame.timestamp)
-                {
-                    continue;
-                }
-                else
-                {
-                    actionFrame.Run();
-                }
-            }
         }
 
         public override void OnSceneBegin()
         {
             base.OnSceneBegin();
 
-            foreach (ActionFrame actionFrame in actionFrames)
+            foreach(ActionFrame actionFrame in actionFrames)
             {
                 actionFrame.Reset();
             }
         }
 
-        public void RecordDestructionEvent(float timeStamp, Action action)
+        public void SetBreakableObject(ObjectDestructable destructable)
         {
-            actionFrames.Add(new ActionFrame(action, timeStamp));
+            this.breakableProp = destructable;
         }
 
         public void DestructionEvent()

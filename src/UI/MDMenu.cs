@@ -57,6 +57,7 @@ namespace NEP.MonoDirector.UI
             audioCategory.CreateBoolElement("Mic Playback", Color.white, false, (value) => Settings.World.micPlayback = value);
 
             cameraCategory.CreateEnumElement("Camera Mode", Color.white, CameraMode.None, (mode) => CameraRigManager.Instance.CameraMode = mode);
+            cameraCategory.CreateBoolElement("Show Timecode", Color.white, false, (value) => Timecode.Instance.ShowTimecode = value);
 
             var headModeCategory = cameraCategory.CreateCategory("Head Mode Settings", Color.white);
             var freeCamCategory = cameraCategory.CreateCategory("Free Camera Settings", Color.white);

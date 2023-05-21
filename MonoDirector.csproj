@@ -73,7 +73,6 @@
     <Compile Include="src\Patches\SFX\GunSFX.cs" />
     <Compile Include="src\Patches\ObjectDestructable.cs" />
     <Compile Include="src\Patches\Vehicles\Atv.cs" />
-    <Compile Include="src\Patches\VRGraphicRaycaster.cs" />
     <Compile Include="src\Photographer.cs" />
     <Compile Include="src\Playback.cs" />
     <Compile Include="src\Recorder.cs" />
@@ -87,6 +86,9 @@
     <Compile Include="src\Tools\StudioLight.cs" />
     <Compile Include="src\UI\MDMenu.cs" />
     <Compile Include="src\UI\PropMarkerManager.cs" />
+    <Compile Include="src\UI\Timecode.cs" />
+    <Compile Include="src\UI\TimecodeManager.cs" />
+    <Compile Include="src\UI\UIManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
@@ -207,9 +209,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources\md_resources.pack" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="src\Patches\UI\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>COPY "$(TargetPath)" "C:\Program Files (x86)\Steam\steamapps\common\BONELAB\Mods"

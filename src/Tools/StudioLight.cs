@@ -1,4 +1,5 @@
-﻿using SLZ.Bonelab;
+﻿using BoneLib.Nullables;
+using SLZ.Bonelab;
 using SLZ.Interaction;
 using System;
 using UnityEngine;
@@ -10,41 +11,50 @@ namespace NEP.MonoDirector.Tools
     {
         public StudioLight(System.IntPtr ptr) : base(ptr) { }
 
-        private handLightControl handLightcontrol
+        private Color[] colors = new Color[]
         {
-            get
-            {
-                if(_handLightControl == null)
-                {
-                    _handLightControl = GetComponent<handLightControl>();
-                }
+            Color.white,
+            Color.red,
+            new Color(1, 0.6470588f, 0, 1f),
+            Color.yellow,
+            Color.green,
+            Color.blue,
+            new Color(0.2941177f, 0, 0.509804f, 1f),
+            new Color(0.9333333f, 0.509804f, 0.9333333f, 1f)
+        };
 
-                return _handLightControl;
-            }
-        }
+        private float[] intensities = new float[]
+        {
+            1f,
+            2f,
+            3f,
+            4f,
+            5f
+        };
 
-        private handLightControl _handLightControl;
+        private Light spotlight;
+        private Light pointLight;
 
-        private Light light => this.handLightcontrol.handLight;
-        private Color[] colors => this.handLightcontrol.color;
-        private float[] intensities => this.handLightcontrol.intensity;
-        private Grip grip => this.handLightcontrol.grip;
+        private CylinderGrip grip;
 
         private int colorIndex;
         private int intensityIndex;
 
         private void Awake()
         {
+            spotlight = transform.Find("Spotlight").GetComponent<Light>();
+            pointLight = transform.Find("Point Light").GetComponent<Light>();
+
+            grip = transform.Find("Grip").GetComponent<CylinderGrip>();
+
             grip.attachedUpdateDelegate += new Action<Hand>((hand) => HandAttachedUpdate(hand));
         }
 
         private void HandAttachedUpdate(Hand hand)
         {
-            if (hand._indexButtonDown)
+            if (hand.GetIndexButtonDown())
             {
-                light.color = colors[colorIndex];
-
-                if (colorIndex + 1 >= colors.Length)
+                if (colorIndex > colors.Length)
                 {
                     colorIndex = 0;
                 }
@@ -52,13 +62,14 @@ namespace NEP.MonoDirector.Tools
                 {
                     colorIndex++;
                 }
+
+                spotlight.color = colors[colorIndex];
+                pointLight.color = colors[colorIndex];
             }
 
             if (hand.Controller.GetMenuTap())
             {
-                light.intensity = intensities[intensityIndex];
-
-                if (intensityIndex + 1 >= colors.Length)
+                if (intensityIndex > colors.Length)
                 {
                     intensityIndex = 0;
                 }
@@ -66,6 +77,9 @@ namespace NEP.MonoDirector.Tools
                 {
                     intensityIndex++;
                 }
+
+                spotlight.intensity = intensities[intensityIndex];
+                pointLight.intensity = intensities[intensityIndex];
             }
         }
     }

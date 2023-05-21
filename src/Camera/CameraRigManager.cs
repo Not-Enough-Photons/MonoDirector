@@ -78,6 +78,8 @@ namespace NEP.MonoDirector.Cameras
 
                     FreeCamera.enabled = false;
                 }
+
+                Events.OnCameraModeSet?.Invoke(cameraMode);
             }
         }
 

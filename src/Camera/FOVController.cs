@@ -28,7 +28,7 @@ namespace NEP.MonoDirector.Cameras
         private void MouseFOV()
         {
             lastFieldOfView = camera.fieldOfView;
-            //SetFOV(Input.GetAxisRaw("Mouse ScrollWheel") * fovChangeRate);
+            SetFOV(Input.GetAxisRaw("Mouse ScrollWheel") * fovChangeRate);
         }
 
         public void SetCamera(Camera camera)

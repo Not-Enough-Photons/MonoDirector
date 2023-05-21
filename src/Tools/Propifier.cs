@@ -46,18 +46,11 @@ namespace NEP.MonoDirector.Tools
             removeModeIcon = transform.Find("Propifier Art/ScreenMode_Remove").gameObject;
         }
 
-        private void OnEnable()
+        private void Start()
         {
             triggerGrip.attachedHandDelegate += new System.Action<Hand>((hand) => OnAttachHand());
             triggerGrip.detachedHandDelegate += new System.Action<Hand>((hand) => OnDetachHand());
             triggerGrip.attachedUpdateDelegate += new System.Action<Hand>((hand) => OnTriggerGripUpdate());
-        }
-
-        private void OnDisable()
-        {
-            triggerGrip.attachedHandDelegate -= new System.Action<Hand>((hand) => OnAttachHand());
-            triggerGrip.detachedHandDelegate -= new System.Action<Hand>((hand) => OnDetachHand());
-            triggerGrip.attachedUpdateDelegate -= new System.Action<Hand>((hand) => OnTriggerGripUpdate());
         }
 
         private void PrimaryButtonDown()
