@@ -86,8 +86,8 @@
     <Compile Include="src\Tools\StudioLight.cs" />
     <Compile Include="src\UI\MDMenu.cs" />
     <Compile Include="src\UI\PropMarkerManager.cs" />
-    <Compile Include="src\UI\Timecode.cs" />
-    <Compile Include="src\UI\TimecodeManager.cs" />
+    <Compile Include="src\UI\InformationInterface.cs" />
+    <Compile Include="src\UI\InfoInterfaceManager.cs" />
     <Compile Include="src\UI\UIManager.cs" />
   </ItemGroup>
   <ItemGroup>

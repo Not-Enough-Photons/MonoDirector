@@ -210,7 +210,15 @@ namespace NEP.MonoDirector.Core
         public IEnumerator RecordRoutine()
         {
             Events.OnPreRecord?.Invoke();
-            yield return new WaitForSeconds(5f);
+
+            for (int i = 0; i < 3; i++)
+            {
+                Main.feedbackSFX.BeepLow();
+                yield return new WaitForSeconds(1);
+            }
+
+            Main.feedbackSFX.BeepHigh();
+
             Events.OnStartRecording?.Invoke();
 
             while (Director.PlayState == PlayState.Recording || Director.PlayState == PlayState.Paused)

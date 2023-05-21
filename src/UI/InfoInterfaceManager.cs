@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace NEP.MonoDirector.UI
 {
-    public static class TimecodeManager
+    public static class InfoInterfaceManager
     {
         public static void Initialize()
         {
-            UIManager.Warmup(UIManager.timecodeBarcode, 1, true);
+            UIManager.Warmup(UIManager.infoInterfaceBarcode, 1, true);
         }
     }
 }

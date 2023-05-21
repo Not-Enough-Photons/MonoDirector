@@ -52,12 +52,12 @@ namespace NEP.MonoDirector.UI
             var audioCategory = category.CreateCategory("Audio", Color.white);
             var cameraCategory = category.CreateCategory("Camera", Color.white);
             var toolCategory = category.CreateCategory("Tools", Color.white);
+            var uiCategory = category.CreateCategory("UI", Color.white);
 
             audioCategory.CreateBoolElement("Use Microphone", Color.white, false, (value) => Settings.World.useMicrophone = value);
             audioCategory.CreateBoolElement("Mic Playback", Color.white, false, (value) => Settings.World.micPlayback = value);
 
             cameraCategory.CreateEnumElement("Camera Mode", Color.white, CameraMode.None, (mode) => CameraRigManager.Instance.CameraMode = mode);
-            cameraCategory.CreateBoolElement("Show Timecode", Color.white, false, (value) => Timecode.Instance.ShowTimecode = value);
 
             var headModeCategory = cameraCategory.CreateCategory("Head Mode Settings", Color.white);
             var freeCamCategory = cameraCategory.CreateCategory("Free Camera Settings", Color.white);
@@ -70,6 +70,15 @@ namespace NEP.MonoDirector.UI
             BuildVFXCategory(vfxCategory);
 
             toolCategory.CreateFloatElement("Playback Speed", Color.white, 1f, 0.1f, float.NegativeInfinity, float.PositiveInfinity, (value) => Playback.instance.SetPlaybackRate(value));
+
+            BuildUIMenu(uiCategory);
+        }
+
+        private static void BuildUIMenu(MenuCategory category)
+        {
+            category.CreateBoolElement("Show Timecode", Color.white, false, (value) => InformationInterface.Instance.ShowTimecode = value);
+            category.CreateBoolElement("Show Play Mode", Color.white, false, (value) => InformationInterface.Instance.ShowPlaymode = value);
+            category.CreateBoolElement("Show Icons", Color.white, false, (value) => InformationInterface.Instance.ShowIcons = value);
         }
 
         private static void BuildDebugCategory(MenuCategory category)

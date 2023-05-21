@@ -7,11 +7,24 @@ using NEP.MonoDirector.State;
 namespace NEP.MonoDirector.UI
 {
     [MelonLoader.RegisterTypeInIl2Cpp]
-    public class Timecode : MonoBehaviour
+    public class InformationInterface : MonoBehaviour
     {
-        public Timecode(System.IntPtr ptr) : base(ptr) { }
+        public InformationInterface(System.IntPtr ptr) : base(ptr) { }
 
-        public static Timecode Instance { get; private set; }
+        public static InformationInterface Instance { get; private set; }
+
+        public bool ShowIcons
+        {
+            get
+            {
+                return showIcons;
+            }
+            set
+            {
+                showIcons = value;
+                microIconsObject?.SetActive(showIcons);
+            }
+        }
 
         public bool ShowTimecode
         {
@@ -22,22 +35,52 @@ namespace NEP.MonoDirector.UI
             set
             {
                 showTimecode = value;
-                gameObject.SetActive(showTimecode);
+                timecodeObject?.SetActive(showTimecode);
             }
         }
 
+        public bool ShowPlaymode
+        {
+            get
+            {
+                return showPlaymode;
+            }
+            set
+            {
+                showPlaymode = value;
+                playmodeObject?.SetActive(showPlaymode);
+            }
+        }
+
+        private GameObject microIconsObject;
+        private GameObject timecodeObject;
+        private GameObject playmodeObject;
+
+        private GameObject micObject;
+        private GameObject micOffObject;
+
         private TextMeshProUGUI timecodeText;
+        private TextMeshProUGUI playmodeText;
 
         private PlayState playState;
 
+        private bool showIcons;
         private bool showTimecode;
+        private bool showPlaymode;
 
         private void Awake()
         {
             Instance = this;
-            timecodeText = transform.Find("Time").GetComponent<TextMeshProUGUI>();
-            ShowTimecode = false;
-            gameObject.SetActive(false);
+
+            microIconsObject = transform.Find("MicroIcons").gameObject;
+            timecodeObject = transform.Find("Timecode").gameObject;
+            playmodeObject = transform.Find("Playmode").gameObject;
+
+            micObject = microIconsObject.transform.Find("Microphone/Mic").gameObject;
+            micOffObject = microIconsObject.transform.Find("Microphone/Disabled").gameObject;
+
+            timecodeText = timecodeObject.transform.Find("Time").GetComponent<TextMeshProUGUI>();
+            playmodeText = playmodeObject.transform.Find("Mode").GetComponent<TextMeshProUGUI>();
         }
 
         private void Start()
@@ -55,6 +98,8 @@ namespace NEP.MonoDirector.UI
 
         private void Update()
         {
+            micOffObject.SetActive(!Settings.World.useMicrophone);
+
             transform.position = Vector3.Lerp(transform.position, BoneLib.Player.playerHead.position + BoneLib.Player.playerHead.forward, 16f * Time.deltaTime);
             transform.LookAt(BoneLib.Player.playerHead);
         }
@@ -89,6 +134,7 @@ namespace NEP.MonoDirector.UI
         private void OnPlayStateSet(PlayState playState)
         {
             this.playState = playState;
+            playmodeText.text = playState.ToString();
         }
     }
 }

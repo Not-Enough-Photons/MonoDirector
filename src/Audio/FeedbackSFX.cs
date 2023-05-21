@@ -22,14 +22,8 @@ namespace NEP.MonoDirector.Audio
 
         private void OnEnable()
         {
-            Events.OnPreRecord += Preroll;
             Events.OnStopRecording += Beep;
-
-            Events.OnPrePlayback += Postroll;
             Events.OnStopPlayback += Beep;
-
-            Events.OnPreSnapshot += Preroll;
-
             Events.OnTimerCountdown += Beep;
         }
 
@@ -57,8 +51,21 @@ namespace NEP.MonoDirector.Audio
             Play(sfx_preroll);
         }
 
-        private void Beep()
+        public void Beep()
         {
+            source.pitch = 1f;
+            Play(sfx_beep);
+        }
+
+        public void BeepLow()
+        {
+            source.pitch = 0.5f;
+            Play(sfx_beep);
+        }
+
+        public void BeepHigh()
+        {
+            source.pitch = 2f;
             Play(sfx_beep);
         }
 

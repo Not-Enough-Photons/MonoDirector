@@ -104,7 +104,7 @@ namespace NEP.MonoDirector.Core
 
         public void Pause()
         {
-            playState = PlayState.Paused;
+            SetPlayState(PlayState.Paused);
         }
 
         public void Record()
@@ -114,13 +114,13 @@ namespace NEP.MonoDirector.Core
 
         public void Retake()
         {
-            playState = PlayState.Stopped;
+            SetPlayState(PlayState.Stopped);
             recorder.StartRecordRoutine();
         }
 
         public void Stop()
         {
-            playState = PlayState.Stopped;
+            SetPlayState(PlayState.Stopped);
         }
 
         public void SetCamera(FreeCamera camera)

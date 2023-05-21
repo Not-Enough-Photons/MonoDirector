@@ -91,7 +91,7 @@ namespace NEP.MonoDirector
         private void CreateUI()
         {
             PropMarkerManager.Initialize();
-            TimecodeManager.Initialize();
+            InfoInterfaceManager.Initialize();
         }
 
         private static AssetBundle GetEmbeddedBundle()

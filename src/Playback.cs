@@ -186,11 +186,24 @@ namespace NEP.MonoDirector.Core
         public IEnumerator PlayRoutine()
         {
             Events.OnPrePlayback?.Invoke();
-            yield return new WaitForSeconds(4f);
+
+            for (int i = 0; i < 3; i++)
+            {
+                Events.OnTimerCountdown?.Invoke();
+                yield return new WaitForSeconds(1);
+            }
+
+            Main.feedbackSFX.BeepHigh();
+
             Events.OnPlay?.Invoke();
 
-            while (Director.PlayState == PlayState.Playing || Director.PlayState == PlayState.Paused)
+            while (Director.PlayState == PlayState.Playing)
             {
+                if(PlaybackTime >= Recorder.instance.RecordingTime)
+                {
+                    break;
+                }
+
                 LateUpdate();
                 yield return null;
             }
