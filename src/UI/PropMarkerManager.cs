@@ -22,7 +22,7 @@ namespace NEP.MonoDirector.UI
 
         public static void Initialize()
         {
-            UIManager.Warmup(UIManager.propMarkerBarcode, 32);
+            loadedMarkerObjects = UIManager.Warmup(UIManager.propMarkerBarcode, 32);
 
             Events.OnPropCreated += AddMarkerToProp;
             Events.OnPropRemoved += RemoveMarkerFromProp;
@@ -53,19 +53,6 @@ namespace NEP.MonoDirector.UI
 
             asset.gameObject.SetActive(true);
 
-            LookAtTarget lookAtTarget = null;
-
-            if(asset.GetComponent<LookAtTarget>() != null)
-            {
-                lookAtTarget = asset.GetComponent<LookAtTarget>();
-            }
-            else
-            {
-                lookAtTarget = asset.gameObject.AddComponent<LookAtTarget>();
-            }
-
-            lookAtTarget.targetTransform = BoneLib.Player.playerHead;
-
             asset.transform.SetParent(prop.transform);
             asset.transform.localPosition = new Vector3(0f, 1.25f + asset.spawnableCrate.ColliderBounds.extents.y, 0f);
 
@@ -82,6 +69,7 @@ namespace NEP.MonoDirector.UI
 
             AssetPoolee marker = markers[prop];
             marker.Despawn();
+            marker.gameObject.SetActive(false);
             marker.transform.parent = null;
 
             markers.Remove(prop);

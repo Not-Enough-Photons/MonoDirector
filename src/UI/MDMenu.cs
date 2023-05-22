@@ -76,6 +76,7 @@ namespace NEP.MonoDirector.UI
 
         private static void BuildUIMenu(MenuCategory category)
         {
+            category.CreateBoolElement("Show UI", Color.white, false, (value) => InformationInterface.Instance.ShowUI = value);
             category.CreateBoolElement("Show Timecode", Color.white, false, (value) => InformationInterface.Instance.ShowTimecode = value);
             category.CreateBoolElement("Show Play Mode", Color.white, false, (value) => InformationInterface.Instance.ShowPlaymode = value);
             category.CreateBoolElement("Show Icons", Color.white, false, (value) => InformationInterface.Instance.ShowIcons = value);

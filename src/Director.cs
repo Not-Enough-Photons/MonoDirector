@@ -71,6 +71,10 @@ namespace NEP.MonoDirector.Core
                 return;
             }
 
+
+            return;
+
+
             if (Input.GetKey(KeyCode.LeftArrow))
             {
                 Playback.instance.Seek(-Playback.instance.PlaybackRate);

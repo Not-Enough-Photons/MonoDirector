@@ -26,21 +26,18 @@ namespace NEP.MonoDirector.Cameras
 
         private void Awake()
         {
-            leftHandleTransform = transform.Find("Grips/Left Handle");
-            rightHandleTransform = transform.Find("Grips/Right Handle");
+            gimbal = transform.Find("Gimbal");
 
-            sensorCamera = transform.Find("Sensor").GetComponent<Camera>();
-            backViewfinderScreen = transform.Find("Studio Camera/Viewfinder_Back").gameObject;
-            frontViewfinderScreen = transform.Find("Studio Camera/Viewfinder_Front").gameObject;
-            displayScreen = transform.Find("Studio Camera/Screen").gameObject;
+            leftHandleTransform = gimbal.Find("Grips/Left Handle");
+            rightHandleTransform = gimbal.Find("Grips/Right Handle");
+
+            sensorCamera = gimbal.Find("Sensor").GetComponent<Camera>();
+            backViewfinderScreen = gimbal.Find("Studio Camera/Viewfinder_Back").gameObject;
+            frontViewfinderScreen = gimbal.Find("Studio Camera/Viewfinder_Front").gameObject;
+            displayScreen = gimbal.Find("Studio Camera/Screen").gameObject;
 
             leftHandle = leftHandleTransform.GetComponent<CylinderGrip>();
             rightHandle = rightHandleTransform.GetComponent<CylinderGrip>();
-        }
-
-        private void Start()
-        {
-            CameraRigManager.Instance.ClonedCamera.nearClipPlane = 0.25f;
         }
 
         private void OnEnable()
@@ -73,7 +70,6 @@ namespace NEP.MonoDirector.Cameras
                 CameraRigManager.Instance.ClonedCamera.gameObject.SetActive(true);
                 CameraRigManager.Instance.CameraDisplay.FollowCamera.SetFollowTarget(sensorCamera.transform);
                 CameraRigManager.Instance.FollowCamera.SetFollowTarget(sensorCamera.transform);
-                CameraRigManager.Instance.Camera.nearClipPlane = 0.25f;
             }
             else
             {
@@ -84,29 +80,28 @@ namespace NEP.MonoDirector.Cameras
 
                 CameraRigManager.Instance.ClonedCamera.gameObject.SetActive(false);
                 CameraRigManager.Instance.FollowCamera.SetDefaultTarget();
-                CameraRigManager.Instance.Camera.nearClipPlane = 0.01f;
             }
         }
 
         private void LeftHandUpdate(Hand hand)
         {
-            if (hand._indexButtonDown)
+            if (hand.GetIndexTriggerAxis() > 0.25f)
             {
                 float rate = CameraRigManager.Instance.FOVController.fovChangeRate;
 
-                CameraRigManager.Instance.CameraDisplay.FOVController.SetFOV(-(rate / 10f));
-                CameraRigManager.Instance.FOVController.SetFOV(-(rate / 10f));
+                CameraRigManager.Instance.CameraDisplay.FOVController.SetFOV(-(hand.GetIndexTriggerAxis() * rate / 10f));
+                CameraRigManager.Instance.FOVController.SetFOV(-(hand.GetIndexTriggerAxis() * rate / 10f));
             }
         }
-
+         
         private void RightHandUpdate(Hand hand)
         {
-            if (hand._indexButtonDown)
+            if (hand.GetIndexTriggerAxis() > 0.25f)
             {
                 float rate = CameraRigManager.Instance.FOVController.fovChangeRate;
 
-                CameraRigManager.Instance.CameraDisplay.FOVController.SetFOV(rate / 10f);
-                CameraRigManager.Instance.FOVController.SetFOV(rate / 10f);
+                CameraRigManager.Instance.CameraDisplay.FOVController.SetFOV(hand.GetIndexTriggerAxis() * rate / 10f);
+                CameraRigManager.Instance.FOVController.SetFOV(hand.GetIndexTriggerAxis() * rate / 10f);
             }
         }
     }

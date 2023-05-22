@@ -13,6 +13,22 @@ namespace NEP.MonoDirector.UI
 
         public static InformationInterface Instance { get; private set; }
 
+        public bool ShowUI
+        {
+            get
+            {
+                return showUI;
+            }
+            set
+            {
+                showUI = value;
+
+                ShowIcons = showUI;
+                ShowTimecode = showUI;
+                ShowPlaymode = showUI;
+            }
+        }
+
         public bool ShowIcons
         {
             get
@@ -64,6 +80,7 @@ namespace NEP.MonoDirector.UI
 
         private PlayState playState;
 
+        private bool showUI;
         private bool showIcons;
         private bool showTimecode;
         private bool showPlaymode;
@@ -94,6 +111,14 @@ namespace NEP.MonoDirector.UI
             Events.OnPreRecord += OnSceneStart;
             Events.OnRecordTick += OnSceneTick;
             Events.OnStopRecording += OnSceneEnd;
+
+            showIcons = false;
+            showTimecode = false;
+            showPlaymode = false;
+
+            microIconsObject.SetActive(false);
+            timecodeObject.SetActive(false);
+            playmodeObject.SetActive(false);
         }
 
         private void Update()
