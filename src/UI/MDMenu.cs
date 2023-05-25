@@ -42,6 +42,7 @@ namespace NEP.MonoDirector.UI
 
         private static void BuildActorMenu(MenuCategory category)
         {
+            category.CreateFunctionElement("Show Caster Menu", Color.white, () => CasterUI.Instance.gameObject.SetActive(true));
             category.CreateFunctionElement("Delete Last Actor", Color.red, () => Director.instance.RemoveActor(Recorder.instance.LastActor), "Are you sure? This cannot be undone.");
             category.CreateFunctionElement("Remove All Actors", Color.red, () => Director.instance.RemoveAllActors(), "Are you sure? This cannot be undone.");
             category.CreateFunctionElement("Clear Scene", Color.red, () => Director.instance.ClearScene(), "Are you sure? This cannot be undone.");

@@ -91,7 +91,7 @@ namespace NEP.MonoDirector.Actors
                 casing,
                 gun.shellSpawnTransform.position,
                 gun.shellOrientationTransform.rotation,
-                Vector3.one,
+                new Vector3(2f, 2f, 2f),
                 false,
                 null,
                 null,

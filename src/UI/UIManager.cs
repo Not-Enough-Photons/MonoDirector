@@ -15,6 +15,7 @@ namespace NEP.MonoDirector.UI
     {
         internal static readonly string propMarkerBarcode = "NotEnoughPhotons.MonoDirector.Spawnable.UIPropMarker";
         internal static readonly string infoInterfaceBarcode = "NotEnoughPhotons.MonoDirector.Spawnable.InformationInterface";
+        internal static readonly string casterBarcode = "NotEnoughPhotons.MonoDirector.Spawnable.CasterUI";
 
         internal static List<AssetPoolee> Warmup(string barcode, int size, bool startActive = false)
         {

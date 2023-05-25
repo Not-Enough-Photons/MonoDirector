@@ -84,6 +84,11 @@
     <Compile Include="src\State\PlayState.cs" />
     <Compile Include="src\Tools\Propifier.cs" />
     <Compile Include="src\Tools\StudioLight.cs" />
+    <Compile Include="src\UI\Caster\ActorEntry.cs" />
+    <Compile Include="src\UI\Caster\ActorSettingsView.cs" />
+    <Compile Include="src\UI\Caster\CasterPage.cs" />
+    <Compile Include="src\UI\Caster\CasterPageView.cs" />
+    <Compile Include="src\UI\Caster\CasterUI.cs" />
     <Compile Include="src\UI\MDMenu.cs" />
     <Compile Include="src\UI\PropMarkerManager.cs" />
     <Compile Include="src\UI\InformationInterface.cs" />
