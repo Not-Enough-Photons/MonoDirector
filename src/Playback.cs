@@ -187,7 +187,7 @@ namespace NEP.MonoDirector.Core
         {
             Events.OnPrePlayback?.Invoke();
 
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < Settings.World.delay; i++)
             {
                 Events.OnTimerCountdown?.Invoke();
                 yield return new WaitForSeconds(1);

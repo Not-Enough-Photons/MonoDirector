@@ -71,6 +71,7 @@ namespace NEP.MonoDirector.UI
             BuildVFXCategory(vfxCategory);
 
             toolCategory.CreateFloatElement("Playback Speed", Color.white, 1f, 0.1f, float.NegativeInfinity, float.PositiveInfinity, (value) => Playback.instance.SetPlaybackRate(value));
+            toolCategory.CreateIntElement("Delay", Color.white, 5, 1, 0, 30, (value) => Settings.World.delay = value);
 
             BuildUIMenu(uiCategory);
         }
