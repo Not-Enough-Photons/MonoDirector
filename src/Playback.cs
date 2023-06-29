@@ -201,7 +201,7 @@ namespace NEP.MonoDirector.Core
 
             while (Director.PlayState == PlayState.Playing)
             {
-                if(PlaybackTime >= Recorder.instance.RecordingTime)
+                if(PlaybackTime >= Recorder.instance.TakeTime)
                 {
                     break;
                 }
