@@ -25,6 +25,7 @@ namespace NEP.MonoDirector.Core
         public static Recorder instance;
 
         public float RecordingTime { get => recordingTime; }
+        public float TakeTime { get => takeTime; }
 
         public int RecordTick { get => recordTick; }
 
@@ -41,6 +42,7 @@ namespace NEP.MonoDirector.Core
         private Coroutine recordRoutine;
 
         private float recordingTime;
+        private float takeTime;
 
         private int recordTick;
 
@@ -152,6 +154,12 @@ namespace NEP.MonoDirector.Core
 
             recordTick++;
             recordingTime += Time.deltaTime;
+
+            // keep up!
+            if(recordingTime > takeTime)
+            {
+                takeTime = recordingTime;
+            }
 
             Playback.instance.MovePlayhead(Time.deltaTime);
 
