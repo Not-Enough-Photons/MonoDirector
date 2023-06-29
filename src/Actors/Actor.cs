@@ -163,11 +163,6 @@ namespace NEP.MonoDirector.Actors
 
             clonedRigBones = GetAvatarBones(clonedAvatar);
 
-            for(int i = 0; i < clonedRigBones.Length; i++)
-            {
-                Main.Logger.Msg(clonedRigBones[i] != null ? clonedRigBones[i].name : "Null");
-            }
-
             GameObject.Destroy(clonedAvatar.GetComponent<LODGroup>());
 
             actorName = $"Actor - {Constants.rigManager.AvatarCrate.Crate.Title}";

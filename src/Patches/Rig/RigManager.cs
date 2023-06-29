@@ -21,7 +21,6 @@ namespace NEP.MonoDirector.Patches
                 var activeActor = Recorder.instance.ActiveActor;
                 activeActor.RecordAction(new System.Action(() => activeActor.SwitchToActor(activeActor)));
                 activeActor.CloneAvatar();
-                Main.Logger.Msg(activeActor.ClonedAvatar.name);
                 Recorder.instance.ActiveActors.Add(activeActor);
                 Recorder.instance.SetActor(newAvatar);
             }
