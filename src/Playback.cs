@@ -56,6 +56,12 @@ namespace NEP.MonoDirector.Core
 
         public void BeginPlayback()
         {
+            if(Director.LastPlayState == PlayState.Paused)
+            {
+                Director.instance.SetPlayState(PlayState.Playing);
+                return;
+            }
+
             if (playRoutine == null)
             {
                 playRoutine = MelonCoroutines.Start(PlayRoutine()) as Coroutine;
@@ -199,9 +205,14 @@ namespace NEP.MonoDirector.Core
 
             Events.OnPlay?.Invoke();
 
-            while (Director.PlayState == PlayState.Playing)
+            while (Director.PlayState == PlayState.Playing || Director.PlayState == PlayState.Paused)
             {
-                if(PlaybackTime >= Recorder.instance.TakeTime)
+                while (Director.PlayState == PlayState.Paused)
+                {
+                    yield return null;
+                }
+
+                if (PlaybackTime >= Recorder.instance.TakeTime)
                 {
                     break;
                 }

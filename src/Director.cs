@@ -24,6 +24,7 @@ namespace NEP.MonoDirector.Core
         public CameraVolume Volume { get => camera.GetComponent<CameraVolume>(); }
 
         public static PlayState PlayState { get => playState; }
+        public static PlayState LastPlayState { get => lastPlayState; }
         public static CaptureState CaptureState { get => captureState; }
 
         public List<Actor> Cast;
@@ -36,6 +37,7 @@ namespace NEP.MonoDirector.Core
         public int WorldTick { get => worldTick; }
 
         private static PlayState playState = PlayState.Stopped;
+        private static PlayState lastPlayState;
         private static CaptureState captureState = CaptureState.CaptureActor;
 
         private FreeCamera camera;
@@ -174,8 +176,9 @@ namespace NEP.MonoDirector.Core
             WorldProps.Clear();
         }
 
-        private void SetPlayState(PlayState state)
+        public void SetPlayState(PlayState state)
         {
+            lastPlayState = playState;
             playState = state;
             Events.OnPlayStateSet?.Invoke(state);
         }
