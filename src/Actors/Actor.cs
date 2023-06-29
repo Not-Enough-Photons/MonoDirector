@@ -159,7 +159,15 @@ namespace NEP.MonoDirector.Actors
             GameObject clonedAvatarObject = GameObject.Instantiate(playerAvatar.gameObject);
             clonedAvatar = clonedAvatarObject.GetComponent<SLZ.VRMK.Avatar>();
 
+            clonedAvatar.gameObject.SetActive(true);
+
             clonedRigBones = GetAvatarBones(clonedAvatar);
+
+            for(int i = 0; i < clonedRigBones.Length; i++)
+            {
+                Main.Logger.Msg(clonedRigBones[i] != null ? clonedRigBones[i].name : "Null");
+            }
+
             GameObject.Destroy(clonedAvatar.GetComponent<LODGroup>());
 
             actorName = $"Actor - {Constants.rigManager.AvatarCrate.Crate.Title}";
