@@ -132,9 +132,9 @@ namespace NEP.MonoDirector.Core
                 playbackTime = 0f;
             }
 
-            if(playbackTime >= Recorder.instance.RecordingTime)
+            if(playbackTime >= Recorder.instance.TakeTime)
             {
-                playbackTime = Recorder.instance.RecordingTime;
+                playbackTime = Recorder.instance.TakeTime;
             }
 
             AnimateAll();
