@@ -29,6 +29,8 @@ namespace NEP.MonoDirector.Core
 
         public float PlaybackRate { get => playbackRate; }
 
+        public int Countdown { get; private set; }
+
         private Coroutine playRoutine;
 
         private int playbackTick;
@@ -187,7 +189,7 @@ namespace NEP.MonoDirector.Core
         {
             Events.OnPrePlayback?.Invoke();
 
-            for (int i = 0; i < Settings.World.delay; i++)
+           for (Countdown = 0; Countdown < Settings.World.delay; Countdown++)
             {
                 Events.OnTimerCountdown?.Invoke();
                 yield return new WaitForSeconds(1);

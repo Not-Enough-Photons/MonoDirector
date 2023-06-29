@@ -28,6 +28,8 @@
     <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="src\Actors\ActorSkeleton.cs" />
+    <Compile Include="src\Proxy\ActorProxy.cs" />
     <Compile Include="src\Actors\GripEventListener.cs" />
     <Compile Include="src\Actors\MagazineProp.cs" />
     <Compile Include="src\Actors\Trackable.cs" />
@@ -75,6 +77,7 @@
     <Compile Include="src\Patches\Vehicles\Atv.cs" />
     <Compile Include="src\Photographer.cs" />
     <Compile Include="src\Playback.cs" />
+    <Compile Include="src\Proxy\TrackableProxy.cs" />
     <Compile Include="src\Recorder.cs" />
     <Compile Include="src\Settings.cs" />
     <Compile Include="src\Spline\SplinePlacer.cs" />

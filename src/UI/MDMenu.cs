@@ -60,6 +60,12 @@ namespace NEP.MonoDirector.UI
 
             cameraCategory.CreateEnumElement("Camera Mode", Color.white, CameraMode.None, (mode) => CameraRigManager.Instance.CameraMode = mode);
 
+            cameraCategory.CreateBoolElement("Lock X Rotation", Color.white, false, (value) => Settings.Camera.handheldLockXAxis = value);
+            cameraCategory.CreateBoolElement("Lock Y Rotation", Color.white, false, (value) => Settings.Camera.handheldLockYAxis = value);
+            cameraCategory.CreateBoolElement("Lock Z Rotation", Color.white, false, (value) => Settings.Camera.handheldLockZAxis = value);
+
+            cameraCategory.CreateBoolElement("Kinematic On Release", Color.white, false, (value) => Settings.Camera.handheldKinematicOnRelease = value);
+
             var headModeCategory = cameraCategory.CreateCategory("Head Mode Settings", Color.white);
             var freeCamCategory = cameraCategory.CreateCategory("Free Camera Settings", Color.white);
 

@@ -74,7 +74,6 @@ namespace NEP.MonoDirector.Core
 
             return;
 
-
             if (Input.GetKey(KeyCode.LeftArrow))
             {
                 Playback.instance.Seek(-Playback.instance.PlaybackRate);

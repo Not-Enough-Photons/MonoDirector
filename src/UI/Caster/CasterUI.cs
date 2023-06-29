@@ -54,6 +54,8 @@ namespace NEP.MonoDirector.UI
             goBackButton.onClick.AddListener(new System.Action(() => SetPage("Cast")));
 
             actorSettingsView.gameObject.SetActive(false);
+
+            gameObject.SetActive(false);
         }
 
         private void Update()

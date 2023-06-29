@@ -22,6 +22,8 @@ namespace NEP.MonoDirector.Cameras
         private GameObject frontViewfinderScreen;
         private GameObject displayScreen;
 
+        private Rigidbody cameraRigidbody;
+
         private RenderTexture displayTexture  => sensorCamera.targetTexture;
 
         private void Awake()
@@ -38,6 +40,8 @@ namespace NEP.MonoDirector.Cameras
 
             leftHandle = leftHandleTransform.GetComponent<CylinderGrip>();
             rightHandle = rightHandleTransform.GetComponent<CylinderGrip>();
+
+            cameraRigidbody = transform.GetChild(0).GetComponent<Rigidbody>();
         }
 
         private void OnEnable()
@@ -46,6 +50,7 @@ namespace NEP.MonoDirector.Cameras
 
             leftHandle.attachedUpdateDelegate += new System.Action<Hand>(LeftHandUpdate);
             rightHandle.attachedUpdateDelegate += new System.Action<Hand>(RightHandUpdate);
+            leftHandle.detachedHandDelegate += new System.Action<Hand>(LeftHandDetached);
         }
 
         private void OnDisable()
@@ -54,6 +59,24 @@ namespace NEP.MonoDirector.Cameras
 
             leftHandle.attachedUpdateDelegate -= new System.Action<Hand>(LeftHandUpdate);
             rightHandle.attachedUpdateDelegate -= new System.Action<Hand>(RightHandUpdate);
+        }
+
+        private void Update()
+        {
+            // I don't feel like making more actions that get called when you update a BoneMenu setting
+            // So here's some hack about locking rotations using bit shifting and dividing 
+
+            int bitLockX = Settings.Camera.handheldLockXAxis ? 1 : 0;
+            int bitLockY = Settings.Camera.handheldLockYAxis ? 1 : 0;
+            int bitLockZ = Settings.Camera.handheldLockZAxis ? 1 : 0;
+
+            RigidbodyConstraints constraintX = (RigidbodyConstraints)(16 * bitLockX);
+            RigidbodyConstraints constraintY = (RigidbodyConstraints)(32 * bitLockY);
+            RigidbodyConstraints constraintZ = (RigidbodyConstraints)(64 * bitLockZ);
+
+            cameraRigidbody.constraints = constraintX;
+            cameraRigidbody.constraints = constraintY;
+            cameraRigidbody.constraints = constraintZ;
         }
 
         private void OnCameraModeChanged(CameraMode mode)
@@ -85,6 +108,8 @@ namespace NEP.MonoDirector.Cameras
 
         private void LeftHandUpdate(Hand hand)
         {
+            cameraRigidbody.isKinematic = false;
+
             if (hand.GetIndexTriggerAxis() > 0.25f)
             {
                 float rate = CameraRigManager.Instance.FOVController.fovChangeRate;
@@ -96,12 +121,22 @@ namespace NEP.MonoDirector.Cameras
          
         private void RightHandUpdate(Hand hand)
         {
+            cameraRigidbody.isKinematic = false;
+
             if (hand.GetIndexTriggerAxis() > 0.25f)
             {
                 float rate = CameraRigManager.Instance.FOVController.fovChangeRate;
 
                 CameraRigManager.Instance.CameraDisplay.FOVController.SetFOV(hand.GetIndexTriggerAxis() * rate / 10f);
                 CameraRigManager.Instance.FOVController.SetFOV(hand.GetIndexTriggerAxis() * rate / 10f);
+            }
+        }
+
+        private void LeftHandDetached(Hand hand)
+        {
+            if (Settings.Camera.handheldKinematicOnRelease)
+            {
+                cameraRigidbody.isKinematic = true;
             }
         }
     }

@@ -13,9 +13,13 @@ namespace NEP.MonoDirector.UI
 {
     public static class UIManager
     {
-        internal static readonly string propMarkerBarcode = "NotEnoughPhotons.MonoDirector.Spawnable.UIPropMarker";
-        internal static readonly string infoInterfaceBarcode = "NotEnoughPhotons.MonoDirector.Spawnable.InformationInterface";
-        internal static readonly string casterBarcode = "NotEnoughPhotons.MonoDirector.Spawnable.CasterUI";
+        internal static readonly string companyCode = "NotEnoughPhotons.";
+        internal static readonly string modCode = "MonoDirector.";
+        internal static readonly string typeCode = "Spawnable.";
+
+        internal static readonly string propMarkerBarcode = companyCode + modCode + typeCode + ".UIPropMarker";
+        internal static readonly string infoInterfaceBarcode = companyCode + modCode + typeCode + "InformationInterface";
+        internal static readonly string casterBarcode = companyCode + modCode + typeCode + "CasterUI";
 
         internal static List<AssetPoolee> Warmup(string barcode, int size, bool startActive = false)
         {

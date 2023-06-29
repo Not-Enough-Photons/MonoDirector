@@ -71,12 +71,16 @@ namespace NEP.MonoDirector.UI
         private GameObject microIconsObject;
         private GameObject timecodeObject;
         private GameObject playmodeObject;
+        private GameObject countdownObject;
 
         private GameObject micObject;
         private GameObject micOffObject;
 
         private TextMeshProUGUI timecodeText;
         private TextMeshProUGUI playmodeText;
+        private TextMeshProUGUI countdownText;
+
+        private Animator countdownAnimator;
 
         private PlayState playState;
 
@@ -92,12 +96,16 @@ namespace NEP.MonoDirector.UI
             microIconsObject = transform.Find("MicroIcons").gameObject;
             timecodeObject = transform.Find("Timecode").gameObject;
             playmodeObject = transform.Find("Playmode").gameObject;
+            countdownObject = transform.Find("Countdown").gameObject;
 
             micObject = microIconsObject.transform.Find("Microphone/Mic").gameObject;
             micOffObject = microIconsObject.transform.Find("Microphone/Disabled").gameObject;
 
             timecodeText = timecodeObject.transform.Find("Time").GetComponent<TextMeshProUGUI>();
             playmodeText = playmodeObject.transform.Find("Mode").GetComponent<TextMeshProUGUI>();
+            countdownText = countdownObject.transform.Find("Counter").GetComponent<TextMeshProUGUI>();
+
+            countdownAnimator = countdownObject.GetComponent<Animator>();
         }
 
         private void Start()
@@ -109,8 +117,11 @@ namespace NEP.MonoDirector.UI
             Events.OnStopPlayback += OnSceneEnd;
 
             Events.OnPreRecord += OnSceneStart;
+            Events.OnStartRecording += OnStartRecording;
             Events.OnRecordTick += OnSceneTick;
             Events.OnStopRecording += OnSceneEnd;
+
+            Events.OnTimerCountdown += OnTimerCountdown;
 
             showIcons = false;
             showTimecode = false;
@@ -119,6 +130,7 @@ namespace NEP.MonoDirector.UI
             microIconsObject.SetActive(false);
             timecodeObject.SetActive(false);
             playmodeObject.SetActive(false);
+            countdownObject.SetActive(false);
         }
 
         private void Update()
@@ -131,7 +143,18 @@ namespace NEP.MonoDirector.UI
 
         public void OnSceneStart()
         {
+            if(Director.PlayState != PlayState.Prerecording)
+            {
+                return;
+            }
+
             timecodeText.text = "0s";
+            countdownObject.SetActive(true);
+        }
+
+        public void OnStartRecording()
+        {
+            countdownObject.SetActive(false);
         }
 
         public void OnSceneTick()
@@ -154,6 +177,16 @@ namespace NEP.MonoDirector.UI
         public void OnSceneEnd()
         {
             
+        }
+
+        public void OnTimerCountdown()
+        {
+            countdownObject.SetActive(false);
+            int counter = Director.PlayState == PlayState.Prerecording ? Recorder.instance.Countdown : Playback.instance.Countdown;
+            int currentCountdown = Settings.World.delay - counter;
+            countdownText.text = currentCountdown.ToString();
+            countdownObject.SetActive(true);
+            countdownAnimator.Play("Countdown");
         }
 
         private void OnPlayStateSet(PlayState playState)

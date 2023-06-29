@@ -20,8 +20,8 @@ namespace NEP.MonoDirector.Patches
 
                 var activeActor = Recorder.instance.ActiveActor;
                 activeActor.CloneAvatar();
+                activeActor.RecordAction(new System.Action(() => activeActor.SwitchToActor(activeActor)));
                 Recorder.instance.ActiveActors.Add(activeActor);
-
                 Recorder.instance.SetActor(newAvatar);
             }
         }

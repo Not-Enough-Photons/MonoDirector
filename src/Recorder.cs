@@ -28,6 +28,8 @@ namespace NEP.MonoDirector.Core
 
         public int RecordTick { get => recordTick; }
 
+        public int Countdown { get; private set; }
+
         public List<Actor> ActiveActors = new List<Actor>();
 
         public Actor ActiveActor { get => activeActor; }
@@ -211,9 +213,9 @@ namespace NEP.MonoDirector.Core
         {
             Events.OnPreRecord?.Invoke();
 
-            for (int i = 0; i < Settings.World.delay; i++)
+            for (Countdown = 0; Countdown < Settings.World.delay; Countdown++)
             {
-                Main.feedbackSFX.BeepLow();
+                Events.OnTimerCountdown?.Invoke();
                 yield return new WaitForSeconds(1);
             }
 

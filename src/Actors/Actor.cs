@@ -8,6 +8,8 @@ using SLZ.Props;
 using SLZ.Vehicle;
 using UnityEngine;
 
+using Avatar = SLZ.VRMK.Avatar;
+
 namespace NEP.MonoDirector.Actors
 {
     public class Actor : Trackable
@@ -22,24 +24,22 @@ namespace NEP.MonoDirector.Actors
             microphone = micObject.AddComponent<ActorMic>();
         }
 
-        public SLZ.VRMK.Avatar PlayerAvatar { get => playerAvatar; }
-        public SLZ.VRMK.Avatar ClonedAvatar { get => clonedAvatar; }
+        public Avatar PlayerAvatar { get => playerAvatar; }
+        public Avatar ClonedAvatar { get => clonedAvatar; }
         public Transform[] AvatarBones { get => avatarBones; }
 
-        public ActorBody ActorBody { get => actorBody; }
         public ActorMic Microphone { get => microphone; }
 
         public bool Seated { get => activeSeat != null; }
 
         protected List<FrameGroup> avatarFrames;
 
-        private ActorBody actorBody;
         private ActorMic microphone;
 
         private SLZ.Vehicle.Seat activeSeat;
 
-        private SLZ.VRMK.Avatar playerAvatar;
-        private SLZ.VRMK.Avatar clonedAvatar;
+        private Avatar playerAvatar;
+        private Avatar clonedAvatar;
 
         private Transform[] avatarBones;
         private Transform[] clonedRigBones;
@@ -170,7 +170,16 @@ namespace NEP.MonoDirector.Actors
 
             microphone.SetAvatar(clonedAvatar);
 
+            clonedAvatar.gameObject.SetActive(true);
+
             Events.OnActorCasted?.Invoke(this);
+        }
+
+        public void SwitchToActor(Actor actor)
+        {
+            Main.Logger.Msg("SwitchToAvatar");
+            clonedAvatar.gameObject.SetActive(false);
+            actor.clonedAvatar.gameObject.SetActive(true);
         }
 
         public void Delete()

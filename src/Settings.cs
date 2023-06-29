@@ -8,6 +8,10 @@
             public static float cameraSpeedFast;
             public static float cameraSmoothRotationDelta;
             public static bool useHeadCamera;
+            public static bool handheldLockXAxis;
+            public static bool handheldLockYAxis;
+            public static bool handheldLockZAxis;
+            public static bool handheldKinematicOnRelease;
         }
 
         public static class World
