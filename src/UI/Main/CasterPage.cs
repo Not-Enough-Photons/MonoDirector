@@ -22,6 +22,7 @@ namespace NEP.MonoDirector.UI
         }
 
         public List<Actor> actors;
+        private Actor lastAppendedActor;
 
         private int pageElements = 0;
         private int maxElementsPerPage = 8;
@@ -32,7 +33,7 @@ namespace NEP.MonoDirector.UI
 
         public void OnActorCasted(Trackable trackable)
         {
-            Actor actor = (Actor)trackable;
+            Actor actor = trackable as Actor;
             AddActor(this, actor);
         }
 
@@ -61,6 +62,7 @@ namespace NEP.MonoDirector.UI
             }
 
             actors.Add(actor);
+            lastAppendedActor = actor;
 
             if (this != pageView.ActivePage)
             {
@@ -68,8 +70,10 @@ namespace NEP.MonoDirector.UI
             }
 
             var entry = pageView.EntryObjects.FirstOrDefault((entryObject) => !entryObject.gameObject.activeInHierarchy);
-            entry.SetActor(actor);
             entry.gameObject.SetActive(true);
+            // I DONT CARE HOW LONG IT TAKES
+            // JUST SET TEH DAMN ACTOR PLEASE
+            entry.SetActor(lastAppendedActor);
         }
     }
 }

@@ -53,7 +53,7 @@ namespace NEP.MonoDirector.Actors
 
             var actorFrame = actorFrames[currentFrame];
 
-            for (int i = 0; i < actorFrame.transformFrames.Count; i++)
+            for (int i = 0; i < actorFrame.transformFrames.Length; i++)
             {
                 var boneFrame = actorFrame.transformFrames[i];
                 boneFrame.transform = clonedNPCBones[i];
@@ -74,7 +74,7 @@ namespace NEP.MonoDirector.Actors
         /// <param name="index">The frame to record the bones.</param>
         public void CaptureActorFrame()
         {
-            actorFrames.Add(recordedTicks++, new FrameGroup(CaptureBoneFrames(meshes.ToArray())));
+            //actorFrames.Add(recordedTicks++, new FrameGroup(CaptureBoneFrames(meshes.ToArray())));
         }
 
         public void CloneNPC()

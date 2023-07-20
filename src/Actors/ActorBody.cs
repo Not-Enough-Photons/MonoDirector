@@ -60,8 +60,8 @@ namespace NEP.MonoDirector.Actors
 
             float delta = head / gap;
 
-            List<ObjectFrame> previousTransformFrames = previousFrame.transformFrames;
-            List<ObjectFrame> nextTransformFrames = nextFrame.transformFrames;
+            ObjectFrame[] previousTransformFrames = previousFrame.transformFrames;
+            ObjectFrame[] nextTransformFrames = nextFrame.transformFrames;
 
             for (int i = 0; i < 55; i++)
             {
@@ -96,7 +96,7 @@ namespace NEP.MonoDirector.Actors
         public void RecordFrame()
         {
             FrameGroup frameGroup = new FrameGroup();
-            frameGroup.SetFrames(CaptureLimbs(rigidbodies.ToArray()), Recorder.instance.RecordingTime);
+            //frameGroup.SetFrames(CaptureLimbs(rigidbodies.ToArray()), Recorder.instance.RecordingTime);
             limbFrames.Add(frameGroup);
         }
 

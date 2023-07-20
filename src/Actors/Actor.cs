@@ -22,6 +22,8 @@ namespace NEP.MonoDirector.Actors
 
             GameObject micObject = new GameObject("Actor Microphone");
             microphone = micObject.AddComponent<ActorMic>();
+
+            tempFrames = new ObjectFrame[55];
         }
 
         public Avatar PlayerAvatar { get => playerAvatar; }
@@ -40,6 +42,8 @@ namespace NEP.MonoDirector.Actors
 
         private Avatar playerAvatar;
         private Avatar clonedAvatar;
+
+        private ObjectFrame[] tempFrames;
 
         private Transform[] avatarBones;
         private Transform[] clonedRigBones;
@@ -88,19 +92,12 @@ namespace NEP.MonoDirector.Actors
 
             float delta = head / gap;
 
-            List<ObjectFrame> previousTransformFrames = previousFrame.transformFrames;
-            List<ObjectFrame> nextTransformFrames = nextFrame.transformFrames;
+            ObjectFrame[] previousTransformFrames = previousFrame.transformFrames;
+            ObjectFrame[] nextTransformFrames = nextFrame.transformFrames;
 
             for (int i = 0; i < 55; i++)
             {
                 if(i == (int)HumanBodyBones.Jaw)
-                {
-                    continue;
-                }
-
-                var bone = clonedRigBones[i];
-
-                if (bone == null)
                 {
                     continue;
                 }
@@ -110,21 +107,14 @@ namespace NEP.MonoDirector.Actors
                     continue;
                 }
 
-                Vector3 previousBonePosition = previousTransformFrames[i].position;
-                Vector3 nextBonePosition = nextTransformFrames[i].position;
+                Vector3 previousPosition = previousTransformFrames[i].position;
+                Vector3 nextPosition = nextTransformFrames[i].position;
 
-                Quaternion previousBoneRotation = previousTransformFrames[i].rotation;
-                Quaternion nextBoneRotation = nextTransformFrames[i].rotation;
+                Quaternion previousRotation = previousTransformFrames[i].rotation;
+                Quaternion nextRotation = nextTransformFrames[i].rotation;
 
-                // seat hack for now until i code a better way to do actor parenting/unparenting
-
-                if (!Seated)
-                {
-                    bone.position = Vector3.Lerp(previousBonePosition, nextBonePosition, delta);
-                }
-
-                // still want to update rotations 
-                bone.rotation = Quaternion.Slerp(previousBoneRotation, nextBoneRotation, delta);
+                clonedRigBones[i].position = Vector3.Lerp(previousPosition, nextPosition, delta);
+                clonedRigBones[i].rotation = Quaternion.Slerp(previousRotation, nextRotation, delta);
             }
 
             foreach (ActionFrame actionFrame in actionFrames)
@@ -150,7 +140,8 @@ namespace NEP.MonoDirector.Actors
         public override void RecordFrame()
         {
             FrameGroup frameGroup = new FrameGroup();
-            frameGroup.SetFrames(CaptureBoneFrames(avatarBones), Recorder.instance.RecordingTime);
+            CaptureBoneFrames(avatarBones);
+            frameGroup.SetFrames(tempFrames, Recorder.instance.RecordingTime);
             avatarFrames.Add(frameGroup);
         }
 
@@ -160,6 +151,9 @@ namespace NEP.MonoDirector.Actors
             clonedAvatar = clonedAvatarObject.GetComponent<SLZ.VRMK.Avatar>();
 
             clonedAvatar.gameObject.SetActive(true);
+
+            // stops position overrides, if there are any
+            clonedAvatar.GetComponent<Animator>().enabled = false;
 
             clonedRigBones = GetAvatarBones(clonedAvatar);
 
@@ -224,17 +218,16 @@ namespace NEP.MonoDirector.Actors
             }
         }
 
-        private List<ObjectFrame> CaptureBoneFrames(Transform[] boneList)
+        private void CaptureBoneFrames(Transform[] boneList)
         {
-            List<ObjectFrame> frames = new List<ObjectFrame>();
-
             for (int i = 0; i < boneList.Length; i++)
             {
-                ObjectFrame frame = new ObjectFrame(boneList[i]);
-                frames.Add(frame);
-            }
+                Vector3 bonePosition = boneList[i].position;
+                Quaternion boneRotation = boneList[i].rotation;
 
-            return frames;
+                ObjectFrame frame = new ObjectFrame(bonePosition, boneRotation);
+                tempFrames[i] = frame;
+            }
         }
 
         private Transform[] GetAvatarBones(SLZ.VRMK.Avatar avatar)

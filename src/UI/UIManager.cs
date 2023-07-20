@@ -19,7 +19,7 @@ namespace NEP.MonoDirector.UI
 
         internal static readonly string propMarkerBarcode = companyCode + modCode + typeCode + ".UIPropMarker";
         internal static readonly string infoInterfaceBarcode = companyCode + modCode + typeCode + "InformationInterface";
-        internal static readonly string casterBarcode = companyCode + modCode + typeCode + "CasterUI";
+        internal static readonly string casterBarcode = companyCode + modCode + typeCode + "MonoDirectorMainMenu";
 
         internal static List<AssetPoolee> Warmup(string barcode, int size, bool startActive = false)
         {

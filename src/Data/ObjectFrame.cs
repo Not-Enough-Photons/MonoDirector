@@ -1,11 +1,69 @@
-﻿using System;
-using UnityEngine;
-using static SLZ.VFX.GenericFrameTimer;
+﻿using UnityEngine;
 
 namespace NEP.MonoDirector.Data
 {
     public struct ObjectFrame
     {
+        public ObjectFrame(Vector3 position)
+        {
+            name = "Bone";
+            this.transform = null;
+            this.position = position;
+            this.rotation = Quaternion.identity;
+            this.scale = Vector3.one;
+
+            frameTime = 0f;
+
+            rigidbody = null;
+            rigidbodyVelocity = Vector3.zero;
+            rigidbodyAngularVelocity = Vector3.zero;
+        }
+
+        public ObjectFrame(Vector3 position, Quaternion rotation)
+        {
+            name = "Bone";
+            this.transform = null;
+            this.position = position;
+            this.rotation = rotation;
+            this.scale = Vector3.one;
+
+            frameTime = 0f;
+
+            rigidbody = null;
+            rigidbodyVelocity = Vector3.zero;
+            rigidbodyAngularVelocity = Vector3.zero;
+        }
+
+        public ObjectFrame(Vector3 position, Quaternion rotation, Vector3 scale)
+        {
+            name = "Bone";
+            this.transform = null;
+            this.position = position;
+            this.rotation = rotation;
+            this.scale = scale;
+
+            frameTime = 0f;
+
+            rigidbody = null;
+            rigidbodyVelocity = Vector3.zero;
+            rigidbodyAngularVelocity = Vector3.zero;
+        }
+
+        public ObjectFrame(Quaternion rotation)
+        {
+            name = "Bone";
+            this.transform = null;
+            this.position = Vector3.zero;
+            this.rotation = rotation;
+            this.scale = Vector3.one;
+
+            frameTime = 0f;
+
+            rigidbody = null;
+            rigidbodyVelocity = Vector3.zero;
+            rigidbodyAngularVelocity = Vector3.zero;
+        }
+
         public ObjectFrame(Transform transform)
         {
             name = transform != null ? transform.name : "Null";

@@ -4,24 +4,19 @@ namespace NEP.MonoDirector.Data
 {
     public struct FrameGroup
     {
-        public FrameGroup(List<ObjectFrame> frames)
+        public void SetFrames(ObjectFrame[] transformFrames, float frameTime)
         {
-            this.transformFrames = frames;
-            frameTime = 0f;
-        }
-
-        public void SetFrames(List<ObjectFrame> transformFrames, float frameTime)
-        {
+            this.transformFrames = new ObjectFrame[transformFrames.Length];
             this.frameTime = frameTime;
-            this.transformFrames = transformFrames;
 
-            for(int i = 0; i < transformFrames.Count; i++)
+            for(int i = 0; i < this.transformFrames.Length; i++)
             {
+                this.transformFrames[i] = transformFrames[i];
                 transformFrames[i].SetDelta(frameTime);
             }
         }
 
-        public List<ObjectFrame> transformFrames;
+        public ObjectFrame[] transformFrames;
         public float frameTime;
     }
 }

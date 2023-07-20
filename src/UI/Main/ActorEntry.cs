@@ -15,7 +15,7 @@ namespace NEP.MonoDirector.UI
         private TextMeshProUGUI avatarNameText;
         private Button button;
 
-        private Actor actor;
+        public Actor actor;
 
         public void Awake()
         {
@@ -29,19 +29,15 @@ namespace NEP.MonoDirector.UI
 
         public void SetActor(Actor actor)
         {
-            if(actor == null)
-            {
-                return;
-            }
-
+            Main.Logger.Msg($"ActorEntry.SetActor({actor.ActorName})");
             this.actor = actor;
             avatarNameText.text = actor.ActorName;
         }
 
         private void OnButtonClick()
         {
-            CasterUI.Instance.SetPage("ActorSettings");
-            CasterUI.Instance.actorSettingsView.SetActor(actor);
+            MenuUI.Instance.SetPage("ActorSettings");
+            MenuUI.Instance.ActorSettingsView.SetActor(actor);
         }
     }
 }

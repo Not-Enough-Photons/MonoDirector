@@ -17,16 +17,18 @@ namespace NEP.MonoDirector.UI
 
         private TextMeshProUGUI actorName;
 
+        private Button visibilityButton;
         private Button recastButton;
         private Button deleteButton;
+
+        private bool visible;
 
         private void Awake()
         {
             actorName = transform.Find("ActorName").GetComponent<TextMeshProUGUI>();
+            visibilityButton = transform.Find("OptionsGroup/Visibility").GetComponent<Button>();
             recastButton = transform.Find("OptionsGroup/Recast").GetComponent<Button>();
             deleteButton = transform.Find("OptionsGroup/Delete").GetComponent<Button>();
-
-            deleteButton.onClick.AddListener(new System.Action(() => DeleteActor(actor)));
         }
 
         public void SetActor(Actor actor)
@@ -36,7 +38,18 @@ namespace NEP.MonoDirector.UI
             actorName.text = $"Actor Name:\n{actor.ActorName}";
         }
 
-        public void DeleteActor(Actor actor)
+        public void OnVisibilityClicked()
+        {
+            visible = !visible;
+            actor.ClonedAvatar.gameObject.SetActive(!visible);
+        }
+
+        public void OnRecastClicked()
+        {
+
+        }
+
+        public void OnDeleteClicked()
         {
             Director.instance.RemoveActor(actor);
         }

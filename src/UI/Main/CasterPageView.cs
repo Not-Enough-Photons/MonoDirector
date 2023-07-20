@@ -13,7 +13,7 @@ namespace NEP.MonoDirector.UI
 
         public CasterPage ActivePage => activePage;
 
-        private CasterUI casterUI => CasterUI.Instance;
+        private MenuUI casterUI => MenuUI.Instance;
 
         private List<CasterPage> pages;
 
@@ -92,23 +92,7 @@ namespace NEP.MonoDirector.UI
 
         private void DrawElements()
         {
-            for(int i = 0; i < entryObjects.Length; i++)
-            {
-                entryObjects[i].gameObject.SetActive(false);
 
-                for (int j = 0; j < activePage.actors.Count; j++)
-                {
-                    if(activePage.actors.Count == 0)
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        entryObjects[j].gameObject.SetActive(true);
-                        entryObjects[j].SetActor(activePage.actors[j]);
-                    }
-                }
-            }
         }
     }
 }
