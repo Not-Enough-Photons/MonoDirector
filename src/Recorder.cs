@@ -41,6 +41,8 @@ namespace NEP.MonoDirector.Core
 
         private Coroutine recordRoutine;
 
+        private float fpsTimer = 0f;
+
         private float recordingTime;
         private float takeTime;
 
@@ -109,6 +111,8 @@ namespace NEP.MonoDirector.Core
             }
 
             Playback.instance.ResetPlayhead();
+
+            fpsTimer = 0f;
 
             recordingTime = 0f;
 
@@ -233,7 +237,14 @@ namespace NEP.MonoDirector.Core
 
             while (Director.PlayState == PlayState.Recording || Director.PlayState == PlayState.Paused)
             {
-                Tick();
+                fpsTimer += Time.deltaTime;
+
+                if(fpsTimer > 1f / Settings.World.fps)
+                {
+                    Tick();
+                    fpsTimer = 0f;
+                }
+
                 yield return null;
             }
             

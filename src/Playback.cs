@@ -39,12 +39,14 @@ namespace NEP.MonoDirector.Core
 
         private float playbackRate = 1f;
 
+        private float playbackFPSTimer;
+
         public void SetPlaybackRate(float rate)
         {
             this.playbackRate = rate;
         }
 
-        public void LateUpdate()
+        public void Tick()
         {
             if (Director.PlayState != PlayState.Playing)
             {
@@ -70,6 +72,8 @@ namespace NEP.MonoDirector.Core
 
         public void OnPrePlayback()
         {
+            playbackFPSTimer = 0f;
+
             playbackTick = 0;
 
             ResetPlayhead();
@@ -106,7 +110,7 @@ namespace NEP.MonoDirector.Core
 
             AnimateAll();
 
-            playbackTime += Time.deltaTime * playbackRate;
+            playbackTime += playbackRate * 1f / Settings.World.fps;
         }
 
         public void OnStopPlayback()
@@ -217,7 +221,8 @@ namespace NEP.MonoDirector.Core
                     break;
                 }
 
-                LateUpdate();
+                Tick();
+                
                 yield return null;
             }
 
