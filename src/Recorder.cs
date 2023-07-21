@@ -28,7 +28,7 @@ namespace NEP.MonoDirector.Core
         public static Recorder instance;
 
         public float RecordingTime { get => recordingTime; }
-        public float TakeTime { get => takeTime; }
+        public float TakeTime;
 
         public int RecordTick { get => recordTick; }
 
@@ -47,7 +47,6 @@ namespace NEP.MonoDirector.Core
         private float fpsTimer = 0f;
 
         private float recordingTime;
-        private float takeTime;
 
         private float timeSinceLastTick = 0;
 
@@ -165,9 +164,9 @@ namespace NEP.MonoDirector.Core
             recordingTime += timeSinceLastTick;
 
             // keep up!
-            if (recordingTime > takeTime)
+            if (recordingTime > TakeTime)
             {
-                takeTime = recordingTime;
+                TakeTime = recordingTime;
             }
 
             Playback.Instance.MovePlayhead(timeSinceLastTick);
@@ -213,7 +212,7 @@ namespace NEP.MonoDirector.Core
             sw.Stop();
             
             Main.Logger.Msg($"[STOPWATCH]: Actor::ToBinary() took {sw.ElapsedMilliseconds}...");
-
+            /*
             sw.Restart();
             
             using (FileStream file = File.Open("test.mdat", FileMode.Create))
@@ -227,7 +226,7 @@ namespace NEP.MonoDirector.Core
             sw.Stop();
             
             Main.Logger.Msg($"[STOPWATCH]: Writing MDAT took {sw.ElapsedMilliseconds}...");
-
+            */
             sw.Restart();
             
             // Then try to read it back
@@ -239,6 +238,8 @@ namespace NEP.MonoDirector.Core
             }
 
             sw.Stop();
+            
+            Main.Logger.Msg($"[STOPWATCH]: Actor::FromBinary() took {sw.ElapsedMilliseconds}...");
 #endif
             
             activeActor.CloneAvatar();

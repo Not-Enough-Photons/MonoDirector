@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using Cysharp.Threading.Tasks.Triggers;
+
 using NEP.MonoDirector.Audio;
 using NEP.MonoDirector.Core;
 using NEP.MonoDirector.Data;
@@ -115,7 +115,7 @@ namespace NEP.MonoDirector.Actors
                 {
                     continue;
                 }
-
+                
                 bone.position = avatarFrames[0].TransformFrames[i].position;
                 bone.rotation = avatarFrames[0].TransformFrames[i].rotation;
             }
@@ -340,6 +340,7 @@ namespace NEP.MonoDirector.Actors
             // version: u16
             // barcode_size: i32
             // barcode : utf-8 string
+            // take_time: float
             // num_frames : u32
             //
             // Below the header is the following
@@ -351,6 +352,8 @@ namespace NEP.MonoDirector.Actors
             byte[] encodedBarcode = Encoding.UTF8.GetBytes(avatarBarcode);
             bytes.AddRange(BitConverter.GetBytes(encodedBarcode.Length));
             bytes.AddRange(encodedBarcode);
+            bytes.AddRange(BitConverter.GetBytes(Recorder.instance.TakeTime));
+            bytes.AddRange(BitConverter.GetBytes(avatarFrames.Count));
 
             foreach (FrameGroup group in avatarFrames)
                 bytes.AddRange(group.ToBinary());
@@ -360,7 +363,65 @@ namespace NEP.MonoDirector.Actors
 
         public void FromBinary(Stream stream)
         {
-            
+            // Check the version number
+            byte[] versionBytes = new byte[sizeof(short)];
+            stream.Read(versionBytes, 0, versionBytes.Length);
+
+            short version = BitConverter.ToInt16(versionBytes, 0);
+
+            if (version != (short)VersionNumber.V1)
+                throw new Exception($"Unsupported version type! Value was {version}");
+
+            // Deserialize
+            if (version == (short)VersionNumber.V1)
+            {
+                // How long is the string?
+                byte[] strLenBytes = new byte[sizeof(int)];
+                stream.Read(strLenBytes, 0, strLenBytes.Length);
+
+                int strLen = BitConverter.ToInt32(strLenBytes, 0);
+
+                byte[] strBytes = new byte[strLen];
+                stream.Read(strBytes, 0, strBytes.Length);
+
+                avatarBarcode = Encoding.UTF8.GetString(strBytes);
+                
+#if DEBUG
+                Main.Logger.Msg($"[ACTOR]: Barcode: {avatarBarcode}");
+#endif
+                
+                // Then the take
+                byte[] takeBytes = new byte[sizeof(float)];
+                stream.Read(takeBytes, 0, takeBytes.Length);
+
+                float takeTime = BitConverter.ToSingle(takeBytes, 0);
+
+                // Force the take time to be correct
+                // This means if an actor takes a long time on disk
+                // We then match their take time and not ours
+                if (Recorder.instance.TakeTime < takeTime)
+                    Recorder.instance.TakeTime = takeTime;
+                
+                // Then deserialize the frames
+                byte[] frameNumBytes = new byte[sizeof(int)];
+                stream.Read(frameNumBytes, 0, frameNumBytes.Length);
+
+                int numFrames = BitConverter.ToInt32(frameNumBytes, 0);
+
+#if DEBUG
+                Main.Logger.Msg($"[ACTOR]: NumFrames: {numFrames}");
+#endif
+                
+                FrameGroup[] frameGroups = new FrameGroup[numFrames];
+
+                for (int f = 0; f < numFrames; f++)
+                {
+                    frameGroups[f] = new FrameGroup();
+                    frameGroups[f].FromBinary(stream);
+                }
+
+                avatarFrames = new List<FrameGroup>(frameGroups);
+            }
         }
 
         // TADB - Tracked Actor Data Block

@@ -237,6 +237,8 @@ namespace NEP.MonoDirector.Data
 
         public void FromBinary(Stream stream)
         {
+            //Main.Logger.Msg($"[ObjectFrame]: FromBinary() Called!");
+            
             // Check the version number
             byte[] versionBytes = new byte[sizeof(short)];
             stream.Read(versionBytes, 0, versionBytes.Length);
