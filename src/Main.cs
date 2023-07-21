@@ -18,7 +18,7 @@ namespace NEP.MonoDirector
     public static class BuildInfo
     {
         public const string Name = "MonoDirector"; // Name of the Mod.  (MUST BE SET)
-        public const string Description = "Camera dolly system for Boneworks. Take cool shots and whatnot!"; // Description for the Mod.  (Set as null if none)
+        public const string Description = "A movie/photo making utility for BONELAB!"; // Description for the Mod.  (Set as null if none)
         public const string Author = "Not Enough Photons"; // Author of the Mod.  (MUST BE SET)
         public const string Company = null; // Company that made the Mod.  (Set as null if none)
         public const string Version = "0.0.1"; // Version of the Mod.  (MUST BE SET)

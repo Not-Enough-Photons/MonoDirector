@@ -36,6 +36,7 @@
     <Compile Include="src\Actors\ActorSkeleton.cs" />
     <Compile Include="src\Data\ManagedQuaternion.cs" />
     <Compile Include="src\Data\ManagedVector.cs" />
+    <Compile Include="src\Patches\VRMK\PlayerAvatarArt.cs" />
     <Compile Include="src\Proxy\ActorProxy.cs" />
     <Compile Include="src\Actors\GripEventListener.cs" />
     <Compile Include="src\Actors\MagazineProp.cs" />
@@ -226,7 +227,6 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources\md_resources.pack" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
   </PropertyGroup>

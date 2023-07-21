@@ -17,6 +17,7 @@ namespace NEP.MonoDirector.Actors
         public Actor(SLZ.VRMK.Avatar avatar) : base()
         {
             playerAvatar = avatar;
+
             avatarBones = GetAvatarBones(playerAvatar);
             avatarFrames = new List<FrameGroup>();
 
@@ -26,6 +27,15 @@ namespace NEP.MonoDirector.Actors
             tempFrames = new ObjectFrame[55];
         }
 
+        // For a traditional rig, this should be all the "head" bones
+        public readonly List<int> HeadBones = new List<int>()
+        {
+            (int)HumanBodyBones.Head,
+            (int)HumanBodyBones.Jaw,
+            (int)HumanBodyBones.LeftEye,
+            (int)HumanBodyBones.RightEye,
+        };
+        
         public Avatar PlayerAvatar { get => playerAvatar; }
         public Avatar ClonedAvatar { get => clonedAvatar; }
         public Transform[] AvatarBones { get => avatarBones; }
@@ -52,6 +62,7 @@ namespace NEP.MonoDirector.Actors
         private FrameGroup nextFrame;
 
         private Transform lastPelvisParent;
+        private int headIndex;
 
         public override void OnSceneBegin()
         {
@@ -97,7 +108,7 @@ namespace NEP.MonoDirector.Actors
 
             for (int i = 0; i < 55; i++)
             {
-                if(i == (int)HumanBodyBones.Jaw)
+                if (i == (int)HumanBodyBones.Jaw)
                 {
                     continue;
                 }
@@ -228,6 +239,11 @@ namespace NEP.MonoDirector.Actors
                 ObjectFrame frame = new ObjectFrame(bonePosition, boneRotation);
                 tempFrames[i] = frame;
             }
+
+            // Undo the head offset... afterward because no branching :P
+            // This undoes it for every bone we count under it too!
+            foreach (int headBone in HeadBones)
+                tempFrames[headBone].position += Patches.PlayerAvatarArtPatches.UpdateAvatarHead.calculatedHeadOffset;
         }
 
         private Transform[] GetAvatarBones(SLZ.VRMK.Avatar avatar)
