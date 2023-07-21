@@ -34,6 +34,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="src\Actors\ActorSkeleton.cs" />
+    <Compile Include="src\Data\IBinaryData.cs" />
+    <Compile Include="src\Data\IJSONData.cs" />
     <Compile Include="src\Data\ManagedQuaternion.cs" />
     <Compile Include="src\Data\ManagedVector.cs" />
     <Compile Include="src\Patches\VRMK\PlayerAvatarArt.cs" />

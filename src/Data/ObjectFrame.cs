@@ -1,9 +1,15 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using UnityEngine;
 
 namespace NEP.MonoDirector.Data
 {
-    public struct ObjectFrame
+    public struct ObjectFrame : IBinaryData
     {
+        //
+        // Constructors
+        //
         public ObjectFrame(Vector3 position)
         {
             name = "Bone";
@@ -100,7 +106,34 @@ namespace NEP.MonoDirector.Data
         {
             this.frameTime = frameTime;
         }
+        
+        //
+        // Serialization data
+        //
+        public enum VersionNumber : short
+        {
+            V1
+        }
 
+        // V1 contains the following data
+        // 
+        // version: u16
+        // position: v3
+        // rotation: v4
+        // frame_time: float
+        //
+        // 8 floats = sizeof(float) * 8
+        // 1 ushort = sizeof(ushort)
+        // Total = sizeof(float) * 8 + sizeof(ushort)
+
+        public static Dictionary<VersionNumber, ushort> VersionSizes = new Dictionary<VersionNumber, ushort>()
+        {
+            { VersionNumber.V1, sizeof(float) * 8 + sizeof(ushort) }
+        };
+
+        //
+        // Members
+        //
         public string name;
 
         public Transform transform;
@@ -114,5 +147,124 @@ namespace NEP.MonoDirector.Data
 
         public Vector3 rigidbodyVelocity;
         public Vector3 rigidbodyAngularVelocity;
+        
+        //
+        // IBinaryData
+        //
+        public byte[] ToBinary()
+        {
+            // Writes a version 1 object frame
+            byte[] bytes = new byte[VersionSizes[VersionNumber.V1]];
+
+            Array.Copy(
+                BitConverter.GetBytes((short)VersionNumber.V1), 
+                0, 
+                bytes, 
+                0, 
+                sizeof(short)
+            );
+            
+            
+            Array.Copy(
+                BitConverter.GetBytes(position.x), 
+                0, 
+                bytes, 
+                sizeof(short), 
+                sizeof(float)
+            );
+
+            Array.Copy(
+                BitConverter.GetBytes(position.y), 
+                0, 
+                bytes, 
+                sizeof(short) + sizeof(float), 
+                sizeof(float)
+            );
+
+            
+            Array.Copy(
+                BitConverter.GetBytes(position.z), 
+                0, 
+                bytes, 
+                sizeof(short) + sizeof(float) * 2, 
+                sizeof(float)
+            );
+            
+
+            Array.Copy(
+                BitConverter.GetBytes(rotation.x), 
+                0, 
+                bytes, 
+                sizeof(short) + sizeof(float) * 3, 
+                sizeof(float)
+            );
+
+            Array.Copy(
+                BitConverter.GetBytes(rotation.y), 
+                0, 
+                bytes, 
+                sizeof(short) + sizeof(float) * 4, 
+                sizeof(float)
+            );
+            
+            Array.Copy(
+                BitConverter.GetBytes(rotation.z), 
+                0, 
+                bytes, 
+                sizeof(short) + sizeof(float) * 5, 
+                sizeof(float)
+            );
+            
+            Array.Copy(
+                BitConverter.GetBytes(rotation.w), 
+                0, 
+                bytes, 
+                sizeof(short) + sizeof(float) * 6, 
+                sizeof(float)
+            );
+            
+            Array.Copy(
+                BitConverter.GetBytes(frameTime), 
+                0, 
+                bytes, 
+                sizeof(short) + sizeof(float) * 7, 
+                sizeof(float)
+            );
+            
+            return bytes;
+        }
+
+        public void FromBinary(byte[] bytes)
+        {
+            // Check the version number
+            short version = BitConverter.ToInt16(bytes, 0);
+
+            if (version != (short)VersionNumber.V1)
+                throw new Exception($"Unsupported version type! Value was {version}");
+
+            // Copy the data back into our structures
+            // This is dependent on the version number!
+            if (version == (short)VersionNumber.V1)
+            {
+                position = new Vector3(
+                    BitConverter.ToSingle(bytes, sizeof(ushort)),
+                    BitConverter.ToSingle(bytes, sizeof(ushort) + sizeof(float)),
+                    BitConverter.ToSingle(bytes, sizeof(ushort) + sizeof(float) * 2)
+                );
+
+                rotation = new Quaternion(
+                    BitConverter.ToSingle(bytes, sizeof(ushort) + sizeof(float) * 3),
+                    BitConverter.ToSingle(bytes, sizeof(ushort) + sizeof(float) * 4),
+                    BitConverter.ToSingle(bytes, sizeof(ushort) + sizeof(float) * 5),
+                    BitConverter.ToSingle(bytes, sizeof(ushort) + sizeof(float) * 6)
+                );
+
+                frameTime = BitConverter.ToSingle(bytes, sizeof(ushort) + sizeof(float) * 7);
+            }
+        }
+
+        // The identifier is OBFD in ASCII
+        // It's backwards bc endianness :(
+        public uint GetBinaryID() => 0x4446424F;
     }
 }

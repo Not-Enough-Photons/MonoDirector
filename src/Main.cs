@@ -1,4 +1,6 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Diagnostics;
+using System.Reflection;
 using System.IO;
 
 using MelonLoader;
@@ -10,6 +12,7 @@ using NEP.MonoDirector.Audio;
 using NEP.MonoDirector.Cameras;
 using NEP.MonoDirector.Core;
 using BoneLib.BoneMenu.Elements;
+using NEP.MonoDirector.Data;
 using NEP.MonoDirector.UI;
 using NEP.MonoDirector.State;
 
@@ -50,9 +53,51 @@ namespace NEP.MonoDirector
             BoneLib.Hooking.OnLevelInitialized += (info) => MonoDirectorInitialize();
 
             MDMenu.Initialize();
-            
+
 #if DEBUG
             Logger.Warning("MONODIRECTOR DEBUG BUILD!");
+
+            // Testing
+            Logger.Warning("Writing test frame data, better hope this doesn't violently crash!!!");
+            Data.ObjectFrame frame = new ObjectFrame();
+            frame.frameTime = 3.141592654F;
+            frame.position = new Vector3(1, -1, 2);
+            frame.rotation = new Quaternion(0.5F, 0.75F, 0.9F, 1.0F).normalized;
+
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            byte[] frameBytes = frame.ToBinary();
+            sw.Stop();
+            
+            Logger.Msg($"[STOPWATCH]: ToBinary() took {sw.ElapsedMilliseconds}...");
+
+            sw.Restart();
+            
+            using (FileStream file = File.Open("test.mdbf", FileMode.Create))
+            {
+                uint ident = frame.GetBinaryID();
+                file.Write(BitConverter.GetBytes(ident), 0, sizeof(uint));
+                
+                file.Write(frameBytes, 0, frameBytes.Length);
+            };
+            
+            sw.Stop();
+            
+            Logger.Msg($"[STOPWATCH]: Writing MDBF took {sw.ElapsedMilliseconds}...");
+            
+            sw.Restart();
+            
+            // Then try to read it back
+            frame.FromBinary(frameBytes);
+            
+            sw.Stop();
+
+            Logger.Msg($"[STOPWATCH]: FromBinary() took {sw.ElapsedMilliseconds}...");
+
+            Logger.Msg("READING...");
+            Logger.Msg($"\tFrT = {frame.frameTime}");
+            Logger.Msg($"\tPos = {frame.position}");
+            Logger.Msg($"\tRot = {frame.rotation}");
 #endif
         }
 
