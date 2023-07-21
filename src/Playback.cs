@@ -109,9 +109,8 @@ namespace NEP.MonoDirector.Core
             }
 
             AnimateAll();
-
-            // TODO: Talk to adamdev about what he was trying here
-            playbackTime += Time.deltaTime * playbackRate;
+            
+            playbackTime += playbackRate * Time.deltaTime;
         }
 
         public void OnStopPlayback()

@@ -133,6 +133,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\Links\MelonLoader\Managed\Il2CppSystem.dll</HintPath>
     </Reference>
+    <Reference Include="Il2CppSystem.Core, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\BONELAB\MelonLoader\Managed\Il2CppSystem.Core.dll</HintPath>
+    </Reference>
     <Reference Include="JeviLib, Version=2.0.3.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\Links\Mods\JeviLib.dll</HintPath>

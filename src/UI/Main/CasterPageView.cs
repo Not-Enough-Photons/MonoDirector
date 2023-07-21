@@ -31,7 +31,7 @@ namespace NEP.MonoDirector.UI
 
             foreach(var entryObject in entryObjects)
             {
-                entryObject.Awake();
+                entryObject.Start();
                 entryObject.gameObject.SetActive(false);
             }
 

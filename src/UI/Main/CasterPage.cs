@@ -31,9 +31,8 @@ namespace NEP.MonoDirector.UI
 
         private CasterPageView pageView;
 
-        public void OnActorCasted(Trackable trackable)
+        public void OnActorCasted(Actor actor)
         {
-            Actor actor = trackable as Actor;
             AddActor(this, actor);
         }
 
@@ -70,10 +69,9 @@ namespace NEP.MonoDirector.UI
             }
 
             var entry = pageView.EntryObjects.FirstOrDefault((entryObject) => !entryObject.gameObject.activeInHierarchy);
+            entry.actorData = lastAppendedActor;
+            entry.avatarNameText.text = lastAppendedActor.ActorName;
             entry.gameObject.SetActive(true);
-            // I DONT CARE HOW LONG IT TAKES
-            // JUST SET TEH DAMN ACTOR PLEASE
-            entry.SetActor(lastAppendedActor);
         }
     }
 }
