@@ -139,7 +139,7 @@ namespace NEP.MonoDirector.UI
             if (page == "ActorSettings")
             {
                 menuPage.SetActive(false);
-                castPage.SetActive(false);
+                castPage.SetActive(true);
                 playheadPage.SetActive(false);
                 actorSettingsPage.SetActive(true);
                 settingsPage.SetActive(false);

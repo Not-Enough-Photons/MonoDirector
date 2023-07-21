@@ -237,14 +237,7 @@ namespace NEP.MonoDirector.Core
 
             while (Director.PlayState == PlayState.Recording || Director.PlayState == PlayState.Paused)
             {
-                fpsTimer += Time.deltaTime;
-
-                if(fpsTimer > 1f / Settings.World.fps)
-                {
-                    Tick();
-                    fpsTimer = 0f;
-                }
-
+                Tick();
                 yield return null;
             }
             

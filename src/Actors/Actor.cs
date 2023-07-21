@@ -36,6 +36,7 @@ namespace NEP.MonoDirector.Actors
 
         protected List<FrameGroup> avatarFrames;
 
+        private ActorBody body;
         private ActorMic microphone;
 
         private SLZ.Vehicle.Seat activeSeat;
@@ -152,6 +153,8 @@ namespace NEP.MonoDirector.Actors
 
             clonedAvatar.gameObject.SetActive(true);
 
+            body = new ActorBody(this, Constants.rigManager.physicsRig);
+
             // stops position overrides, if there are any
             clonedAvatar.GetComponent<Animator>().enabled = false;
 
@@ -181,6 +184,7 @@ namespace NEP.MonoDirector.Actors
 
         public void Delete()
         {
+            body.Delete();
             GameObject.Destroy(clonedAvatar.gameObject);
             GameObject.Destroy(microphone.gameObject);
             microphone = null;

@@ -16,7 +16,7 @@
 
         public static class World
         {
-            public static int delay = 5;
+            public static int delay = 2;
             public static bool useMicrophone = false;
             public static bool micPlayback = false;
             public static float playbackRate = 1f;

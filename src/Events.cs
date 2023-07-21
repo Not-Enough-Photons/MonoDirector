@@ -39,7 +39,7 @@ namespace NEP.MonoDirector
             OnTimerCountdown = null;
         }
 
-        public static Action<Trackable> OnActorCasted;
+        public static Action<Actor> OnActorCasted;
 
         public static Action<Prop> OnPropCreated;
         public static Action<Prop> OnPropRemoved;

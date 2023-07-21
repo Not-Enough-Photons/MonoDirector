@@ -12,12 +12,12 @@ namespace NEP.MonoDirector.UI
         public ActorEntry(System.IntPtr ptr) : base(ptr) { }
 
         private Image avatarImage;
-        private TextMeshProUGUI avatarNameText;
+        public TextMeshProUGUI avatarNameText;
         private Button button;
 
-        public Actor actor;
+        public Actor actorData;
 
-        public void Awake()
+        public void Start()
         {
             avatarImage = transform.Find("Avatar").GetComponent<Image>();
             avatarNameText = transform.Find("Text (TMP)").GetComponent<TextMeshProUGUI>();
@@ -30,14 +30,14 @@ namespace NEP.MonoDirector.UI
         public void SetActor(Actor actor)
         {
             Main.Logger.Msg($"ActorEntry.SetActor({actor.ActorName})");
-            this.actor = actor;
+            actorData = actor;
             avatarNameText.text = actor.ActorName;
         }
 
         private void OnButtonClick()
         {
+            MenuUI.Instance.ActorSettingsView.SetActor(actorData);
             MenuUI.Instance.SetPage("ActorSettings");
-            MenuUI.Instance.ActorSettingsView.SetActor(actor);
         }
     }
 }
