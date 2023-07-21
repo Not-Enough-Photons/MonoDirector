@@ -50,11 +50,15 @@ namespace NEP.MonoDirector.UI
 
         private static void BuildSettingsMenu(MenuCategory category)
         {
-            var audioCategory = category.CreateCategory("Audio", Color.white);
-            var cameraCategory = category.CreateCategory("Camera", Color.white);
-            var toolCategory = category.CreateCategory("Tools", Color.white);
-            var uiCategory = category.CreateCategory("UI", Color.white);
+            MenuCategory audioCategory = category.CreateCategory("Audio", Color.white);
+            MenuCategory cameraCategory = category.CreateCategory("Camera", Color.white);
+            MenuCategory toolCategory = category.CreateCategory("Tools", Color.white);
+            MenuCategory uiCategory = category.CreateCategory("UI", Color.white);
 
+            MenuCategory headModeCategory = cameraCategory.CreateCategory("Head Mode Settings", Color.white);
+            MenuCategory freeCamCategory = cameraCategory.CreateCategory("Free Camera Settings", Color.white);
+            MenuCategory vfxCategory = cameraCategory.CreateCategory("VFX", Color.white);
+            
             audioCategory.CreateBoolElement("Use Microphone", Color.white, false, (value) => Settings.World.useMicrophone = value);
             audioCategory.CreateBoolElement("Mic Playback", Color.white, false, (value) => Settings.World.micPlayback = value);
 
@@ -66,25 +70,63 @@ namespace NEP.MonoDirector.UI
 
             cameraCategory.CreateBoolElement("Kinematic On Release", Color.white, false, (value) => Settings.Camera.handheldKinematicOnRelease = value);
 
-            var headModeCategory = cameraCategory.CreateCategory("Head Mode Settings", Color.white);
-            var freeCamCategory = cameraCategory.CreateCategory("Free Camera Settings", Color.white);
-
             BuildHeadModeCategory(headModeCategory);
             BuildFreeModeCategory(freeCamCategory);
 
-            var vfxCategory = cameraCategory.CreateCategory("VFX", Color.white);
-
             BuildVFXCategory(vfxCategory);
 
-            toolCategory.CreateFloatElement("Playback Speed", Color.white, 1f, 0.1f, float.NegativeInfinity, float.PositiveInfinity, (value) => Playback.instance.SetPlaybackRate(value));
-            toolCategory.CreateIntElement("Delay", Color.white, 5, 1, 0, 30, (value) => Settings.World.delay = value);
-            toolCategory.CreateIntElement("FPS", Color.white, 60, 5, 5, 144, (value) => Settings.World.fps = value);
-            toolCategory.CreateBoolElement("Ignore Slomo", Color.white, false, (value) => Settings.World.ignoreSlomo = value);
-            toolCategory.CreateBoolElement("Temporal Scaling", Color.white, true, (value) => Settings.World.temporalScaling = value);
+            BuildToolCategory(toolCategory);
 
             BuildUIMenu(uiCategory);
         }
 
+        private static void BuildToolCategory(MenuCategory category)
+        {
+            category.CreateFloatElement(
+                "Playback Speed", 
+                Color.white, 
+                1f, 
+                0.1f, 
+                float.NegativeInfinity, 
+                float.PositiveInfinity, 
+                value => Playback.Instance.PlaybackRate = value
+            );
+            
+            category.CreateIntElement(
+                "Delay", 
+                Color.white, 
+                5, 
+                1, 
+                0, 
+                30, 
+                value => Settings.World.delay = value
+            );
+            
+            category.CreateIntElement(
+                "FPS", 
+                Color.white, 
+                60, 
+                5, 
+                5, 
+                160, 
+                value => Settings.World.fps = value
+            );
+            
+            category.CreateBoolElement(
+                "Ignore Slomo", 
+                Color.white, 
+                false, 
+                value => Settings.World.ignoreSlomo = value
+            );
+            
+            category.CreateBoolElement(
+                "Temporal Scaling", 
+                Color.white, 
+                true, 
+                value => Settings.World.temporalScaling = value
+            );
+        }
+        
         private static void BuildUIMenu(MenuCategory category)
         {
             category.CreateBoolElement("Show UI", Color.white, false, (value) => InformationInterface.Instance.ShowUI = value);

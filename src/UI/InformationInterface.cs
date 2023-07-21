@@ -163,7 +163,7 @@ namespace NEP.MonoDirector.UI
 
             if(playState == PlayState.Playing)
             {
-                time = Playback.instance.PlaybackTime;
+                time = Playback.Instance.PlaybackTime;
             }
 
             if(playState == PlayState.Recording)
@@ -182,7 +182,7 @@ namespace NEP.MonoDirector.UI
         public void OnTimerCountdown()
         {
             countdownObject.SetActive(false);
-            int counter = Director.PlayState == PlayState.Prerecording ? Recorder.instance.Countdown : Playback.instance.Countdown;
+            int counter = Director.PlayState == PlayState.Prerecording ? Recorder.instance.Countdown : Playback.Instance.Countdown;
             int currentCountdown = Settings.World.delay - counter;
             countdownText.text = currentCountdown.ToString();
             countdownObject.SetActive(true);

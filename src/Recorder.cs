@@ -93,12 +93,12 @@ namespace NEP.MonoDirector.Core
 
             foreach (var castMember in Director.instance.Cast)
             {
-                Playback.instance.AnimateActor(castMember);
+                Playback.Instance.AnimateActor(castMember);
             }
 
             foreach(var prop in Director.instance.WorldProps)
             {
-                Playback.instance.AnimateProp(prop);
+                Playback.Instance.AnimateProp(prop);
             }
         }
 
@@ -112,7 +112,7 @@ namespace NEP.MonoDirector.Core
                 recordTick = 0;
             }
 
-            Playback.instance.ResetPlayhead();
+            Playback.Instance.ResetPlayhead();
 
             fpsTimer = 0f;
 
@@ -167,7 +167,7 @@ namespace NEP.MonoDirector.Core
                 takeTime = recordingTime;
             }
 
-            Playback.instance.MovePlayhead(timeSinceLastTick);
+            Playback.Instance.MovePlayhead(timeSinceLastTick);
 
             if (Director.CaptureState == CaptureState.CaptureCamera)
             {

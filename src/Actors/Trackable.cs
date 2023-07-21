@@ -53,14 +53,14 @@ namespace NEP.MonoDirector.Actors
                 previousFrame = nextFrame;
                 nextFrame = frame;
 
-                if (frame.frameTime > Playback.instance.PlaybackTime)
+                if (frame.frameTime > Playback.Instance.PlaybackTime)
                 {
                     break;
                 }
             }
 
             float gap = nextFrame.frameTime - previousFrame.frameTime;
-            float head = Playback.instance.PlaybackTime - previousFrame.frameTime;
+            float head = Playback.Instance.PlaybackTime - previousFrame.frameTime;
 
             float delta = head / gap;
 
@@ -69,7 +69,7 @@ namespace NEP.MonoDirector.Actors
 
             foreach (ActionFrame actionFrame in actionFrames)
             {
-                if (Playback.instance.PlaybackTime < actionFrame.timestamp)
+                if (Playback.Instance.PlaybackTime < actionFrame.timestamp)
                 {
                     continue;
                 }

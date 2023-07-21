@@ -139,7 +139,7 @@ namespace NEP.MonoDirector.Actors
 
             foreach(var actionFrame in actionFrames)
             {
-                if (Playback.instance.PlaybackTime < actionFrame.timestamp)
+                if (Playback.Instance.PlaybackTime < actionFrame.timestamp)
                 {
                     continue;
                 }

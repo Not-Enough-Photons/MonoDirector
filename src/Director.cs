@@ -76,14 +76,16 @@ namespace NEP.MonoDirector.Core
 
             return;
 
+            float seekRate = Playback.Instance.PlaybackRate * Time.deltaTime;
+            
             if (Input.GetKey(KeyCode.LeftArrow))
             {
-                Playback.instance.Seek(-Playback.instance.PlaybackRate);
+                Playback.Instance.Seek(-seekRate);
             }
 
             if (Input.GetKey(KeyCode.RightArrow))
             {
-                Playback.instance.Seek(Playback.instance.PlaybackRate);
+                Playback.Instance.Seek(seekRate);
             }
 
             if (Input.GetKeyDown(KeyCode.P))
