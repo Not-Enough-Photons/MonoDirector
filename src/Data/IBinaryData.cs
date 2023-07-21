@@ -15,8 +15,8 @@ namespace NEP.MonoDirector.Data
         /// <summary>
         /// Converts the provided byte array into an object
         /// </summary>
-        /// <param name="bytes">A byte array representing the object</param>
-        void FromBinary(byte[] bytes);
+        /// <param name="stream">The stream in which bytes are pulled from</param>
+        void FromBinary(Stream stream);
 
         /// <summary>
         /// Provides a unique binary ID to the serializer

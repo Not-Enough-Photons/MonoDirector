@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using Cysharp.Threading.Tasks.Triggers;
 using NEP.MonoDirector.Audio;
 using NEP.MonoDirector.Core;
 using NEP.MonoDirector.Data;
 
 using SLZ.Props;
+using SLZ.Rig;
 using SLZ.Vehicle;
 using UnityEngine;
 
@@ -13,7 +16,7 @@ using Avatar = SLZ.VRMK.Avatar;
 
 namespace NEP.MonoDirector.Actors
 {
-    public class Actor : Trackable
+    public class Actor : Trackable, IBinaryData
     {
         public Actor() : base()
         {
@@ -38,6 +41,9 @@ namespace NEP.MonoDirector.Actors
         
         public Actor(SLZ.VRMK.Avatar avatar) : this()
         {
+            RigManager rigManager = BoneLib.Player.rigManager;
+            avatarBarcode = rigManager.AvatarCrate.Barcode;
+            
             playerAvatar = avatar;
 
             avatarBones = GetAvatarBones(playerAvatar);
@@ -57,6 +63,10 @@ namespace NEP.MonoDirector.Actors
             (int)HumanBodyBones.LeftEye,
             (int)HumanBodyBones.RightEye,
         };
+
+
+        private string avatarBarcode;
+        public string AvatarBarcode => avatarBarcode;
         
         public Avatar PlayerAvatar { get => playerAvatar; }
         public Avatar ClonedAvatar { get => clonedAvatar; }
@@ -106,8 +116,8 @@ namespace NEP.MonoDirector.Actors
                     continue;
                 }
 
-                bone.position = avatarFrames[0].transformFrames[i].position;
-                bone.rotation = avatarFrames[0].transformFrames[i].rotation;
+                bone.position = avatarFrames[0].TransformFrames[i].position;
+                bone.rotation = avatarFrames[0].TransformFrames[i].rotation;
             }
         }
 
@@ -121,19 +131,19 @@ namespace NEP.MonoDirector.Actors
                 previousFrame = nextFrame;
                 nextFrame = frame;
 
-                if (frame.frameTime > Playback.Instance.PlaybackTime)
+                if (frame.FrameTime > Playback.Instance.PlaybackTime)
                 {
                     break;
                 }
             }
 
-            float gap = nextFrame.frameTime - previousFrame.frameTime;
-            float head = Playback.Instance.PlaybackTime - previousFrame.frameTime;
+            float gap = nextFrame.FrameTime - previousFrame.FrameTime;
+            float head = Playback.Instance.PlaybackTime - previousFrame.FrameTime;
 
             float delta = head / gap;
 
-            ObjectFrame[] previousTransformFrames = previousFrame.transformFrames;
-            ObjectFrame[] nextTransformFrames = nextFrame.transformFrames;
+            ObjectFrame[] previousTransformFrames = previousFrame.TransformFrames;
+            ObjectFrame[] nextTransformFrames = nextFrame.TransformFrames;
 
             for (int i = 0; i < 55; i++)
             {
@@ -307,5 +317,53 @@ namespace NEP.MonoDirector.Actors
 
             return bones;
         }
+        
+        //
+        // Enums
+        //
+        public enum VersionNumber : short
+        {
+            V1
+        }
+        
+        //
+        // IBinaryData
+        //
+        public byte[] ToBinary()
+        {
+            // TODO: Keep this up to date
+
+            List<byte> bytes = new List<byte>();
+            
+            // The header contains the following data
+            //
+            // version: u16
+            // barcode_size: i32
+            // barcode : utf-8 string
+            // num_frames : u32
+            //
+            // Below the header is the following
+            //
+            // num_frames FrameGroup blocks
+            //
+            bytes.AddRange(BitConverter.GetBytes((short)VersionNumber.V1));
+            
+            byte[] encodedBarcode = Encoding.UTF8.GetBytes(avatarBarcode);
+            bytes.AddRange(BitConverter.GetBytes(encodedBarcode.Length));
+            bytes.AddRange(encodedBarcode);
+
+            foreach (FrameGroup group in avatarFrames)
+                bytes.AddRange(group.ToBinary());
+
+            return bytes.ToArray();
+        }
+
+        public void FromBinary(Stream stream)
+        {
+            
+        }
+
+        // TADB - Tracked Actor Data Block
+        public uint GetBinaryID() => 0x42444154;
     }
 }

@@ -88,8 +88,13 @@ namespace NEP.MonoDirector
             sw.Restart();
             
             // Then try to read it back
-            frame.FromBinary(frameBytes);
-            
+            using (FileStream file = File.Open("test.mdbf", FileMode.Open))
+            {
+                // Seek past the first 4 bytes
+                file.Seek(4, SeekOrigin.Begin);
+                frame.FromBinary(file);
+            }
+
             sw.Stop();
 
             Logger.Msg($"[STOPWATCH]: FromBinary() took {sw.ElapsedMilliseconds}...");

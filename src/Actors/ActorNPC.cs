@@ -53,9 +53,9 @@ namespace NEP.MonoDirector.Actors
 
             var actorFrame = actorFrames[currentFrame];
 
-            for (int i = 0; i < actorFrame.transformFrames.Length; i++)
+            for (int i = 0; i < actorFrame.TransformFrames.Length; i++)
             {
-                var boneFrame = actorFrame.transformFrames[i];
+                var boneFrame = actorFrame.TransformFrames[i];
                 boneFrame.transform = clonedNPCBones[i];
 
                 if (boneFrame.transform == null)

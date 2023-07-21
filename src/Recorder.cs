@@ -1,5 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using MelonLoader;
 using NEP.MonoDirector.Actors;
 using NEP.MonoDirector.State;
@@ -203,6 +206,41 @@ namespace NEP.MonoDirector.Core
                 }
             }
 
+#if DEBUG
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            byte[] actorBytes = ActiveActor.ToBinary();
+            sw.Stop();
+            
+            Main.Logger.Msg($"[STOPWATCH]: Actor::ToBinary() took {sw.ElapsedMilliseconds}...");
+
+            sw.Restart();
+            
+            using (FileStream file = File.Open("test.mdat", FileMode.Create))
+            {
+                uint ident = ActiveActor.GetBinaryID();
+                file.Write(BitConverter.GetBytes(ident), 0, sizeof(uint));
+                
+                file.Write(actorBytes, 0, actorBytes.Length);
+            };
+            
+            sw.Stop();
+            
+            Main.Logger.Msg($"[STOPWATCH]: Writing MDAT took {sw.ElapsedMilliseconds}...");
+
+            sw.Restart();
+            
+            // Then try to read it back
+            using (FileStream file = File.Open("test.mdat", FileMode.Open))
+            {
+                // Seek past the first 4 bytes
+                file.Seek(4, SeekOrigin.Begin);
+                ActiveActor.FromBinary(file);
+            }
+
+            sw.Stop();
+#endif
+            
             activeActor.CloneAvatar();
             Director.instance.Cast.Add(activeActor);
             lastActor = activeActor;

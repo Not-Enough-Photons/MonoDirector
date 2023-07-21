@@ -71,15 +71,15 @@ namespace NEP.MonoDirector.Data
                 previousFrame = nextFrame;
                 nextFrame = frame;
 
-                if (frame.frameTime > GetPlaybackTime())
+                if (frame.FrameTime > GetPlaybackTime())
                 {
                     break;
                 }
             }
 
-            float delta = GetFrameDelta(nextFrame.frameTime, previousFrame.frameTime);
+            float delta = GetFrameDelta(nextFrame.FrameTime, previousFrame.FrameTime);
 
-            return Vector3.Lerp(previousFrame.transformFrames[frameIndex].position, nextFrame.transformFrames[frameIndex].position, delta);
+            return Vector3.Lerp(previousFrame.TransformFrames[frameIndex].position, nextFrame.TransformFrames[frameIndex].position, delta);
         }
 
         public static Quaternion InterpolateRotation(FrameGroup[] frames, int frameIndex)
@@ -92,15 +92,15 @@ namespace NEP.MonoDirector.Data
                 previousFrame = nextFrame;
                 nextFrame = frame;
 
-                if (frame.frameTime > GetPlaybackTime())
+                if (frame.FrameTime > GetPlaybackTime())
                 {
                     break;
                 }
             }
 
-            float delta = GetFrameDelta(nextFrame.frameTime, previousFrame.frameTime);
+            float delta = GetFrameDelta(nextFrame.FrameTime, previousFrame.FrameTime);
 
-            return Quaternion.Slerp(previousFrame.transformFrames[frameIndex].rotation, nextFrame.transformFrames[frameIndex].rotation, delta);
+            return Quaternion.Slerp(previousFrame.TransformFrames[frameIndex].rotation, nextFrame.TransformFrames[frameIndex].rotation, delta);
         }
 
         public static Vector3 InterpolateVelocity(List<ObjectFrame> frames)

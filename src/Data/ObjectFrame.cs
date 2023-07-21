@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.InteropServices;
 using UnityEngine;
 
@@ -123,12 +124,12 @@ namespace NEP.MonoDirector.Data
         // frame_time: float
         //
         // 8 floats = sizeof(float) * 8
-        // 1 ushort = sizeof(ushort)
-        // Total = sizeof(float) * 8 + sizeof(ushort)
+        // 1 short = sizeof(short)
+        // Total = sizeof(float) * 8 + sizeof(short)
 
         public static Dictionary<VersionNumber, ushort> VersionSizes = new Dictionary<VersionNumber, ushort>()
         {
-            { VersionNumber.V1, sizeof(float) * 8 + sizeof(ushort) }
+            { VersionNumber.V1, sizeof(float) * 8 + sizeof(short) }
         };
 
         //
@@ -234,10 +235,13 @@ namespace NEP.MonoDirector.Data
             return bytes;
         }
 
-        public void FromBinary(byte[] bytes)
+        public void FromBinary(Stream stream)
         {
             // Check the version number
-            short version = BitConverter.ToInt16(bytes, 0);
+            byte[] versionBytes = new byte[sizeof(short)];
+            stream.Read(versionBytes, 0, versionBytes.Length);
+            
+            short version = BitConverter.ToInt16(versionBytes, 0);
 
             if (version != (short)VersionNumber.V1)
                 throw new Exception($"Unsupported version type! Value was {version}");
@@ -246,20 +250,23 @@ namespace NEP.MonoDirector.Data
             // This is dependent on the version number!
             if (version == (short)VersionNumber.V1)
             {
+                byte[] bytes = new byte[sizeof(float) * 8];
+                stream.Read(bytes, 0, bytes.Length);
+                
                 position = new Vector3(
-                    BitConverter.ToSingle(bytes, sizeof(ushort)),
-                    BitConverter.ToSingle(bytes, sizeof(ushort) + sizeof(float)),
-                    BitConverter.ToSingle(bytes, sizeof(ushort) + sizeof(float) * 2)
+                    BitConverter.ToSingle(bytes, 0),
+                    BitConverter.ToSingle(bytes, sizeof(float)),
+                    BitConverter.ToSingle(bytes, sizeof(float) * 2)
                 );
 
                 rotation = new Quaternion(
-                    BitConverter.ToSingle(bytes, sizeof(ushort) + sizeof(float) * 3),
-                    BitConverter.ToSingle(bytes, sizeof(ushort) + sizeof(float) * 4),
-                    BitConverter.ToSingle(bytes, sizeof(ushort) + sizeof(float) * 5),
-                    BitConverter.ToSingle(bytes, sizeof(ushort) + sizeof(float) * 6)
+                    BitConverter.ToSingle(bytes, sizeof(float) * 3),
+                    BitConverter.ToSingle(bytes, sizeof(float) * 4),
+                    BitConverter.ToSingle(bytes, sizeof(float) * 5),
+                    BitConverter.ToSingle(bytes, sizeof(float) * 6)
                 );
 
-                frameTime = BitConverter.ToSingle(bytes, sizeof(ushort) + sizeof(float) * 7);
+                frameTime = BitConverter.ToSingle(bytes, sizeof(float) * 7);
             }
         }
 
