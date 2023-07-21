@@ -46,6 +46,8 @@ namespace NEP.MonoDirector.Core
         private float recordingTime;
         private float takeTime;
 
+        private float timeSinceLastTick = 0;
+
         private int recordTick;
 
         public void SetActor(Avatar avatar)
@@ -157,15 +159,15 @@ namespace NEP.MonoDirector.Core
             }
 
             recordTick++;
-            recordingTime += Time.deltaTime;
+            recordingTime += timeSinceLastTick;
 
             // keep up!
-            if(recordingTime > takeTime)
+            if (recordingTime > takeTime)
             {
                 takeTime = recordingTime;
             }
 
-            Playback.instance.MovePlayhead(Time.deltaTime);
+            Playback.instance.MovePlayhead(timeSinceLastTick);
 
             if (Director.CaptureState == CaptureState.CaptureCamera)
             {
@@ -234,15 +236,33 @@ namespace NEP.MonoDirector.Core
             Main.feedbackSFX.BeepHigh();
 
             Events.OnStartRecording?.Invoke();
-
+            
+            float perTick = 1.0F / Settings.World.fps;
+            
             while (Director.PlayState == PlayState.Recording || Director.PlayState == PlayState.Paused)
             {
-                fpsTimer += Time.deltaTime;
+                // These are different for a reason!
+                // virtual FPS and real FPS are decoupled here when asked!
+                // Recording 15FPS with normal delta time means 15FPS becomes 5FPS in real frames!
+                
+                // Ignoring slomo means using deltaTime to store our recorded time
+                // Therefore data is scaled with timescale
+                if (Settings.World.ignoreSlomo) 
+                    timeSinceLastTick += Time.deltaTime;
+                else
+                    timeSinceLastTick += Time.unscaledDeltaTime;
+                
+                // Temporal scaling increases the resolution when changing timescale
+                if (Settings.World.temporalScaling) 
+                    fpsTimer += Time.unscaledDeltaTime;
+                else
+                    fpsTimer += Time.deltaTime;
 
-                if(fpsTimer > 1f / Settings.World.fps)
+                if (fpsTimer > perTick)
                 {
                     Tick();
                     fpsTimer = 0f;
+                    timeSinceLastTick = 0;
                 }
 
                 yield return null;

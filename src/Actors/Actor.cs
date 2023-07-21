@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks.Triggers;
 using NEP.MonoDirector.Audio;
 using NEP.MonoDirector.Core;
 using NEP.MonoDirector.Data;
@@ -14,7 +15,28 @@ namespace NEP.MonoDirector.Actors
 {
     public class Actor : Trackable
     {
-        public Actor(SLZ.VRMK.Avatar avatar) : base()
+        public Actor() : base()
+        {
+#if DEBUG
+            previousFrameDebugger = new Transform[55];
+            nextFrameDebugger = new Transform[55];
+
+            GameObject baseCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                
+            Component.Destroy(baseCube.GetComponent<Collider>());
+            baseCube.transform.localScale = Vector3.one * 0.1F;
+            
+            for (int i = 0; i < 55; i++)
+            {
+                previousFrameDebugger[i] = GameObject.Instantiate(baseCube).transform;
+                nextFrameDebugger[i] = GameObject.Instantiate(baseCube).transform;
+            }
+            
+            GameObject.Destroy(baseCube);
+#endif
+        }
+        
+        public Actor(SLZ.VRMK.Avatar avatar) : this()
         {
             playerAvatar = avatar;
 
@@ -63,6 +85,12 @@ namespace NEP.MonoDirector.Actors
 
         private Transform lastPelvisParent;
         private int headIndex;
+        
+        // Debug build stuff
+        #if DEBUG
+        private Transform[] previousFrameDebugger;
+        private Transform[] nextFrameDebugger;
+        #endif
 
         public override void OnSceneBegin()
         {
@@ -126,6 +154,14 @@ namespace NEP.MonoDirector.Actors
 
                 clonedRigBones[i].position = Vector3.Lerp(previousPosition, nextPosition, delta);
                 clonedRigBones[i].rotation = Quaternion.Slerp(previousRotation, nextRotation, delta);
+                
+#if DEBUG
+                previousFrameDebugger[i].position = previousPosition;
+                previousFrameDebugger[i].rotation = previousRotation;
+                
+                nextFrameDebugger[i].position = nextPosition;
+                nextFrameDebugger[i].rotation = nextRotation;
+#endif
             }
 
             foreach (ActionFrame actionFrame in actionFrames)

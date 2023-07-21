@@ -20,7 +20,9 @@
             public static bool useMicrophone = false;
             public static bool micPlayback = false;
             public static float playbackRate = 1f;
-            public static float fps = 90f;
+            public static float fps = 60f;
+            public static bool ignoreSlomo = false;
+            public static bool temporalScaling = false;
         }
 
         public static class Debug

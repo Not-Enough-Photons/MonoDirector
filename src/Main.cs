@@ -50,6 +50,10 @@ namespace NEP.MonoDirector
             BoneLib.Hooking.OnLevelInitialized += (info) => MonoDirectorInitialize();
 
             MDMenu.Initialize();
+            
+#if DEBUG
+            Logger.Warning("MONODIRECTOR DEBUG BUILD!");
+#endif
         }
 
         private void MonoDirectorInitialize()

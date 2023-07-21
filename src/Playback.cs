@@ -110,7 +110,8 @@ namespace NEP.MonoDirector.Core
 
             AnimateAll();
 
-            playbackTime += playbackRate * 1f / Settings.World.fps;
+            // TODO: Talk to adamdev about what he was trying here
+            playbackTime += Time.deltaTime * playbackRate;
         }
 
         public void OnStopPlayback()

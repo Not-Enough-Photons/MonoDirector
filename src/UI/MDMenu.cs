@@ -78,7 +78,9 @@ namespace NEP.MonoDirector.UI
 
             toolCategory.CreateFloatElement("Playback Speed", Color.white, 1f, 0.1f, float.NegativeInfinity, float.PositiveInfinity, (value) => Playback.instance.SetPlaybackRate(value));
             toolCategory.CreateIntElement("Delay", Color.white, 5, 1, 0, 30, (value) => Settings.World.delay = value);
-            toolCategory.CreateIntElement("FPS", Color.white, 90, 5, 5, 144, (value) => Settings.World.fps = value);
+            toolCategory.CreateIntElement("FPS", Color.white, 60, 5, 5, 144, (value) => Settings.World.fps = value);
+            toolCategory.CreateBoolElement("Ignore Slomo", Color.white, false, (value) => Settings.World.ignoreSlomo = value);
+            toolCategory.CreateBoolElement("Temporal Scaling", Color.white, true, (value) => Settings.World.temporalScaling = value);
 
             BuildUIMenu(uiCategory);
         }
