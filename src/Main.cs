@@ -41,6 +41,11 @@ namespace NEP.MonoDirector
 
             instance = this;
 
+            Directory.CreateDirectory(Constants.dirBase);
+            Directory.CreateDirectory(Constants.dirMod);
+            Directory.CreateDirectory(Constants.dirSFX);
+            Directory.CreateDirectory(Constants.dirImg);
+
             bundle = GetEmbeddedBundle();
 
             BoneLib.Hooking.OnLevelInitialized += (info) => MonoDirectorInitialize();
@@ -95,7 +100,7 @@ namespace NEP.MonoDirector
             PropMarkerManager.Initialize();
             InfoInterfaceManager.Initialize();
 
-            UIManager.Warmup(UIManager.casterBarcode, 1, true);
+            UIManager.Warmup(UIManager.casterBarcode, 1, false);
         }
 
         private static AssetBundle GetEmbeddedBundle()

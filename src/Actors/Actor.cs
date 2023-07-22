@@ -277,6 +277,11 @@ namespace NEP.MonoDirector.Actors
         {
             for (int i = 0; i < boneList.Length; i++)
             {
+                if (boneList[i] == null)
+                {
+                    continue;
+                }
+
                 Vector3 bonePosition = boneList[i].position;
                 Quaternion boneRotation = boneList[i].rotation;
 
