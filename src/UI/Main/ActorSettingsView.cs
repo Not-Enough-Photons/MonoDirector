@@ -13,7 +13,8 @@ namespace NEP.MonoDirector.UI
     {
         public ActorSettingsView(System.IntPtr ptr) : base(ptr) { }
 
-        private Actor actor;
+        public Actor actorData;
+        public RawImage actorPortrait;
 
         private TextMeshProUGUI actorName;
 
@@ -26,22 +27,26 @@ namespace NEP.MonoDirector.UI
         private void Awake()
         {
             actorName = transform.Find("ActorName").GetComponent<TextMeshProUGUI>();
+            actorPortrait = transform.Find("Avatar").GetComponent<RawImage>();
             visibilityButton = transform.Find("OptionsGroup/Visibility").GetComponent<Button>();
             recastButton = transform.Find("OptionsGroup/Recast").GetComponent<Button>();
             deleteButton = transform.Find("OptionsGroup/Delete").GetComponent<Button>();
         }
 
-        public void SetActor(Actor actor)
+        private void Start()
         {
-            this.actor = actor;
+            visibilityButton.onClick.AddListener(new System.Action(() => OnVisibilityClicked()));
+        }
 
-            actorName.text = $"Actor Name:\n{actor.ActorName}";
+        private void OnEnable()
+        {
+            actorName.text = $"Actor Name:\n{actorData.ActorName}";
         }
 
         public void OnVisibilityClicked()
         {
             visible = !visible;
-            actor.ClonedAvatar.gameObject.SetActive(!visible);
+            actorData.ClonedAvatar.gameObject.SetActive(!visible);
         }
 
         public void OnRecastClicked()
@@ -51,7 +56,7 @@ namespace NEP.MonoDirector.UI
 
         public void OnDeleteClicked()
         {
-            Director.instance.RemoveActor(actor);
+            Director.instance.RemoveActor(actorData);
         }
     }
 }

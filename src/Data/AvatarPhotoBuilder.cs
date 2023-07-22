@@ -1,0 +1,115 @@
+﻿using SLZ.Marrow.Warehouse;
+
+using UnityEngine.Experimental.Rendering;
+using UnityEngine.Rendering.Universal;
+using UnityEngine;
+
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+
+namespace NEP.MonoDirector.Data
+{
+    public static class AvatarPhotoBuilder
+    {
+        public static Dictionary<string, Texture2D> avatarPortraits = new Dictionary<string, Texture2D>();
+
+        private static bool initialized = false;
+
+        public static void Initialize()
+        {
+            if (initialized)
+            {
+                return;
+            }
+
+            foreach (var pallet in AssetWarehouse.Instance.GetPallets())
+            {
+                foreach (var crate in pallet.Crates)
+                {
+                    if (crate.GetIl2CppType() != UnhollowerRuntimeLib.Il2CppType.Of<AvatarCrate>())
+                    {
+                        continue;
+                    }
+
+                    string imageDirectory = Constants.dirImg;
+                    string crateTitle = crate.Title;
+                    string portraitFile = Path.Combine(imageDirectory, crateTitle + ".png");
+
+                    if (File.Exists(portraitFile))
+                    {
+                        Texture2D portrait = new Texture2D(2048, 2048);
+                        portrait.hideFlags = HideFlags.DontUnloadUnusedAsset;
+                        byte[] imageData = File.ReadAllBytes(portraitFile);
+                        ImageConversion.LoadImage(portrait, imageData);
+
+                        if (!avatarPortraits.ContainsKey(crateTitle))
+                        {
+                            avatarPortraits.Add(crateTitle, portrait);
+                        }
+                    }
+                    else
+                    {
+                        crate.LoadAsset(new System.Action<Object>((obj) => CreateDummyAvatarObject(obj, crateTitle)));
+                    }
+                }
+            }
+
+            initialized = true;
+        }
+
+        private static void CreateDummyAvatarObject(Object obj, string crateTitle)
+        {
+            GameObject avatarInstance = GameObject.FindObjectFromInstanceID(obj.GetInstanceID()).Cast<GameObject>();
+            avatarInstance.transform.position = Vector3.zero;
+            Texture2D icon = CreateAvatarIcon(avatarInstance);
+            icon.hideFlags = HideFlags.DontUnloadUnusedAsset;
+
+            byte[] imageBytes = ImageConversion.EncodeToPNG(icon);
+            File.WriteAllBytes(Path.Combine(Constants.dirImg, $"{crateTitle}.png"), imageBytes);
+
+            if (!avatarPortraits.ContainsKey(crateTitle))
+            {
+                avatarPortraits.Add(crateTitle, icon);
+            }
+        }
+
+        private static Texture2D CreateAvatarIcon(GameObject avatarObject)
+        {
+            QualitySettings.streamingMipmapsActive = false;
+
+            GameObject copiedAvatar = GameObject.Instantiate(avatarObject);
+
+            SLZ.VRMK.Avatar avatar = copiedAvatar.GetComponent<SLZ.VRMK.Avatar>();
+
+            RenderTexture input = new RenderTexture(256, 256, -1, RenderTextureFormat.ARGB32);
+
+            Texture2D output = new Texture2D(256, 256);
+
+            GameObject renderCameraObject = new GameObject("Avatar Render Camera");
+            Camera renderCamera = renderCameraObject.AddComponent<Camera>();
+            renderCameraObject.AddComponent<UniversalAdditionalCameraData>().allowXRRendering = false;
+            renderCamera.targetTexture = input;
+
+            Transform head = avatar.animator.GetBoneTransform(HumanBodyBones.Head);
+            renderCamera.transform.position = avatar.transform.forward + Vector3.up * avatar.height * 0.95f;
+            renderCamera.transform.rotation = Quaternion.LookRotation(head.position - renderCamera.transform.position);
+
+            renderCamera.Render();
+
+            RenderTexture.active = input;
+
+            output.ReadPixels(new Rect(0f, 0f, output.width, output.height), 0, 0);
+            output.Apply();
+
+            RenderTexture.active = null;
+
+            GameObject.Destroy(copiedAvatar);
+            GameObject.Destroy(renderCameraObject);
+
+            QualitySettings.streamingMipmapsActive = true;
+
+            return output;
+        }
+    }
+}

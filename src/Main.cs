@@ -4,14 +4,10 @@ using System.IO;
 using MelonLoader;
 using UnityEngine;
 
-using BoneLib.BoneMenu;
-
 using NEP.MonoDirector.Audio;
 using NEP.MonoDirector.Cameras;
 using NEP.MonoDirector.Core;
-using BoneLib.BoneMenu.Elements;
 using NEP.MonoDirector.UI;
-using NEP.MonoDirector.State;
 
 namespace NEP.MonoDirector
 {
@@ -50,7 +46,7 @@ namespace NEP.MonoDirector
             BoneLib.Hooking.OnLevelInitialized += (info) => MonoDirectorInitialize();
 
             MDMenu.Initialize();
-            
+
 #if DEBUG
             Logger.Warning("MONODIRECTOR DEBUG BUILD!");
 #endif
@@ -63,6 +59,8 @@ namespace NEP.MonoDirector
             CreateDirector();
             CreateSFX();
             CreateUI();
+
+            Data.AvatarPhotoBuilder.Initialize();
         }
 
         private void ResetInstances()
@@ -115,7 +113,5 @@ namespace NEP.MonoDirector
                 }
             }
         }
-
-        
     }
 }
