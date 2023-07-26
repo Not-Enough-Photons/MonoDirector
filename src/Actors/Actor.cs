@@ -139,8 +139,10 @@ namespace NEP.MonoDirector.Actors
             previousFrame = new FrameGroup();
             nextFrame = new FrameGroup();
 
-            foreach (var frame in avatarFrames)
+            for(int i = 0; i < avatarFrames.Count; i++)
             {
+                var frame = avatarFrames[i];
+
                 previousFrame = nextFrame;
                 nextFrame = frame;
 
@@ -176,9 +178,15 @@ namespace NEP.MonoDirector.Actors
                 Quaternion previousRotation = previousTransformFrames[i].rotation;
                 Quaternion nextRotation = nextTransformFrames[i].rotation;
 
-                clonedRigBones[i].position = Vector3.Lerp(previousPosition, nextPosition, delta);
-                clonedRigBones[i].rotation = Quaternion.Slerp(previousRotation, nextRotation, delta);
-                
+                var bone = clonedRigBones[i];
+
+                if(bone == null)
+                {
+                    continue;
+                }
+
+                bone.position = Vector3.Lerp(previousPosition, nextPosition, delta);
+                bone.rotation = Quaternion.Slerp(previousRotation, nextRotation, delta);
 #if DEBUG
                 previousFrameDebugger[i].position = previousPosition;
                 previousFrameDebugger[i].rotation = previousRotation;
@@ -188,9 +196,11 @@ namespace NEP.MonoDirector.Actors
 #endif
             }
             
-            foreach (ActionFrame actionFrame in actionFrames)
+            for(int i = 0; i < actionFrames.Count; i++)
             {
-                if (Playback.Instance.PlaybackTime < actionFrame.timestamp)
+                var actionFrame = actionFrames[i];
+
+                if(Playback.Instance.PlaybackTime < actionFrame.timestamp)
                 {
                     continue;
                 }
@@ -304,7 +314,7 @@ namespace NEP.MonoDirector.Actors
                     tempFrames[i] = new ObjectFrame(default, default);
                     continue;
                 }
-                
+
                 Vector3 bonePosition = boneList[i].position;
                 Quaternion boneRotation = boneList[i].rotation;
 
