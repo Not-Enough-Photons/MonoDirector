@@ -1,0 +1,26 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "commitType": "docs",
+  "commitConvention": "angular",
+  "contributors": [
+    {
+      "login": "adamd3v",
+      "name": "adamdev | Not Enough Photons",
+      "avatar_url": "https://avatars.githubusercontent.com/u/17958285?v=4",
+      "profile": "https://notenoughphotons.dev",
+      "contributions": [
+        "bug"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "skipCi": true,
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "projectName": "MonoDirector",
+  "projectOwner": "Not-Enough-Photons"
+}
