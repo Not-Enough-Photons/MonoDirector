@@ -15,6 +15,24 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "BreadSoup",
+      "name": "BreadSoup",
+      "avatar_url": "https://avatars.githubusercontent.com/u/79678268?v=4",
+      "profile": "https://github.com/BreadSoup",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "Acerocks22",
+      "name": "TabloidA",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4953770?v=4",
+      "profile": "http://robotstreamer.com",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7,
