@@ -23,12 +23,7 @@ namespace NEP.MonoDirector.Patches
                     return;
                 }
 
-                activeActor.RecordAction(() => PlayFootstep(__instance, velocitySqr));
-            }
-
-            internal static void PlayFootstep(SLZ.SFX.FootstepSFX footstep, float velocitySqr)
-            {
-                var activeActor = Recorder.instance.ActiveActor;
+                // activeActor.RecordAction(() => activeActor.ActorBody.OnFootstep(velocitySqr));
             }
         }
     }

@@ -176,9 +176,12 @@ namespace NEP.MonoDirector.Actors
                 Quaternion previousRotation = previousTransformFrames[i].rotation;
                 Quaternion nextRotation = nextTransformFrames[i].rotation;
 
-                clonedRigBones[i].position = Vector3.Lerp(previousPosition, nextPosition, delta);
+                if(i == 0)
+                {
+                    clonedRigBones[i].position = Vector3.Lerp(previousPosition, nextPosition, delta);
+                }
+
                 clonedRigBones[i].rotation = Quaternion.Slerp(previousRotation, nextRotation, delta);
-                
 #if DEBUG
                 previousFrameDebugger[i].position = previousPosition;
                 previousFrameDebugger[i].rotation = previousRotation;
@@ -304,7 +307,7 @@ namespace NEP.MonoDirector.Actors
                     tempFrames[i] = new ObjectFrame(default, default);
                     continue;
                 }
-                
+
                 Vector3 bonePosition = boneList[i].position;
                 Quaternion boneRotation = boneList[i].rotation;
 

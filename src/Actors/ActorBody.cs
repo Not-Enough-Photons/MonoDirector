@@ -1,8 +1,11 @@
 ﻿using System.Collections.Generic;
-using SLZ;
+
+using NEP.MonoDirector.Audio;
+
+
 using SLZ.Combat;
 using SLZ.Rig;
-using SLZ.VRMK;
+using SLZ.SFX;
 
 using UnityEngine;
 
@@ -37,6 +40,8 @@ namespace NEP.MonoDirector.Actors
         private List<AudioClip> footstepWalkAudio;
         private List<AudioClip> footstepJogAudio;
         private List<AudioClip> landingAudio;
+        private List<AudioClip> grabAudio;
+        private List<AudioClip> gripReleaseAudio;
 
         private Actor actor;
         private PhysicsRig physicsRig;
@@ -138,11 +143,29 @@ namespace NEP.MonoDirector.Actors
             footstepJogAudio = new List<AudioClip>();
             landingAudio = new List<AudioClip>();
 
-            Avatar avatar = actor.ClonedAvatar;
+            Main.Logger.Msg("1");
 
-            footstepWalkAudio.AddRange(avatar.footstepsWalk.audioClips);
-            footstepJogAudio.AddRange(avatar.footstepsJog.audioClips);
-            landingAudio.AddRange(avatar.highFallOntoFeet.audioClips);
+            Avatar avatar = actor.PlayerAvatar;
+
+            Main.Logger.Msg("2");
+
+            UnhollowerBaseLib.Il2CppReferenceArray<AudioClip> avatarWalkingClips = avatar.footstepsWalk?.audioClips;
+            UnhollowerBaseLib.Il2CppReferenceArray<AudioClip> avatarJoggingClips = avatar.footstepsJog?.audioClips;
+
+            Main.Logger.Msg("3");
+
+            FootstepSFX sfx = GameObject.FindObjectOfType<FootstepSFX>();
+
+            AudioClip[] targetWalkClips = avatarWalkingClips != null && avatarWalkingClips.Length > 0 ? avatarWalkingClips : sfx.walkConcrete;
+            AudioClip[] targetJogClips = avatarJoggingClips != null && avatarJoggingClips.Length > 0 ? avatarJoggingClips : sfx.runConcrete;
+
+            Main.Logger.Msg("4");
+
+            footstepWalkAudio.AddRange(targetWalkClips);
+            footstepJogAudio.AddRange(targetJogClips);
+
+            Main.Logger.Msg("5");
+            //landingAudio.AddRange(avatar.highFallOntoFeet.audioClips);
         }
 
         public void AllowCollisions(bool allow)
@@ -160,19 +183,10 @@ namespace NEP.MonoDirector.Actors
 
         }
 
-        public void OnFootstep()
+        public void OnFootstep(float velocitySqr = 0f)
         {
-
-        }
-
-        public void SetFootstepAudio(AudioClip[] clips, float velocitySquared)
-        {
-
-        }
-
-        public void SetGrabAudio(AudioClip[] clips)
-        {
-
+            List<AudioClip> clipList = velocitySqr < 3f ? footstepWalkAudio : footstepJogAudio;
+            AudioManager.Instance.PlayAtPosition(clipList[Random.Range(0, clipList.Count)], leftFoot.transform.position);
         }
 
         public void Delete()
