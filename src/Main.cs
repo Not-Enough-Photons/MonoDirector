@@ -16,7 +16,7 @@ using BoneLib.BoneMenu.Elements;
 
 namespace NEP.MonoDirector
 {
-    public static class BuildInfo
+    static partial class BuildInfo
     {
         public const string Name = "MonoDirector"; // Name of the Mod.  (MUST BE SET)
         public const string Description = "A movie/photo making utility for BONELAB!"; // Description for the Mod.  (Set as null if none)
@@ -30,28 +30,34 @@ namespace NEP.MonoDirector
     {
         internal static MelonLogger.Instance Logger;
 
-        public static Main instance;
+        public static Main Instance;
 
-        public static Director director;
+        public static Director Director;
 
-        public static FreeCamera camera;
+        public static FreeCamera Camera;
 
-        public static FeedbackSFX feedbackSFX;
+        public static FeedbackSFX FeedbackSFX;
 
-        public static AssetBundle bundle;
+        public static AssetBundle Bundle;
 
         public override void OnInitializeMelon()
         {
             Logger = new MelonLogger.Instance("MonoDirector", System.ConsoleColor.Magenta);
 
-            instance = this;
+            Instance = this;
 
+            Logger.Msg("Welcome to MonoDirector!");
+            Logger.Msg("-===== MonoDirector Build Info =====-");
+            Logger.Msg($"\tBuild Git Hash: {BuildInfo.GitCommit}");
+            Logger.Msg($"\tBuild UTC Time: {DateTimeOffset.FromUnixTimeSeconds(BuildInfo.Epoch).UtcDateTime}");
+            Logger.Msg("-===================================-");
+            
             Directory.CreateDirectory(Constants.dirBase);
             Directory.CreateDirectory(Constants.dirMod);
             Directory.CreateDirectory(Constants.dirSFX);
             Directory.CreateDirectory(Constants.dirImg);
 
-            bundle = GetEmbeddedBundle();
+            Bundle = GetEmbeddedBundle();
 
             BoneLib.Hooking.OnLevelInitialized += (info) => MonoDirectorInitialize();
 
@@ -123,9 +129,9 @@ namespace NEP.MonoDirector
         private void ResetInstances()
         {
             Events.FlushActions();
-            director = null;
-            camera = null;
-            feedbackSFX = null;
+            Director = null;
+            Camera = null;
+            FeedbackSFX = null;
             PropMarkerManager.CleanUp();
         }
 
@@ -137,8 +143,8 @@ namespace NEP.MonoDirector
         private void CreateDirector()
         {
             GameObject directorObject = new GameObject("Director");
-            director = directorObject.AddComponent<Director>();
-            director.SetCamera(camera);
+            Director = directorObject.AddComponent<Director>();
+            Director.SetCamera(Camera);
         }
 
         private void CreateSFX()
@@ -147,7 +153,7 @@ namespace NEP.MonoDirector
             audioManager.AddComponent<AudioManager>();
 
             GameObject feedback = new GameObject("Feedback SFX");
-            feedbackSFX = feedback.AddComponent<FeedbackSFX>();
+            FeedbackSFX = feedback.AddComponent<FeedbackSFX>();
         }
 
         private void CreateUI()

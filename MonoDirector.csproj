@@ -36,6 +36,7 @@
     <Compile Include="src\Actors\ActorSkeleton.cs" />
     <Compile Include="src\Audio\AudioManager.cs" />
     <Compile Include="src\Audio\PooledAudio.cs" />
+    <Compile Include="src\BuildInfo.gen.cs" />
     <Compile Include="src\Data\IBinaryData.cs" />
     <Compile Include="src\Data\IJSONData.cs" />
     <Compile Include="src\Data\AvatarPhotoBuilder.cs" />

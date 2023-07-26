@@ -171,7 +171,7 @@ namespace NEP.MonoDirector.Cameras
 
         private void InitializeCameraModel()
         {
-            cameraModel = GameObject.Instantiate(Main.bundle.LoadAsset("md_camera")).Cast<GameObject>();
+            cameraModel = GameObject.Instantiate(Main.Bundle.LoadAsset("md_camera")).Cast<GameObject>();
             cameraRenderer = cameraModel.transform.Find("geo").GetComponent<MeshRenderer>();
 
             cameraRenderer.castShadows = false;
