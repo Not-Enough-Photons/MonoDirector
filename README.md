@@ -1,6 +1,6 @@
 <p align="center">
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
   <img src="https://i.imgur.com/5XrPOnQ.png" />
 </p>
@@ -25,6 +25,7 @@ This is the official source code for the BONELAB machinima mod, MonoDirector.
   <tbody>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="http://robotstreamer.com"><img src="https://avatars.githubusercontent.com/u/4953770?v=4?s=100" width="100px;" alt="TabloidA"/><br /><sub><b>TabloidA</b></sub></a><br /><a href="https://github.com/Not-Enough-Photons/MonoDirector/issues?q=author%3AAcerocks22" title="Bug reports">🐛</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/coldboiddcddd"><img src="https://avatars.githubusercontent.com/u/131008472?v=4?s=100" width="100px;" alt="DopierRex "/><br /><sub><b>DopierRex </b></sub></a><br /><a href="https://github.com/Not-Enough-Photons/MonoDirector/issues?q=author%3Acoldboiddcddd" title="Bug reports">🐛</a></td>
     </tr>
   </tbody>
 </table>
