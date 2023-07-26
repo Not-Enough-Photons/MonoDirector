@@ -1,9 +1,16 @@
 ﻿using BoneLib.BoneMenu;
 using BoneLib.BoneMenu.Elements;
+using BoneLib.Nullables;
+
+using Jevil;
+
 using NEP.MonoDirector.Cameras;
 using NEP.MonoDirector.Core;
 using NEP.MonoDirector.State;
+
 using UnityEngine;
+
+using SLZ.Rig;
 
 namespace NEP.MonoDirector.UI
 {
@@ -99,6 +106,11 @@ namespace NEP.MonoDirector.UI
             MenuCategory headModeCategory = cameraCategory.CreateCategory("Head Mode Settings", Color.white);
             MenuCategory freeCamCategory = cameraCategory.CreateCategory("Free Camera Settings", Color.white);
             MenuCategory vfxCategory = cameraCategory.CreateCategory("VFX", Color.white);
+            
+            #if DEBUG
+            MenuCategory debugCategory = category.CreateCategory("DEBUG", Color.red);
+            BuildDebugCategory(debugCategory);
+            #endif
 
             audioCategory.CreateBoolElement(
                 "Use Microphone", 
@@ -237,8 +249,20 @@ namespace NEP.MonoDirector.UI
             );
         }
 
+#if DEBUG
         private static void BuildDebugCategory(MenuCategory category)
         {
+            category.CreateFunctionElement(
+                "Duplicate Player",
+                Color.white,
+                () =>
+                {
+                    RigManager rigManager = BoneLib.Player.rigManager;
+                    
+                    rigManager.AvatarCrate.Crate.Spawn(rigManager.ControllerRig.m_head.position, Quaternion.identity);
+                }
+            );
+            
             category.CreateBoolElement(
                 "Debug Mode", 
                 Color.white, 
@@ -253,7 +277,8 @@ namespace NEP.MonoDirector.UI
                 value => Settings.Debug.useKeys = value
             );
         }
-
+#endif
+        
         private static void BuildHeadModeCategory(MenuCategory headModeCategory)
         {
             headModeCategory.CreateFloatElement(

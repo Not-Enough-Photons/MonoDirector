@@ -151,7 +151,7 @@ namespace NEP.MonoDirector.Core
         }
 
         /// <summary>
-        /// Called every frame.
+        /// Called every time a frame is recorded
         /// </summary>
         public void OnRecordTick()
         {
@@ -206,13 +206,14 @@ namespace NEP.MonoDirector.Core
             }
 
 #if DEBUG
+            /*
             Stopwatch sw = new Stopwatch();
             sw.Start();
             byte[] actorBytes = ActiveActor.ToBinary();
             sw.Stop();
             
             Main.Logger.Msg($"[STOPWATCH]: Actor::ToBinary() took {sw.ElapsedMilliseconds}...");
-            /*
+            
             sw.Restart();
             
             using (FileStream file = File.Open("test.mdat", FileMode.Create))
@@ -226,7 +227,6 @@ namespace NEP.MonoDirector.Core
             sw.Stop();
             
             Main.Logger.Msg($"[STOPWATCH]: Writing MDAT took {sw.ElapsedMilliseconds}...");
-            */
             sw.Restart();
             
             // Then try to read it back
@@ -240,6 +240,7 @@ namespace NEP.MonoDirector.Core
             sw.Stop();
             
             Main.Logger.Msg($"[STOPWATCH]: Actor::FromBinary() took {sw.ElapsedMilliseconds}...");
+            */
 #endif
             
             activeActor.CloneAvatar();

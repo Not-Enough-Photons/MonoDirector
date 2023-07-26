@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 using NEP.MonoDirector.Audio;
 using NEP.MonoDirector.Core;
 using NEP.MonoDirector.Data;
 
+
 using SLZ.Props;
 using SLZ.Rig;
 using SLZ.Vehicle;
+
 using UnityEngine;
 
 using Avatar = SLZ.VRMK.Avatar;
@@ -25,14 +28,20 @@ namespace NEP.MonoDirector.Actors
             nextFrameDebugger = new Transform[55];
 
             GameObject baseCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                
-            Component.Destroy(baseCube.GetComponent<Collider>());
-            baseCube.transform.localScale = Vector3.one * 0.1F;
+
+            baseCube.GetComponent<BoxCollider>().enabled = false;
+            baseCube.transform.localScale = Vector3.one * 0.03F;
+
+            MeshRenderer renderer = baseCube.GetComponent<MeshRenderer>();
+            renderer.material = new Material(Shader.Find(Jevil.Const.UrpLitName));
+
+            GameObject empty = new GameObject("MONODIRECTOR DEBUG VIZ");
+            baseCube.transform.parent = empty.transform;
             
             for (int i = 0; i < 55; i++)
             {
-                previousFrameDebugger[i] = GameObject.Instantiate(baseCube).transform;
-                nextFrameDebugger[i] = GameObject.Instantiate(baseCube).transform;
+                previousFrameDebugger[i] = GameObject.Instantiate(empty).transform;
+                nextFrameDebugger[i] = GameObject.Instantiate(empty).transform;
             }
             
             GameObject.Destroy(baseCube);
@@ -52,7 +61,7 @@ namespace NEP.MonoDirector.Actors
             GameObject micObject = new GameObject("Actor Microphone");
             microphone = micObject.AddComponent<ActorMic>();
 
-            tempFrames = new ObjectFrame[55];
+            tempFrames = new ObjectFrame[avatarBones.Length];
         }
 
         // For a traditional rig, this should be all the "head" bones
@@ -174,7 +183,7 @@ namespace NEP.MonoDirector.Actors
                 nextFrameDebugger[i].rotation = nextRotation;
 #endif
             }
-
+            
             foreach (ActionFrame actionFrame in actionFrames)
             {
                 if (Playback.Instance.PlaybackTime < actionFrame.timestamp)
@@ -283,6 +292,12 @@ namespace NEP.MonoDirector.Actors
         {
             for (int i = 0; i < boneList.Length; i++)
             {
+                if (boneList[i] == null)
+                {
+                    tempFrames[i] = new ObjectFrame(default, default);
+                    continue;
+                }
+                
                 Vector3 bonePosition = boneList[i].position;
                 Quaternion boneRotation = boneList[i].rotation;
 
@@ -300,19 +315,12 @@ namespace NEP.MonoDirector.Actors
         {
             Transform[] bones = new Transform[(int)HumanBodyBones.LastBone];
 
-            for (int i = 0; i < bones.Length; i++)
+            for (int i = 0; i < (int)HumanBodyBones.LastBone; i++)
             {
                 var currentBone = (HumanBodyBones)i;
 
-                if (avatar.animator.GetBoneTransform(currentBone) == null)
-                {
-                    continue;
-                }
-                else
-                {
-                    var boneTransform = avatar.animator.GetBoneTransform(currentBone);
-                    bones[i] = boneTransform;
-                }
+                var boneTransform = avatar.animator.GetBoneTransform(currentBone);
+                bones[i] = boneTransform;
             }
 
             return bones;
