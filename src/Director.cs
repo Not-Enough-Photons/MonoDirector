@@ -68,14 +68,12 @@ namespace NEP.MonoDirector.Core
 
         private void Update()
         {
+            #if DEBUG
             if (!Settings.Debug.useKeys)
             {
                 return;
             }
-
-
-            return;
-
+            
             float seekRate = Playback.Instance.PlaybackRate * Time.deltaTime;
             
             if (Input.GetKey(KeyCode.LeftArrow))
@@ -102,6 +100,7 @@ namespace NEP.MonoDirector.Core
             {
                 Stop();
             }
+            #endif
         }
 
         public void Play()

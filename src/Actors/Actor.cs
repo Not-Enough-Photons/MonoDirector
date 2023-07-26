@@ -76,14 +76,14 @@ namespace NEP.MonoDirector.Actors
         private string avatarBarcode;
         public string AvatarBarcode => avatarBarcode;
         
-        private Avatar playerAvatar;
-        public Avatar PlayerAvatar { get => playerAvatar; }
-        
-        private Avatar clonedAvatar;
-        public Avatar ClonedAvatar { get => clonedAvatar; }
-        
-        private Transform[] avatarBones;
-        public Transform[] AvatarBones { get => avatarBones; }
+        private Avatar playerAvatar = null;
+        public Avatar PlayerAvatar => playerAvatar;
+
+        private Avatar clonedAvatar = null;
+        public Avatar ClonedAvatar => clonedAvatar;
+
+        private Transform[] avatarBones = null;
+        public Transform[] AvatarBones => avatarBones;
 
         // TODO: Expose this?
         private bool[] avatarBonesValid;
