@@ -50,11 +50,13 @@ namespace NEP.MonoDirector
             Logger.Msg("-===== MonoDirector Build Info =====-");
             Logger.Msg($"\tBuild Git Hash: {BuildInfo.GitCommit}");
             Logger.Msg($"\tBuild UTC Time: {DateTimeOffset.FromUnixTimeSeconds(BuildInfo.Epoch).UtcDateTime}");
+
             #if DEBUG
             Logger.Msg($"\tBuild Type: Debug");
             #else
             Logger.Msg($"\tBuild Type: Release");
             #endif
+
             Logger.Msg("-===================================-");
             
             Directory.CreateDirectory(Constants.dirBase);
