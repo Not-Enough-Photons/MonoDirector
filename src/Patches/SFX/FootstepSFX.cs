@@ -1,4 +1,6 @@
 ﻿using NEP.MonoDirector.Core;
+using NEP.MonoDirector.Audio;
+
 using UnityEngine;
 
 using BoneLib.Nullables;
@@ -12,6 +14,8 @@ namespace NEP.MonoDirector.Patches
         {
             internal static void Postfix(SLZ.SFX.FootstepSFX __instance, float velocitySqr)
             {
+                Main.Logger.Msg(velocitySqr.ToString());
+
                 var activeActor = Recorder.instance.ActiveActor;
 
                 if(activeActor == null)
@@ -24,8 +28,7 @@ namespace NEP.MonoDirector.Patches
 
             internal static void PlayFootstep(SLZ.SFX.FootstepSFX footstep, float velocitySqr)
             {
-                int rand = Random.Range(0, footstep.walkConcrete.Count);
-                NullableMethodExtensions.AudioPlayer_PlayAtPoint(footstep.walkConcrete[rand], footstep.transform.position);
+                var activeActor = Recorder.instance.ActiveActor;
             }
         }
     }

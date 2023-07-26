@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
-
-using NEP.MonoDirector.Core;
-using NEP.MonoDirector.Data;
+using SLZ;
 using SLZ.Combat;
-using SLZ.Interaction;
 using SLZ.Rig;
-using SLZ.Vehicle;
+using SLZ.VRMK;
+
 using UnityEngine;
+
+using Avatar = SLZ.VRMK.Avatar;
 
 namespace NEP.MonoDirector.Actors
 {
@@ -27,12 +27,46 @@ namespace NEP.MonoDirector.Actors
 
         public ActorBody(Actor actor, PhysicsRig physicsRig)
         {
+            this.actor = actor;
+            this.physicsRig = physicsRig;
+
+            SetupCollisions();
+            SetupAudio();
+        }
+
+        private List<AudioClip> footstepWalkAudio;
+        private List<AudioClip> footstepJogAudio;
+        private List<AudioClip> landingAudio;
+
+        private Actor actor;
+        private PhysicsRig physicsRig;
+
+        private GameObject head;
+        private GameObject chest;
+        private GameObject spine;
+        private GameObject hips;
+        private GameObject leftHand;
+        private GameObject rightHand;
+        private GameObject leftFoot;
+        private GameObject rightFoot;
+
+        private MeshCollider headCollider;
+        private MeshCollider chestCollider;
+        private MeshCollider spineCollider;
+        private MeshCollider hipCollider;
+        private BoxCollider leftHandCollider;
+        private BoxCollider rightHandCollider;
+
+        private void SetupCollisions()
+        {
             Transform actorHead = actor.ClonedAvatar.animator.GetBoneTransform(HumanBodyBones.Head);
             Transform actorChest = actor.ClonedAvatar.animator.GetBoneTransform(HumanBodyBones.UpperChest);
             Transform actorSpine = actor.ClonedAvatar.animator.GetBoneTransform(HumanBodyBones.Spine);
             Transform actorHips = actor.ClonedAvatar.animator.GetBoneTransform(HumanBodyBones.Hips);
             Transform actorLeftHand = actor.ClonedAvatar.animator.GetBoneTransform(HumanBodyBones.LeftHand);
             Transform actorRightHand = actor.ClonedAvatar.animator.GetBoneTransform(HumanBodyBones.RightHand);
+            Transform actorLeftFoot = actor.ClonedAvatar.animator.GetBoneTransform(HumanBodyBones.LeftFoot);
+            Transform actorRightFoot = actor.ClonedAvatar.animator.GetBoneTransform(HumanBodyBones.RightFoot);
 
             head = new GameObject("Head");
             chest = new GameObject("Chest");
@@ -40,6 +74,8 @@ namespace NEP.MonoDirector.Actors
             hips = new GameObject("Hips");
             leftHand = new GameObject("LeftHand");
             rightHand = new GameObject("RightHand");
+            leftFoot = new GameObject("LeftFoot");
+            rightFoot = new GameObject("RightFoot");
 
             headCollider = head.AddComponent<MeshCollider>();
             chestCollider = chest.AddComponent<MeshCollider>();
@@ -69,6 +105,8 @@ namespace NEP.MonoDirector.Actors
             hips.transform.parent = actorHips;
             leftHand.transform.parent = actorLeftHand;
             rightHand.transform.parent = actorRightHand;
+            leftFoot.transform.parent = actorLeftFoot;
+            rightFoot.transform.parent = actorRightFoot;
 
             head.transform.localPosition = Vector3.zero;
             chest.transform.localPosition = Vector3.zero;
@@ -94,6 +132,19 @@ namespace NEP.MonoDirector.Actors
             rightHandVFX.surfaceData = vfxManager.surfaceData;
         }
 
+        private void SetupAudio()
+        {
+            footstepWalkAudio = new List<AudioClip>();
+            footstepJogAudio = new List<AudioClip>();
+            landingAudio = new List<AudioClip>();
+
+            Avatar avatar = actor.ClonedAvatar;
+
+            footstepWalkAudio.AddRange(avatar.footstepsWalk.audioClips);
+            footstepJogAudio.AddRange(avatar.footstepsJog.audioClips);
+            landingAudio.AddRange(avatar.highFallOntoFeet.audioClips);
+        }
+
         public void AllowCollisions(bool allow)
         {
             headCollider.enabled = allow;
@@ -102,6 +153,26 @@ namespace NEP.MonoDirector.Actors
             hipCollider.enabled = allow;
             leftHandCollider.enabled = allow;
             rightHandCollider.enabled = allow;
+        }
+
+        public void OnHandGrab()
+        {
+
+        }
+
+        public void OnFootstep()
+        {
+
+        }
+
+        public void SetFootstepAudio(AudioClip[] clips, float velocitySquared)
+        {
+
+        }
+
+        public void SetGrabAudio(AudioClip[] clips)
+        {
+
         }
 
         public void Delete()
@@ -113,19 +184,5 @@ namespace NEP.MonoDirector.Actors
             GameObject.Destroy(leftHand);
             GameObject.Destroy(rightHand);
         }
-
-        private GameObject head;
-        private GameObject chest;
-        private GameObject spine;
-        private GameObject hips;
-        private GameObject leftHand;
-        private GameObject rightHand;
-
-        private MeshCollider headCollider;
-        private MeshCollider chestCollider;
-        private MeshCollider spineCollider;
-        private MeshCollider hipCollider;
-        private BoxCollider leftHandCollider;
-        private BoxCollider rightHandCollider;
     }
 }

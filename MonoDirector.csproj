@@ -34,6 +34,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="src\Actors\ActorSkeleton.cs" />
+    <Compile Include="src\Audio\AudioManager.cs" />
+    <Compile Include="src\Audio\PooledAudio.cs" />
     <Compile Include="src\Data\AvatarPhotoBuilder.cs" />
     <Compile Include="src\Data\ManagedQuaternion.cs" />
     <Compile Include="src\Data\ManagedVector.cs" />
