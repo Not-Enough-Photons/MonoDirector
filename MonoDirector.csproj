@@ -36,6 +36,7 @@
     <Compile Include="src\Actors\ActorSkeleton.cs" />
     <Compile Include="src\Data\IBinaryData.cs" />
     <Compile Include="src\Data\IJSONData.cs" />
+    <Compile Include="src\Data\AvatarPhotoBuilder.cs" />
     <Compile Include="src\Data\ManagedQuaternion.cs" />
     <Compile Include="src\Data\ManagedVector.cs" />
     <Compile Include="src\Patches\VRMK\PlayerAvatarArt.cs" />
@@ -206,6 +207,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\Links\MelonLoader\Managed\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.ImageConversionModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Program Files (x86)\Steam\steamapps\common\BONELAB\MelonLoader\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.InputLegacyModule">
       <HintPath>.\Links\MelonLoader\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
     </Reference>
@@ -235,5 +240,9 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>

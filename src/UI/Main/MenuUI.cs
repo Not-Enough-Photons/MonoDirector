@@ -24,6 +24,7 @@ namespace NEP.MonoDirector.UI
 
         private GameObject menuPage => pageList.Find("Menu").gameObject;
         private GameObject castPage => pageList.Find("Cast").gameObject;
+        private GameObject castListPage => pageList.Find("Cast/CastList").gameObject;
         private GameObject playheadPage => pageList.Find("Playhead").gameObject;
         private GameObject actorSettingsPage => castPage.transform.Find("ActorSettings").gameObject;
         private GameObject settingsPage => pageList.Find("Settings").gameObject;
@@ -76,6 +77,7 @@ namespace NEP.MonoDirector.UI
             {
                 menuPage.SetActive(true);
                 castPage.SetActive(false);
+                castListPage.SetActive(false);
                 playheadPage.SetActive(false);
                 actorSettingsPage.SetActive(false);
                 settingsPage.SetActive(false);
@@ -92,6 +94,7 @@ namespace NEP.MonoDirector.UI
             {
                 menuPage.SetActive(false);
                 castPage.SetActive(true);
+                castListPage.SetActive(true);
                 playheadPage.SetActive(false);
                 actorSettingsPage.SetActive(false);
                 settingsPage.SetActive(false);
@@ -108,6 +111,7 @@ namespace NEP.MonoDirector.UI
             {
                 menuPage.SetActive(false);
                 castPage.SetActive(false);
+                castListPage.SetActive(false);
                 playheadPage.SetActive(true);
                 actorSettingsPage.SetActive(false);
                 settingsPage.SetActive(false);
@@ -124,6 +128,7 @@ namespace NEP.MonoDirector.UI
             {
                 menuPage.SetActive(false);
                 castPage.SetActive(false);
+                castListPage.SetActive(false);
                 playheadPage.SetActive(false);
                 actorSettingsPage.SetActive(false);
                 settingsPage.SetActive(true);
@@ -140,6 +145,7 @@ namespace NEP.MonoDirector.UI
             {
                 menuPage.SetActive(false);
                 castPage.SetActive(true);
+                castListPage.SetActive(false);
                 playheadPage.SetActive(false);
                 actorSettingsPage.SetActive(true);
                 settingsPage.SetActive(false);

@@ -70,7 +70,8 @@ namespace NEP.MonoDirector.UI
 
             var entry = pageView.EntryObjects.FirstOrDefault((entryObject) => !entryObject.gameObject.activeInHierarchy);
             entry.actorData = lastAppendedActor;
-            entry.avatarNameText.text = lastAppendedActor.ActorName;
+            entry.avatarImage.texture = entry.actorData.AvatarPortrait;
+            entry.avatarNameText.text = entry.actorData.ActorName;
             entry.gameObject.SetActive(true);
         }
     }

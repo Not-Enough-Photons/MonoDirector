@@ -6,15 +6,13 @@ using System.IO;
 using MelonLoader;
 using UnityEngine;
 
-using BoneLib.BoneMenu;
-
 using NEP.MonoDirector.Audio;
 using NEP.MonoDirector.Cameras;
 using NEP.MonoDirector.Core;
-using BoneLib.BoneMenu.Elements;
-using NEP.MonoDirector.Data;
 using NEP.MonoDirector.UI;
 using NEP.MonoDirector.State;
+
+using BoneLib.BoneMenu.Elements;
 
 namespace NEP.MonoDirector
 {
@@ -48,6 +46,11 @@ namespace NEP.MonoDirector
 
             instance = this;
 
+            Directory.CreateDirectory(Constants.dirBase);
+            Directory.CreateDirectory(Constants.dirMod);
+            Directory.CreateDirectory(Constants.dirSFX);
+            Directory.CreateDirectory(Constants.dirImg);
+
             bundle = GetEmbeddedBundle();
 
             BoneLib.Hooking.OnLevelInitialized += (info) => MonoDirectorInitialize();
@@ -59,7 +62,7 @@ namespace NEP.MonoDirector
 
             // Testing
             Logger.Warning("Writing test frame data, better hope this doesn't violently crash!!!");
-            Data.ObjectFrame frame = new ObjectFrame();
+            Data.ObjectFrame frame = new Data.ObjectFrame();
             frame.frameTime = 3.141592654F;
             frame.position = new Vector3(1, -1, 2);
             frame.rotation = new Quaternion(0.5F, 0.75F, 0.9F, 1.0F).normalized;
@@ -113,6 +116,8 @@ namespace NEP.MonoDirector
             CreateDirector();
             CreateSFX();
             CreateUI();
+
+            Data.AvatarPhotoBuilder.Initialize();
         }
 
         private void ResetInstances()
@@ -147,7 +152,7 @@ namespace NEP.MonoDirector
             PropMarkerManager.Initialize();
             InfoInterfaceManager.Initialize();
 
-            UIManager.Warmup(UIManager.casterBarcode, 1, true);
+            UIManager.Warmup(UIManager.casterBarcode, 1, false);
         }
 
         private static AssetBundle GetEmbeddedBundle()
@@ -165,7 +170,5 @@ namespace NEP.MonoDirector
                 }
             }
         }
-
-        
     }
 }

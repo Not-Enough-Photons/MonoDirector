@@ -82,6 +82,7 @@ namespace NEP.MonoDirector.Actors
         public Transform[] AvatarBones { get => avatarBones; }
 
         public ActorMic Microphone { get => microphone; }
+        public Texture2D AvatarPortrait { get => avatarPortrait; }
 
         public bool Seated { get => activeSeat != null; }
 
@@ -89,6 +90,7 @@ namespace NEP.MonoDirector.Actors
 
         private ActorBody body;
         private ActorMic microphone;
+        private Texture2D avatarPortrait;
 
         private SLZ.Vehicle.Seat activeSeat;
 
@@ -228,7 +230,7 @@ namespace NEP.MonoDirector.Actors
 
             GameObject.Destroy(clonedAvatar.GetComponent<LODGroup>());
 
-            actorName = $"Actor - {Constants.rigManager.AvatarCrate.Crate.Title}";
+            actorName = Constants.rigManager.AvatarCrate.Crate.Title;
             clonedAvatar.name = actorName;
             ShowHairMeshes(clonedAvatar);
 
@@ -237,6 +239,8 @@ namespace NEP.MonoDirector.Actors
             microphone.SetAvatar(clonedAvatar);
 
             clonedAvatar.gameObject.SetActive(true);
+
+            avatarPortrait = AvatarPhotoBuilder.avatarPortraits[actorName];
 
             Events.OnActorCasted?.Invoke(this);
         }
@@ -248,7 +252,7 @@ namespace NEP.MonoDirector.Actors
             actor.clonedAvatar.gameObject.SetActive(true);
         }
 
-        public void Delete()
+        public override void Delete()
         {
             body.Delete();
             GameObject.Destroy(clonedAvatar.gameObject);

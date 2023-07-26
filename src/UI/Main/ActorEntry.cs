@@ -11,7 +11,7 @@ namespace NEP.MonoDirector.UI
     {
         public ActorEntry(System.IntPtr ptr) : base(ptr) { }
 
-        private Image avatarImage;
+        public RawImage avatarImage;
         public TextMeshProUGUI avatarNameText;
         private Button button;
 
@@ -19,7 +19,7 @@ namespace NEP.MonoDirector.UI
 
         public void Start()
         {
-            avatarImage = transform.Find("Avatar").GetComponent<Image>();
+            avatarImage = transform.Find("Avatar").GetComponent<RawImage>();
             avatarNameText = transform.Find("Text (TMP)").GetComponent<TextMeshProUGUI>();
             button = GetComponent<Button>();
 
@@ -27,16 +27,17 @@ namespace NEP.MonoDirector.UI
             button.onClick.AddListener(new System.Action(() => OnButtonClick()));
         }
 
-        public void SetActor(Actor actor)
-        {
-            Main.Logger.Msg($"ActorEntry.SetActor({actor.ActorName})");
-            actorData = actor;
-            avatarNameText.text = actor.ActorName;
-        }
-
         private void OnButtonClick()
         {
-            MenuUI.Instance.ActorSettingsView.SetActor(actorData);
+            SetSettingsData();
+        }
+
+        private void SetSettingsData()
+        {
+            ActorSettingsView settingsView = MenuUI.Instance.ActorSettingsView;
+            settingsView.actorData = actorData;
+            settingsView.actorPortrait.texture = settingsView.actorData.AvatarPortrait;
+
             MenuUI.Instance.SetPage("ActorSettings");
         }
     }

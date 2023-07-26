@@ -9,7 +9,7 @@ namespace NEP.MonoDirector.UI
     {
         public CasterPageView(System.IntPtr ptr) : base(ptr) { }
 
-        public ActorEntry[] EntryObjects => entryObjects;
+        public List<ActorEntry> EntryObjects => entryObjects;
 
         public CasterPage ActivePage => activePage;
 
@@ -19,7 +19,7 @@ namespace NEP.MonoDirector.UI
 
         private CasterPage activePage;
 
-        private ActorEntry[] entryObjects;
+        private List<ActorEntry> entryObjects;
 
         private int currentPage = 0;
         private int totalPages = 0;
@@ -27,12 +27,18 @@ namespace NEP.MonoDirector.UI
         private void Awake()
         {
             pages = new List<CasterPage>();
-            entryObjects = transform.Find("CastList").GetComponentsInChildren<ActorEntry>();
+            entryObjects = new List<ActorEntry>();
 
-            foreach(var entryObject in entryObjects)
+            Transform root = transform.Find("CastList");
+
+            for(int i = 0; i < root.childCount; i++)
             {
-                entryObject.Start();
-                entryObject.gameObject.SetActive(false);
+                Transform currentChild = root.GetChild(i);
+
+                ActorEntry entry = currentChild.gameObject.AddComponent<ActorEntry>();
+                entry.Start();
+                entry.gameObject.SetActive(false);
+                entryObjects.Add(entry);
             }
 
             AddPage(new CasterPage(this));
