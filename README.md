@@ -15,26 +15,11 @@ This is the official source code for the BONELAB machinima mod, MonoDirector.
 - **Stress Level Zero** for BONELAB and the Marrow SDK
 
 ## Tester/Feedback Group
-- [TabloidA](https://github.com/Acerocks22)
-- [Bread Soup](https://github.com/BreadSoup)
-- [CarrionAndOn](https://github.com/CarrionAndOn)
-- [DopierRex](https://github.com/coldboiddcddd)
-- [Everything On Arm](https://github.com/D2Lx0wse)
-- [dreamkitties](https://github.com/dreamkitties)
-- [FersyVR](https://github.com/FersyVR)
-- [Fizzy](https://github.com/Fizzyhex)
-- [Jass](https://github.com/Jass3k)
-- [josalt](https://github.com/josalt)
-- [Koniving](https://github.com/Koniving)
-- [MrBugo](https://github.com/MrBugo)
-- [notnotnotswipez](https://github.com/notnotnotswipez)
-- [OliverIsNapoleon](https://github.com/OiverIsNapoleon)
-- [phoondos](https://github.com/phoondos)
-- [Puma](https://github.com/Pumazzz06)
-- [Son of Forehead](https://github.com/SonOfForehead)
-- [stayx](https://github.com/stayxlol)
-- [stewpid idiot](https://github.com/Stewpididiot)
-- [SwiZ](https://github.com/SwiZ-VR)
-- [TheDarkZEK](https://github.com/TheDarkZEK)
-- [washing machine](https://github.com/WashingmachineREAL)
-- [yellowyears](https://github.com/yellowyears)
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
