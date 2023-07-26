@@ -2,6 +2,7 @@
 using UnityEngine;
 
 using BoneLib.Nullables;
+using NEP.MonoDirector.Audio;
 
 namespace NEP.MonoDirector.Patches
 {
@@ -21,15 +22,15 @@ namespace NEP.MonoDirector.Patches
 
                 if(Director.PlayState == State.PlayState.Recording)
                 {
-                    activeActor.RecordAction(() => PlaySFX(__instance));
+                    activeActor.RecordAction(() => PlaySFX(__instance, __instance.transform.position));
                 }
             }
 
-            internal static void PlaySFX(SLZ.SFX.HandSFX hand)
+            internal static void PlaySFX(SLZ.SFX.HandSFX hand, Vector3 position)
             {
                 int rand = Random.Range(0, hand.grab.Count);
 
-                NullableMethodExtensions.AudioPlayer_PlayAtPoint(hand.grab[rand], hand.transform.position);
+                AudioManager.Instance.PlayAtPosition(hand.grab[rand], position);
             }
         }
     }
