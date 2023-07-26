@@ -8,6 +8,24 @@
   "commitConvention": "angular",
   "contributors": [
     {
+      "login": "CarrionAndOn",
+      "name": "CarrionAndOn",
+      "avatar_url": "https://avatars.githubusercontent.com/u/30084485?v=4",
+      "profile": "https://github.com/CarrionAndOn",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "BreadSoup",
+      "name": "BreadSoup",
+      "avatar_url": "https://avatars.githubusercontent.com/u/79678268?v=4",
+      "profile": "https://github.com/BreadSoup",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
       "login": "Acerocks22",
       "name": "TabloidA",
       "avatar_url": "https://avatars.githubusercontent.com/u/4953770?v=4",
@@ -21,6 +39,15 @@
       "name": "Everything on Arm",
       "avatar_url": "https://avatars.githubusercontent.com/u/92229936?v=4",
       "profile": "https://github.com/D2Lx0wse",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "coldboiddcddd",
+      "name": "DopierRex ",
+      "avatar_url": "https://avatars.githubusercontent.com/u/131008472?v=4",
+      "profile": "https://github.com/coldboiddcddd",
       "contributions": [
         "bug"
       ]

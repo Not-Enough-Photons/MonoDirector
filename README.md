@@ -1,4 +1,7 @@
 <p align="center">
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
   <img src="https://i.imgur.com/5XrPOnQ.png" />
 </p>
 
@@ -21,8 +24,11 @@ This is the official source code for the BONELAB machinima mod, MonoDirector.
 <table>
   <tbody>
     <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/CarrionAndOn"><img src="https://avatars.githubusercontent.com/u/30084485?v=4?s=100" width="100px;" alt="CarrionAndOn"/><br /><sub><b>CarrionAndOn</b></sub></a><br /><a href="https://github.com/Not-Enough-Photons/MonoDirector/issues?q=author%3ACarrionAndOn" title="Bug reports">🐛</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/BreadSoup"><img src="https://avatars.githubusercontent.com/u/79678268?v=4?s=100" width="100px;" alt="BreadSoup"/><br /><sub><b>BreadSoup</b></sub></a><br /><a href="https://github.com/Not-Enough-Photons/MonoDirector/issues?q=author%3ABreadSoup" title="Bug reports">🐛</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://robotstreamer.com"><img src="https://avatars.githubusercontent.com/u/4953770?v=4?s=100" width="100px;" alt="TabloidA"/><br /><sub><b>TabloidA</b></sub></a><br /><a href="https://github.com/Not-Enough-Photons/MonoDirector/issues?q=author%3AAcerocks22" title="Bug reports">🐛</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/D2Lx0wse"><img src="https://avatars.githubusercontent.com/u/92229936?v=4?s=100" width="100px;" alt="Everything on Arm"/><br /><sub><b>Everything on Arm</b></sub></a><br /><a href="https://github.com/Not-Enough-Photons/MonoDirector/issues?q=author%3AD2Lx0wse" title="Bug reports">🐛</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/coldboiddcddd"><img src="https://avatars.githubusercontent.com/u/131008472?v=4?s=100" width="100px;" alt="DopierRex "/><br /><sub><b>DopierRex </b></sub></a><br /><a href="https://github.com/Not-Enough-Photons/MonoDirector/issues?q=author%3Acoldboiddcddd" title="Bug reports">🐛</a></td>
     </tr>
   </tbody>
 </table>
