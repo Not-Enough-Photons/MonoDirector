@@ -8,6 +8,15 @@
   "commitConvention": "angular",
   "contributors": [
     {
+      "login": "CarrionAndOn",
+      "name": "CarrionAndOn",
+      "avatar_url": "https://avatars.githubusercontent.com/u/30084485?v=4",
+      "profile": "https://github.com/CarrionAndOn",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
       "login": "BreadSoup",
       "name": "BreadSoup",
       "avatar_url": "https://avatars.githubusercontent.com/u/79678268?v=4",
