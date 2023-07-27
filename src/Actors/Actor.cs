@@ -139,8 +139,10 @@ namespace NEP.MonoDirector.Actors
             previousFrame = new FrameGroup();
             nextFrame = new FrameGroup();
 
-            foreach (var frame in avatarFrames)
+            for(int i = 0; i < avatarFrames.Count; i++)
             {
+                var frame = avatarFrames[i];
+
                 previousFrame = nextFrame;
                 nextFrame = frame;
 
@@ -176,12 +178,15 @@ namespace NEP.MonoDirector.Actors
                 Quaternion previousRotation = previousTransformFrames[i].rotation;
                 Quaternion nextRotation = nextTransformFrames[i].rotation;
 
-                if(i == 0)
+                var bone = clonedRigBones[i];
+
+                if(bone == null)
                 {
-                    clonedRigBones[i].position = Vector3.Lerp(previousPosition, nextPosition, delta);
+                    continue;
                 }
 
-                clonedRigBones[i].rotation = Quaternion.Slerp(previousRotation, nextRotation, delta);
+                bone.position = Vector3.Lerp(previousPosition, nextPosition, delta);
+                bone.rotation = Quaternion.Slerp(previousRotation, nextRotation, delta);
 #if DEBUG
                 previousFrameDebugger[i].position = previousPosition;
                 previousFrameDebugger[i].rotation = previousRotation;
@@ -191,9 +196,11 @@ namespace NEP.MonoDirector.Actors
 #endif
             }
             
-            foreach (ActionFrame actionFrame in actionFrames)
+            for(int i = 0; i < actionFrames.Count; i++)
             {
-                if (Playback.Instance.PlaybackTime < actionFrame.timestamp)
+                var actionFrame = actionFrames[i];
+
+                if(Playback.Instance.PlaybackTime < actionFrame.timestamp)
                 {
                     continue;
                 }
