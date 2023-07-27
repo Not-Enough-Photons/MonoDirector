@@ -32,7 +32,7 @@ namespace NEP.MonoDirector.Data
                         continue;
                     }
 
-                    string imageDirectory = Constants.dirImg;
+                    string imageDirectory = Constants.DirImg;
                     string crateTitle = crate.Title;
                     string portraitFile = Path.Combine(imageDirectory, crateTitle + ".png");
 
@@ -66,7 +66,7 @@ namespace NEP.MonoDirector.Data
             icon.hideFlags = HideFlags.DontUnloadUnusedAsset;
 
             byte[] imageBytes = ImageConversion.EncodeToPNG(icon);
-            File.WriteAllBytes(Path.Combine(Constants.dirImg, $"{crateTitle}.png"), imageBytes);
+            File.WriteAllBytes(Path.Combine(Constants.DirImg, $"{crateTitle}.png"), imageBytes);
 
             if (!avatarPortraits.ContainsKey(crateTitle))
             {

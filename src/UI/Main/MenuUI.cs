@@ -60,7 +60,7 @@ namespace NEP.MonoDirector.UI
 
         private void Update()
         {
-            var physicsRig = Constants.rigManager.physicsRig;
+            var physicsRig = Constants.RigManager.physicsRig;
 
             transform.position = Vector3.Lerp(transform.position, physicsRig.m_chest.position + physicsRig.m_chest.forward * 1.25f, 16f * Time.deltaTime);
             transform.LookAt(physicsRig.m_chest);

@@ -59,10 +59,9 @@ namespace NEP.MonoDirector
 
             Logger.Msg("-===================================-");
             
-            Directory.CreateDirectory(Constants.dirBase);
-            Directory.CreateDirectory(Constants.dirMod);
-            Directory.CreateDirectory(Constants.dirSFX);
-            Directory.CreateDirectory(Constants.dirImg);
+            // Create our auto-register dirs
+            foreach (string autoDir in Constants.AutoRegisterDirs)
+                Directory.CreateDirectory(autoDir);
 
             Bundle = GetEmbeddedBundle();
 

@@ -120,7 +120,7 @@ namespace NEP.MonoDirector.Core
 
             recordingTime = 0f;
 
-            SetActor(Constants.rigManager.avatar);
+            SetActor(Constants.RigManager.avatar);
 
             foreach (var castMember in Director.instance.Cast)
             {

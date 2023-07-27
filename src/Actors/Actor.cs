@@ -233,7 +233,7 @@ namespace NEP.MonoDirector.Actors
 
             clonedAvatar.gameObject.SetActive(true);
 
-            body = new ActorBody(this, Constants.rigManager.physicsRig);
+            body = new ActorBody(this, Constants.RigManager.physicsRig);
 
             // stops position overrides, if there are any
             clonedAvatar.GetComponent<Animator>().enabled = false;
@@ -243,7 +243,7 @@ namespace NEP.MonoDirector.Actors
 
             GameObject.Destroy(clonedAvatar.GetComponent<LODGroup>());
 
-            actorName = Constants.rigManager.AvatarCrate.Crate.Title;
+            actorName = Constants.RigManager.AvatarCrate.Crate.Title;
             clonedAvatar.name = actorName;
             ShowHairMeshes(clonedAvatar);
 
