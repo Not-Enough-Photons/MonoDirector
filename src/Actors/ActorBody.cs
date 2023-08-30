@@ -143,28 +143,19 @@ namespace NEP.MonoDirector.Actors
             footstepJogAudio = new List<AudioClip>();
             landingAudio = new List<AudioClip>();
 
-            Main.Logger.Msg("1");
-
             Avatar avatar = actor.PlayerAvatar;
-
-            Main.Logger.Msg("2");
 
             UnhollowerBaseLib.Il2CppReferenceArray<AudioClip> avatarWalkingClips = avatar.footstepsWalk?.audioClips;
             UnhollowerBaseLib.Il2CppReferenceArray<AudioClip> avatarJoggingClips = avatar.footstepsJog?.audioClips;
-
-            Main.Logger.Msg("3");
 
             FootstepSFX sfx = GameObject.FindObjectOfType<FootstepSFX>();
 
             AudioClip[] targetWalkClips = avatarWalkingClips != null && avatarWalkingClips.Length > 0 ? avatarWalkingClips : sfx.walkConcrete;
             AudioClip[] targetJogClips = avatarJoggingClips != null && avatarJoggingClips.Length > 0 ? avatarJoggingClips : sfx.runConcrete;
 
-            Main.Logger.Msg("4");
-
             footstepWalkAudio.AddRange(targetWalkClips);
             footstepJogAudio.AddRange(targetJogClips);
 
-            Main.Logger.Msg("5");
             //landingAudio.AddRange(avatar.highFallOntoFeet.audioClips);
         }
 

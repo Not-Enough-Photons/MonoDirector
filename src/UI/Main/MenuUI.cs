@@ -22,12 +22,12 @@ namespace NEP.MonoDirector.UI
         public string LastPage { get; private set; }
         public string CurrentPage { get; private set; }
 
-        private GameObject menuPage => pageList.Find("Menu").gameObject;
-        private GameObject castPage => pageList.Find("Cast").gameObject;
-        private GameObject castListPage => pageList.Find("Cast/CastList").gameObject;
-        private GameObject playheadPage => pageList.Find("Playhead").gameObject;
-        private GameObject actorSettingsPage => castPage.transform.Find("ActorSettings").gameObject;
-        private GameObject settingsPage => pageList.Find("Settings").gameObject;
+        private Page menuPage;
+        private Page castPage;
+        private Page castListPage;
+        private Page playheadPage;
+        private Page actorSettingsPage;
+        private Page settingsPage;
 
         private Transform footer => transform.Find("Footer");
         private Transform pageList => transform.Find("Content/Pages");
@@ -50,6 +50,11 @@ namespace NEP.MonoDirector.UI
             ActorSettingsView.gameObject.SetActive(false);
 
             gameObject.SetActive(false);
+
+            menuPage = new Page("Menu", pageList.transform.GetChild(0));
+            castPage = new Page("Cast", pageList.transform.GetChild(1));
+            playheadPage = new Page("Playhead", pageList.transform.GetChild(2));
+            settingsPage = new Page("Settings", pageList.transform.GetChild(3));
         }
 
         private void Start()
