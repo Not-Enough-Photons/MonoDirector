@@ -251,7 +251,7 @@ namespace NEP.MonoDirector.Actors
 
             clonedAvatar.gameObject.SetActive(true);
 
-            avatarPortrait = AvatarPhotoBuilder.avatarPortraits[actorName];
+            // avatarPortrait = AvatarPhotoBuilder.avatarPortraits[actorName];
 
             Events.OnActorCasted?.Invoke(this);
         }
@@ -330,7 +330,7 @@ namespace NEP.MonoDirector.Actors
         {
             Transform[] bones = new Transform[(int)HumanBodyBones.LastBone];
 
-            for (int i = 0; i < (int)HumanBodyBones.LastBone; i++)
+            for (int i = 0; i < (int)HumanBodyBones.LastBone - 1; i++)
             {
                 var currentBone = (HumanBodyBones)i;
 

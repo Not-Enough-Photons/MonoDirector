@@ -13,6 +13,9 @@ namespace NEP.MonoDirector.UI
 
         public string Name { get; private set; }
 
+        public Transform PageTransform => pageTransform;
+        public GameObject GameObject => pageTransform.gameObject;
+
         private Transform pageTransform;
     }
 }
