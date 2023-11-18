@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-
+using MelonLoader;
 using NEP.MonoDirector.Audio;
 using NEP.MonoDirector.Core;
 using NEP.MonoDirector.Data;
@@ -253,7 +253,7 @@ namespace NEP.MonoDirector.Actors
 
             clonedAvatar.gameObject.SetActive(true);
 
-            avatarPortrait = AvatarPhotoBuilder.avatarPortraits[actorName];
+            // avatarPortrait = AvatarPhotoBuilder.avatarPortraits[actorName];
 
             Events.OnActorCasted?.Invoke(this);
         }
@@ -299,8 +299,23 @@ namespace NEP.MonoDirector.Actors
 
         private void ShowHairMeshes(SLZ.VRMK.Avatar avatar)
         {
+            if(avatar == null)
+            {
+                MelonLogger.LogError("ShowHairMeshes: Avatar doesn't exist!");
+            }
+
+            if(avatar.hairMeshes.Count == 0 || avatar.hairMeshes == null)
+            {
+                MelonLogger.LogWarning("ShowHairMeshes: No hair meshes to clone.");
+            }
+
             foreach (var mesh in avatar.hairMeshes)
             {
+                if(mesh == null)
+                {
+                    continue;
+                }
+
                 mesh.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.TwoSided;
             }
         }
@@ -333,7 +348,7 @@ namespace NEP.MonoDirector.Actors
             bones = new Transform[(int)HumanBodyBones.LastBone];
             bonesValid = new bool[bones.Length];
 
-            for (int i = 0; i < bones.Length; i++)
+            for (int i = 0; i < (int)HumanBodyBones.LastBone - 1; i++)
             {
                 var currentBone = (HumanBodyBones)i;
 

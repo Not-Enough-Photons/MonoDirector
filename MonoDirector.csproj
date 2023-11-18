@@ -83,7 +83,6 @@
     <Compile Include="src\Patches\Guns\InventoryAmmoReciever.cs" />
     <Compile Include="src\Patches\Interaction\SimpleGripEvents.cs" />
     <Compile Include="src\Patches\Rig\RigManager.cs" />
-    <Compile Include="src\Patches\SFX\FootstepSFX.cs" />
     <Compile Include="src\Patches\Guns\Gun.cs" />
     <Compile Include="src\Patches\SFX\HandSFX.cs" />
     <Compile Include="src\Patches\SFX\GunSFX.cs" />
@@ -113,6 +112,7 @@
     <Compile Include="src\UI\Main\SettingsPageView.cs" />
     <Compile Include="src\UI\MDMenu.cs" />
     <Compile Include="src\UI\PropMarkerManager.cs" />
+    <Compile Include="src\UI\Page.cs" />
     <Compile Include="src\UI\InformationInterface.cs" />
     <Compile Include="src\UI\InfoInterfaceManager.cs" />
     <Compile Include="src\UI\UIManager.cs" />

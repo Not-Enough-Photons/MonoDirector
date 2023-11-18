@@ -17,7 +17,7 @@ namespace NEP.MonoDirector.UI
         internal static readonly string modCode = "MonoDirector.";
         internal static readonly string typeCode = "Spawnable.";
 
-        internal static readonly string propMarkerBarcode = companyCode + modCode + typeCode + ".UIPropMarker";
+        internal static readonly string propMarkerBarcode = companyCode + modCode + typeCode + "UIPropMarker";
         internal static readonly string infoInterfaceBarcode = companyCode + modCode + typeCode + "InformationInterface";
         internal static readonly string casterBarcode = companyCode + modCode + typeCode + "MonoDirectorMainMenu";
 

@@ -22,7 +22,7 @@ namespace NEP.MonoDirector.UI
 
         public static void Initialize()
         {
-            loadedMarkerObjects = UIManager.Warmup(UIManager.propMarkerBarcode, 32);
+            loadedMarkerObjects = UIManager.Warmup(UIManager.propMarkerBarcode, 32, false);
 
             Events.OnPropCreated += AddMarkerToProp;
             Events.OnPropRemoved += RemoveMarkerFromProp;

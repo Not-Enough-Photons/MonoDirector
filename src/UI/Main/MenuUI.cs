@@ -15,19 +15,19 @@ namespace NEP.MonoDirector.UI
 
         public static MenuUI Instance { get; private set; }
 
-        public MenuPageView MenuPageView => menuPage.GetComponent<MenuPageView>();
-        public CasterPageView CasterPageView => castPage.GetComponent<CasterPageView>();
-        public ActorSettingsView ActorSettingsView => actorSettingsPage.GetComponent<ActorSettingsView>();
+        public MenuPageView MenuPageView => menuPage.PageTransform.GetComponent<MenuPageView>();
+        public CasterPageView CasterPageView => castPage.PageTransform.GetComponent<CasterPageView>();
+        public ActorSettingsView ActorSettingsView => actorSettingsPage.PageTransform.GetComponent<ActorSettingsView>();
 
         public string LastPage { get; private set; }
         public string CurrentPage { get; private set; }
 
-        private GameObject menuPage => pageList.Find("Menu").gameObject;
-        private GameObject castPage => pageList.Find("Cast").gameObject;
-        private GameObject castListPage => pageList.Find("Cast/CastList").gameObject;
-        private GameObject playheadPage => pageList.Find("Playhead").gameObject;
-        private GameObject actorSettingsPage => castPage.transform.Find("ActorSettings").gameObject;
-        private GameObject settingsPage => pageList.Find("Settings").gameObject;
+        private Page menuPage;
+        private Page castPage;
+        private Page castListPage;
+        private Page playheadPage;
+        private Page actorSettingsPage;
+        private Page settingsPage;
 
         private Transform footer => transform.Find("Footer");
         private Transform pageList => transform.Find("Content/Pages");
@@ -50,6 +50,11 @@ namespace NEP.MonoDirector.UI
             ActorSettingsView.gameObject.SetActive(false);
 
             gameObject.SetActive(false);
+
+            menuPage = new Page("Menu", pageList.transform.GetChild(0));
+            castPage = new Page("Cast", pageList.transform.GetChild(1));
+            playheadPage = new Page("Playhead", pageList.transform.GetChild(2));
+            settingsPage = new Page("Settings", pageList.transform.GetChild(3));
         }
 
         private void Start()
@@ -75,12 +80,12 @@ namespace NEP.MonoDirector.UI
         {
             if (page == "Menu")
             {
-                menuPage.SetActive(true);
-                castPage.SetActive(false);
-                castListPage.SetActive(false);
-                playheadPage.SetActive(false);
-                actorSettingsPage.SetActive(false);
-                settingsPage.SetActive(false);
+                menuPage.GameObject.SetActive(true);
+                castPage.GameObject.SetActive(false);
+                castListPage.GameObject.SetActive(false);
+                playheadPage.GameObject.SetActive(false);
+                actorSettingsPage.GameObject.SetActive(false);
+                settingsPage.GameObject.SetActive(false);
 
                 pageText.gameObject.SetActive(false);
                 previousPageButton.gameObject.SetActive(false);
@@ -92,12 +97,12 @@ namespace NEP.MonoDirector.UI
 
             if (page == "Cast")
             {
-                menuPage.SetActive(false);
-                castPage.SetActive(true);
-                castListPage.SetActive(true);
-                playheadPage.SetActive(false);
-                actorSettingsPage.SetActive(false);
-                settingsPage.SetActive(false);
+                menuPage.GameObject.SetActive(false);
+                castPage.GameObject.SetActive(true);
+                castListPage.GameObject.SetActive(true);
+                playheadPage.GameObject.SetActive(false);
+                actorSettingsPage.GameObject.SetActive(false);
+                settingsPage.GameObject.SetActive(false);
 
                 pageText.gameObject.SetActive(true);
                 previousPageButton.gameObject.SetActive(true);
@@ -109,12 +114,12 @@ namespace NEP.MonoDirector.UI
 
             if(page == "Playhead")
             {
-                menuPage.SetActive(false);
-                castPage.SetActive(false);
-                castListPage.SetActive(false);
-                playheadPage.SetActive(true);
-                actorSettingsPage.SetActive(false);
-                settingsPage.SetActive(false);
+                menuPage.GameObject.SetActive(false);
+                castPage.GameObject.SetActive(false);
+                castListPage.GameObject.SetActive(false);
+                playheadPage.GameObject.SetActive(true);
+                actorSettingsPage.GameObject.SetActive(false);
+                settingsPage.GameObject.SetActive(false);
 
                 pageText.gameObject.SetActive(false);
                 previousPageButton.gameObject.SetActive(false);
@@ -126,12 +131,12 @@ namespace NEP.MonoDirector.UI
 
             if (page == "Settings")
             {
-                menuPage.SetActive(false);
-                castPage.SetActive(false);
-                castListPage.SetActive(false);
-                playheadPage.SetActive(false);
-                actorSettingsPage.SetActive(false);
-                settingsPage.SetActive(true);
+                menuPage.GameObject.SetActive(false);
+                castPage.GameObject.SetActive(false);
+                castListPage.GameObject.SetActive(false);
+                playheadPage.GameObject.SetActive(false);
+                actorSettingsPage.GameObject.SetActive(false);
+                settingsPage.GameObject.SetActive(true);
 
                 pageText.gameObject.SetActive(false);
                 previousPageButton.gameObject.SetActive(false);
@@ -143,12 +148,12 @@ namespace NEP.MonoDirector.UI
 
             if (page == "ActorSettings")
             {
-                menuPage.SetActive(false);
-                castPage.SetActive(true);
-                castListPage.SetActive(false);
-                playheadPage.SetActive(false);
-                actorSettingsPage.SetActive(true);
-                settingsPage.SetActive(false);
+                menuPage.GameObject.SetActive(false);
+                castPage.GameObject.SetActive(true);
+                castListPage.GameObject.SetActive(false);
+                playheadPage.GameObject.SetActive(false);
+                actorSettingsPage.GameObject.SetActive(true);
+                settingsPage.GameObject.SetActive(false);
 
                 pageText.gameObject.SetActive(false);
                 previousPageButton.gameObject.SetActive(false);

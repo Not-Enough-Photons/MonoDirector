@@ -130,7 +130,7 @@ namespace NEP.MonoDirector
             CreateSFX();
             CreateUI();
 
-            Data.AvatarPhotoBuilder.Initialize();
+            // Data.AvatarPhotoBuilder.Initialize();
         }
 
         private void ResetInstances()
@@ -167,8 +167,7 @@ namespace NEP.MonoDirector
         {
             PropMarkerManager.Initialize();
             InfoInterfaceManager.Initialize();
-
-            UIManager.Warmup(UIManager.casterBarcode, 1, false);
+            // UIManager.Warmup(UIManager.casterBarcode, 1, false);
         }
 
         private static AssetBundle GetEmbeddedBundle()

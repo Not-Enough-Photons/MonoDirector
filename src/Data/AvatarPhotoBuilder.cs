@@ -16,6 +16,10 @@ namespace NEP.MonoDirector.Data
 
         private static bool initialized = false;
 
+        private static GameObject renderCameraObject;
+        private static Camera renderCamera;
+        private static Transform renderCameraTransform;
+
         public static void Initialize()
         {
             if (initialized)
@@ -23,7 +27,14 @@ namespace NEP.MonoDirector.Data
                 return;
             }
 
-            foreach (var pallet in AssetWarehouse.Instance.GetPallets())
+            renderCameraObject = new GameObject("Avatar Render Camera");
+            renderCamera = renderCameraObject.AddComponent<Camera>();
+            renderCameraObject.AddComponent<UniversalAdditionalCameraData>().allowXRRendering = false;
+            renderCameraTransform = renderCameraObject.transform;
+
+            var pallets = AssetWarehouse.Instance.GetPallets();
+
+            foreach (var pallet in pallets)
             {
                 foreach (var crate in pallet.Crates)
                 {
@@ -55,6 +66,8 @@ namespace NEP.MonoDirector.Data
                 }
             }
 
+            GameObject.Destroy(renderCameraObject);
+
             initialized = true;
         }
 
@@ -76,8 +89,6 @@ namespace NEP.MonoDirector.Data
 
         private static Texture2D CreateAvatarIcon(GameObject avatarObject)
         {
-            QualitySettings.streamingMipmapsActive = false;
-
             GameObject copiedAvatar = GameObject.Instantiate(avatarObject);
 
             SLZ.VRMK.Avatar avatar = copiedAvatar.GetComponent<SLZ.VRMK.Avatar>();
@@ -86,14 +97,11 @@ namespace NEP.MonoDirector.Data
 
             Texture2D output = new Texture2D(256, 256);
 
-            GameObject renderCameraObject = new GameObject("Avatar Render Camera");
-            Camera renderCamera = renderCameraObject.AddComponent<Camera>();
-            renderCameraObject.AddComponent<UniversalAdditionalCameraData>().allowXRRendering = false;
             renderCamera.targetTexture = input;
 
             Transform head = avatar.animator.GetBoneTransform(HumanBodyBones.Head);
-            renderCamera.transform.position = avatar.transform.forward + Vector3.up * avatar.height * 0.95f;
-            renderCamera.transform.rotation = Quaternion.LookRotation(head.position - renderCamera.transform.position);
+            renderCameraTransform.position = avatar.transform.forward + Vector3.up * avatar.height * 0.95f;
+            renderCameraTransform.rotation = Quaternion.LookRotation(head.position - renderCameraTransform.position);
 
             renderCamera.Render();
 
@@ -106,8 +114,6 @@ namespace NEP.MonoDirector.Data
 
             GameObject.Destroy(copiedAvatar);
             GameObject.Destroy(renderCameraObject);
-
-            QualitySettings.streamingMipmapsActive = true;
 
             return output;
         }
