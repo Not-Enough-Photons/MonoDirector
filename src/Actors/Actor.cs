@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-
+using MelonLoader;
 using NEP.MonoDirector.Audio;
 using NEP.MonoDirector.Core;
 using NEP.MonoDirector.Data;
@@ -297,8 +297,23 @@ namespace NEP.MonoDirector.Actors
 
         private void ShowHairMeshes(SLZ.VRMK.Avatar avatar)
         {
+            if(avatar == null)
+            {
+                MelonLogger.LogError("ShowHairMeshes: Avatar doesn't exist!");
+            }
+
+            if(avatar.hairMeshes.Count == 0 || avatar.hairMeshes == null)
+            {
+                MelonLogger.LogWarning("ShowHairMeshes: No hair meshes to clone.");
+            }
+
             foreach (var mesh in avatar.hairMeshes)
             {
+                if(mesh == null)
+                {
+                    continue;
+                }
+
                 mesh.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.TwoSided;
             }
         }
