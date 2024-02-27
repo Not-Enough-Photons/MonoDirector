@@ -43,7 +43,7 @@ namespace NEP.MonoDirector.Actors
                 previousFrameDebugger[i] = GameObject.Instantiate(empty).transform;
                 nextFrameDebugger[i] = GameObject.Instantiate(empty).transform;
             }
-            
+
             GameObject.Destroy(baseCube);
 #endif
         }

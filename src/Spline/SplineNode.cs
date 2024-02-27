@@ -1,23 +1,42 @@
+using SLZ.Interaction;
 using UnityEngine;
-using UnityEngine.Animations;
 using UnityEngine.Splines;
 
 namespace NEP.MonoDirector.Cameras
 {
     [MelonLoader.RegisterTypeInIl2Cpp]
-    public class SplinePlacer : MonoBehaviour
+    public class SplineNode : MonoBehaviour
     {
-        public SplinePlacer(System.IntPtr ptr) : base(ptr) { }
+        public SplineNode(System.IntPtr ptr) : base(ptr) { }
+
+        public static int nodeCounter { get; private set; }
 
         private SplineContainer splineContainer;
         private SplineAnimate splineAnimator;
 
         private Transform lookAtTarget;
 
+        private SphereGrip nodeGrip;
+
+        private int nodeIndex = 0;
+
         private void Start()
         {
             splineContainer = CreateSplineContainer();
             InitializeSplineAnimator(splineAnimator);
+
+            nodeGrip = transform.Find("Collider").GetComponent<SphereGrip>();
+            nodeGrip.attachedUpdateDelegate += new System.Action<Hand>(OnTriggerGripUpdate);
+        }
+
+        private void OnEnable()
+        {
+            CreatePoint(transform.position, transform.rotation);
+        }
+
+        private void OnDisable()
+        {
+            RemovePoint(nodeIndex);
         }
 
         private void Update()
@@ -31,6 +50,11 @@ namespace NEP.MonoDirector.Cameras
             {
                 transform.LookAt(lookAtTarget);
             }
+        }
+
+        private void OnTriggerGripUpdate(Hand hand)
+        {
+
         }
 
         private void CreatePoint(Vector3 position, Quaternion rotation)
@@ -49,6 +73,16 @@ namespace NEP.MonoDirector.Cameras
 
             splineContainer.Spline.Add(knot);
             print("Spline knot added!");
+
+            nodeIndex = nodeCounter;
+            nodeCounter++;
+        }
+        
+        private void RemovePoint(int index)
+        {
+            splineContainer.Spline.RemoveAt(index);
+            nodeCounter--;
+            nodeIndex = nodeCounter;
         }
 
         private SplineContainer CreateSplineContainer()
