@@ -113,6 +113,11 @@ namespace NEP.MonoDirector.Core
 
         public void Record()
         {
+            if (Film.Instance == null)
+            {
+                new Film();
+            }
+
             recorder.StartRecordRoutine();
         }
 

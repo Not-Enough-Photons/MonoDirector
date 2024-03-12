@@ -53,13 +53,13 @@ namespace NEP.MonoDirector.Actors
             RigManager rigManager = BoneLib.Player.rigManager;
             avatarBarcode = rigManager.AvatarCrate.Barcode;
             
-            playerAvatar = avatar;
+            PlayerAvatar = avatar;
 
-            avatarBones = GetAvatarBones(playerAvatar);
+            avatarBones = GetAvatarBones(PlayerAvatar);
             avatarFrames = new List<FrameGroup>();
 
             GameObject micObject = new GameObject("Actor Microphone");
-            microphone = micObject.AddComponent<ActorMic>();
+            Microphone = micObject.AddComponent<ActorMic>();
 
             tempFrames = new ObjectFrame[avatarBones.Length];
         }
@@ -77,26 +77,19 @@ namespace NEP.MonoDirector.Actors
         private string avatarBarcode;
         public string AvatarBarcode => avatarBarcode;
         
-        public Avatar PlayerAvatar { get => playerAvatar; }
-        public Avatar ClonedAvatar { get => clonedAvatar; }
-        public Transform[] AvatarBones { get => avatarBones; }
+        public Avatar PlayerAvatar { get; private set; }
+        public Avatar ClonedAvatar { get; private set; }
+        public Transform[] AvatarBones { get; private set; }
 
-        public ActorBody ActorBody { get => body; }
-        public ActorMic Microphone { get => microphone; }
-        public Texture2D AvatarPortrait { get => avatarPortrait; }
+        public ActorBody ActorBody { get; private set; }
+        public ActorMic Microphone { get; private set; }
+        public Texture2D AvatarPortrait { get; private set; }
 
         public bool Seated { get => activeSeat != null; }
 
         protected List<FrameGroup> avatarFrames;
 
-        private ActorBody body;
-        private ActorMic microphone;
-        private Texture2D avatarPortrait;
-
         private SLZ.Vehicle.Seat activeSeat;
-
-        private Avatar playerAvatar;
-        private Avatar clonedAvatar;
 
         private ObjectFrame[] tempFrames;
 
@@ -209,8 +202,8 @@ namespace NEP.MonoDirector.Actors
                 }
             }
 
-            microphone?.Playback();
-            microphone?.UpdateJaw();
+            Microphone?.Playback();
+            Microphone?.UpdateJaw();
         }
 
         /// <summary>
@@ -227,48 +220,23 @@ namespace NEP.MonoDirector.Actors
 
         public void CloneAvatar()
         {
-            GameObject clonedAvatarObject = GameObject.Instantiate(playerAvatar.gameObject);
-            clonedAvatar = clonedAvatarObject.GetComponent<SLZ.VRMK.Avatar>();
-
-            clonedAvatar.gameObject.SetActive(true);
-
-            body = new ActorBody(this, Constants.rigManager.physicsRig);
-
-            // stops position overrides, if there are any
-            clonedAvatar.GetComponent<Animator>().enabled = false;
-
-            clonedRigBones = GetAvatarBones(clonedAvatar);
-
-            GameObject.Destroy(clonedAvatar.GetComponent<LODGroup>());
-
-            actorName = Constants.rigManager.AvatarCrate.Crate.Title;
-            clonedAvatar.name = actorName;
-            ShowHairMeshes(clonedAvatar);
-
-            GameObject.FindObjectOfType<PullCordDevice>().PlayAvatarParticleEffects();
-
-            microphone.SetAvatar(clonedAvatar);
-
-            clonedAvatar.gameObject.SetActive(true);
-
-            // avatarPortrait = AvatarPhotoBuilder.avatarPortraits[actorName];
-
+            ConstructAvatarClone();
+            FinishActorClone();
             Events.OnActorCasted?.Invoke(this);
         }
 
         public void SwitchToActor(Actor actor)
         {
-            Main.Logger.Msg("SwitchToAvatar");
-            clonedAvatar.gameObject.SetActive(false);
-            actor.clonedAvatar.gameObject.SetActive(true);
+            ClonedAvatar.gameObject.SetActive(false);
+            actor.ClonedAvatar.gameObject.SetActive(true);
         }
 
         public override void Delete()
         {
-            body.Delete();
-            GameObject.Destroy(clonedAvatar.gameObject);
-            GameObject.Destroy(microphone.gameObject);
-            microphone = null;
+            ActorBody.Delete();
+            GameObject.Destroy(ClonedAvatar.gameObject);
+            GameObject.Destroy(Microphone.gameObject);
+            Microphone = null;
             avatarFrames.Clear();
         }
 
@@ -276,11 +244,11 @@ namespace NEP.MonoDirector.Actors
         {
             activeSeat = seat;
 
-            Transform pelvis = clonedAvatar.animator.GetBoneTransform(HumanBodyBones.Hips);
+            Transform pelvis = ClonedAvatar.animator.GetBoneTransform(HumanBodyBones.Hips);
 
             lastPelvisParent = pelvis.GetParent();
 
-            Vector3 seatOffset = new Vector3(seat._buttOffset.x, Mathf.Abs(seat._buttOffset.y) * clonedAvatar.heightPercent, seat._buttOffset.z);
+            Vector3 seatOffset = new Vector3(seat._buttOffset.x, Mathf.Abs(seat._buttOffset.y) * ClonedAvatar.heightPercent, seat._buttOffset.z);
 
             pelvis.SetParent(seat.transform);
 
@@ -291,8 +259,34 @@ namespace NEP.MonoDirector.Actors
         public void UnparentSeat()
         {
             activeSeat = null;
-            Transform pelvis = clonedAvatar.animator.GetBoneTransform(HumanBodyBones.Hips);
+            Transform pelvis = ClonedAvatar.animator.GetBoneTransform(HumanBodyBones.Hips);
             pelvis.SetParent(lastPelvisParent);
+        }
+
+        private void ConstructAvatarClone()
+        {
+            GameObject clonedAvatarObject = GameObject.Instantiate(PlayerAvatar.gameObject);
+            ClonedAvatar = clonedAvatarObject.GetComponent<SLZ.VRMK.Avatar>();
+            ClonedAvatar.gameObject.SetActive(true);
+
+            ActorBody = new ActorBody(this, Constants.rigManager.physicsRig);
+
+            // stops position overrides, if there are any
+            ClonedAvatar.GetComponent<Animator>().enabled = false;
+
+            clonedRigBones = GetAvatarBones(ClonedAvatar);
+
+            GameObject.Destroy(ClonedAvatar.GetComponent<LODGroup>());
+        }
+
+        private void FinishActorClone()
+        {
+            actorName = Constants.rigManager.AvatarCrate.Crate.Title;
+            ClonedAvatar.name = actorName;
+            ShowHairMeshes(ClonedAvatar);
+            GameObject.FindObjectOfType<PullCordDevice>().PlayAvatarParticleEffects();
+            Microphone.SetAvatar(ClonedAvatar);
+            ClonedAvatar.gameObject.SetActive(true);
         }
 
         private void ShowHairMeshes(SLZ.VRMK.Avatar avatar)
