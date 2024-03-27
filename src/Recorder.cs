@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using Harmony;
 using MelonLoader;
 using NEP.MonoDirector.Actors;
 using NEP.MonoDirector.State;
@@ -79,7 +78,7 @@ namespace NEP.MonoDirector.Core
 
         public void RecordCamera()
         {
-            foreach (var castMember in Film.Instance.ActiveScene.Actors)
+            foreach (var castMember in Director.instance.Cast)
             {
                 castMember?.Act();
             }
@@ -94,12 +93,12 @@ namespace NEP.MonoDirector.Core
                 prop.Record(recordTick);
             }
 
-            foreach (var castMember in Film.Instance.ActiveScene.Actors)
+            foreach (var castMember in Director.instance.Cast)
             {
                 Playback.Instance.AnimateActor(castMember);
             }
 
-            foreach(var prop in Film.Instance.ActiveScene.Props)
+            foreach(var prop in Director.instance.WorldProps)
             {
                 Playback.Instance.AnimateProp(prop);
             }
@@ -110,15 +109,6 @@ namespace NEP.MonoDirector.Core
         /// </summary>
         public void OnPreRecord()
         {
-            if (!Film.Instance.HasActiveScene() || !Film.Instance.HasScenes())
-            {
-                Main.Logger.Msg("No scene, creating one...");
-                Film.Instance.SetScene(new Matinee());
-            }
-
-            Matinee scene = Film.Instance.ActiveScene;
-            scene.AddTake(new Take(scene));
-
             if (recordTick > 0)
             {
                 recordTick = 0;
@@ -127,15 +117,17 @@ namespace NEP.MonoDirector.Core
             Playback.Instance.ResetPlayhead();
 
             fpsTimer = 0f;
+
             recordingTime = 0f;
+
             SetActor(Constants.rigManager.avatar);
 
-            foreach (var castMember in scene.Actors)
+            foreach (var castMember in Director.instance.Cast)
             {
                 castMember.OnSceneBegin();
             }
 
-            foreach(var prop in scene.Props)
+            foreach(var prop in Director.instance.WorldProps)
             {
                 prop.OnSceneBegin();
                 prop.gameObject.SetActive(true);
@@ -149,7 +141,7 @@ namespace NEP.MonoDirector.Core
         {
             activeActor?.Microphone?.RecordMicrophone();
 
-            foreach (Trackable castMember in Film.Instance.ActiveScene.Actors)
+            foreach (Trackable castMember in Director.instance.Cast)
             {
                 if (castMember != null && castMember is Actor actorPlayer)
                 {
@@ -189,7 +181,7 @@ namespace NEP.MonoDirector.Core
                 RecordActor();
             }
 
-            foreach (var castMember in Film.Instance.ActiveScene.Actors)
+            foreach (var castMember in Director.instance.Cast)
             {
                 if (castMember != null)
                 {
@@ -205,7 +197,7 @@ namespace NEP.MonoDirector.Core
         {
             activeActor?.Microphone?.StopRecording();
 
-            foreach (Trackable castMember in Film.Instance.ActiveScene.Actors)
+            foreach (Trackable castMember in Director.instance.Cast)
             {
                 if (castMember != null && castMember is Actor actorPlayer)
                 {
@@ -252,19 +244,17 @@ namespace NEP.MonoDirector.Core
 #endif
             
             activeActor.CloneAvatar();
-            Film.Instance.ActiveScene.AddActor(activeActor);
+            Director.instance.Cast.Add(activeActor);
             lastActor = activeActor;
 
             activeActor = null;
 
-            Film.Instance.ActiveScene.AddActors(ActiveActors);
+            Director.instance.Cast.AddRange(ActiveActors);
             ActiveActors.Clear();
 
-            Film.Instance.ActiveScene.AddProps(Director.instance.RecordingProps);
+            Director.instance.WorldProps.AddRange(Director.instance.RecordingProps);
             Director.instance.LastRecordedProps = Director.instance.RecordingProps;
             Director.instance.RecordingProps.Clear();
-
-            Film.Instance.AddScene(Film.Instance.ActiveScene);
 
             if (recordRoutine != null)
             {

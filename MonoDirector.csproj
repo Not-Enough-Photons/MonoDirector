@@ -33,7 +33,6 @@
     <DefineConstants>DEBUG</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="src\*.cs" />
     <Compile Include="src\Actors\ActorSkeleton.cs" />
     <Compile Include="src\Audio\AudioManager.cs" />
     <Compile Include="src\Audio\PooledAudio.cs" />
@@ -93,6 +92,7 @@
     <Compile Include="src\Proxy\TrackableProxy.cs" />
     <Compile Include="src\Recorder.cs" />
     <Compile Include="src\Settings.cs" />
+    <Compile Include="src\Spline\SplinePlacer.cs" />
     <Compile Include="src\State\BodyPart.cs" />
     <Compile Include="src\State\CameraMode.cs" />
     <Compile Include="src\State\CaptureState.cs" />

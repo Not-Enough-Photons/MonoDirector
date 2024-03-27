@@ -69,16 +69,6 @@ namespace NEP.MonoDirector.Core
         /// </summary>
         public void BeginPlayback()
         {
-            if(Film.Instance == null)
-            {
-                return;
-            }
-
-            if(!Film.Instance.HasActiveScene() || !Film.Instance.HasScenes())
-            {
-                return;
-            }
-
             if (Director.LastPlayState == PlayState.Paused)
             {
                 Director.instance.SetPlayState(PlayState.Playing);
@@ -97,12 +87,12 @@ namespace NEP.MonoDirector.Core
         {
             ResetPlayhead();
 
-            foreach (var castMember in Film.Instance.ActiveScene.Actors)
+            foreach (var castMember in Director.instance.Cast)
             {
                 castMember.OnSceneBegin();
             }
 
-            foreach (var prop in Film.Instance.ActiveScene.Props)
+            foreach (var prop in Director.instance.WorldProps)
             {
                 prop.OnSceneBegin();
                 prop.gameObject.SetActive(true);
@@ -114,7 +104,7 @@ namespace NEP.MonoDirector.Core
         /// </summary>
         public void OnPlay()
         {
-            foreach(var actor in Film.Instance.ActiveScene.Actors)
+            foreach(var actor in Director.instance.Cast)
             {
                 if(actor is Actor actorPlayer)
                 {
@@ -143,7 +133,7 @@ namespace NEP.MonoDirector.Core
         /// </summary>
         public void OnStopPlayback()
         {
-            foreach (Trackable castMember in Film.Instance.ActiveScene.Actors)
+            foreach (Trackable castMember in Director.instance.Cast)
             {
                 if (castMember != null && castMember is Actor actorPlayer)
                 {
@@ -185,10 +175,10 @@ namespace NEP.MonoDirector.Core
         /// </summary>
         public void AnimateAll()
         {
-            foreach (var castMember in Film.Instance.ActiveScene.Actors)
+            foreach (var castMember in Director.instance.Cast)
                 AnimateActor(castMember);
 
-            foreach (var prop in Film.Instance.ActiveScene.Props)
+            foreach (var prop in Director.instance.WorldProps)
                 AnimateProp(prop);
         }
         
