@@ -99,16 +99,7 @@
     <Compile Include="src\State\PlayState.cs" />
     <Compile Include="src\Tools\Propifier.cs" />
     <Compile Include="src\Tools\StudioLight.cs" />
-    <Compile Include="src\UI\Main\ActorEntry.cs" />
-    <Compile Include="src\UI\Main\ActorSettingsView.cs" />
-    <Compile Include="src\UI\Main\AudioSettingsPage.cs" />
-    <Compile Include="src\UI\Main\CameraSettingsPage.cs" />
-    <Compile Include="src\UI\Main\CasterPage.cs" />
-    <Compile Include="src\UI\Main\CasterPageView.cs" />
-    <Compile Include="src\UI\Main\MenuPageView.cs" />
-    <Compile Include="src\UI\Main\MenuUI.cs" />
-    <Compile Include="src\UI\Main\PlayheadPageView.cs" />
-    <Compile Include="src\UI\Main\SettingsPageView.cs" />
+    <Compile Include="src\UI\Main\*.cs" />
     <Compile Include="src\UI\MDMenu.cs" />
     <Compile Include="src\UI\PropMarkerManager.cs" />
     <Compile Include="src\UI\Page.cs" />

@@ -1,8 +1,8 @@
-using NEP.MonoDirector.Actors;
-
 using TMPro;
-using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine;
+
+using NEP.MonoDirector.Actors;
 
 namespace NEP.MonoDirector.UI
 {
@@ -13,33 +13,21 @@ namespace NEP.MonoDirector.UI
 
         public RawImage avatarImage;
         public TextMeshProUGUI avatarNameText;
-        private Button button;
+        public Button avatarButton;
 
-        public Actor actorData;
+        private Actor actor;
 
-        public void Start()
+        public void Show() => gameObject.SetActive(true);
+        public void Hide() => gameObject.SetActive(false);
+
+        public Actor GetActor()
         {
-            avatarImage = transform.Find("Avatar").GetComponent<RawImage>();
-            avatarNameText = transform.Find("Text (TMP)").GetComponent<TextMeshProUGUI>();
-            button = GetComponent<Button>();
-
-            button.targetGraphic = avatarImage;
-            button.onClick.AddListener(new System.Action(() => OnButtonClick()));
+            return this.actor;
         }
 
-        private void OnButtonClick()
+        public void SetActor(Actor actor)
         {
-            SetSettingsData();
-        }
-
-        private void SetSettingsData()
-        {
-            ActorSettingsView settingsView = MenuUI.Instance.ActorSettingsView;
-            settingsView.actorData = actorData;
-            settingsView.actorPortrait.texture = settingsView.actorData.AvatarPortrait;
-
-            MenuUI.Instance.SetPage("ActorSettings");
+            this.actor = actor;
         }
     }
 }
-
