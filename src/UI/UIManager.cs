@@ -1,13 +1,7 @@
-﻿using BoneLib.Nullables;
-using SLZ.Marrow.Data;
-using SLZ.Marrow.Pool;
-using SLZ.Marrow.Warehouse;
-using System;
+﻿using SLZ.Marrow.Pool;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
+using BoneLib;
 
 namespace NEP.MonoDirector.UI
 {
@@ -19,7 +13,7 @@ namespace NEP.MonoDirector.UI
 
         internal static readonly string propMarkerBarcode = companyCode + modCode + typeCode + "UIPropMarker";
         internal static readonly string infoInterfaceBarcode = companyCode + modCode + typeCode + "InformationInterface";
-        internal static readonly string casterBarcode = companyCode + modCode + typeCode + "MonoDirectorMainMenu";
+        internal static readonly string casterBarcode = companyCode + modCode + typeCode + "MonoDirectorCasterUI";
 
         internal static List<AssetPoolee> Warmup(string barcode, int size, bool startActive = false)
         {
@@ -27,15 +21,7 @@ namespace NEP.MonoDirector.UI
 
             for (int i = 0; i < size; i++)
             {
-                SpawnableCrateReference reference = new SpawnableCrateReference(barcode);
-
-                Spawnable spawnable = new Spawnable()
-                {
-                    crateRef = reference
-                };
-
-                AssetSpawner.Register(spawnable);
-                NullableMethodExtensions.PoolManager_Spawn(spawnable, default, default, null, false, null, new Action<GameObject>((obj) => CreateObject(ref cache, obj, startActive)));
+                HelperMethods.SpawnCrate(barcode, Vector3.zero, Quaternion.identity, Vector3.one, false, (obj) => CreateObject(ref cache, obj, startActive));
             }
 
             return cache;

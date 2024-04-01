@@ -1,8 +1,5 @@
-﻿using BoneLib.BoneMenu;
+using BoneLib.BoneMenu;
 using BoneLib.BoneMenu.Elements;
-using BoneLib.Nullables;
-
-using Jevil;
 
 using NEP.MonoDirector.Cameras;
 using NEP.MonoDirector.Core;
@@ -14,7 +11,7 @@ using SLZ.Rig;
 
 namespace NEP.MonoDirector.UI
 {
-    internal static class MDMenu
+    internal static class MDBoneMenu
     {
         internal static MenuCategory rootCategory;
 
@@ -71,7 +68,7 @@ namespace NEP.MonoDirector.UI
             category.CreateFunctionElement(
                 "Show Caster Menu", 
                 Color.white,
-                () => MenuUI.Instance.gameObject.SetActive(true)
+                () => MDMenu.Instance.gameObject.SetActive(true)
             );
             
             category.CreateFunctionElement(
