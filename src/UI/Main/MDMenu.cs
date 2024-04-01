@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using BoneLib;
 using UnityEngine;
 
 namespace NEP.MonoDirector.UI
@@ -8,6 +9,8 @@ namespace NEP.MonoDirector.UI
     public class MDMenu : MonoBehaviour
     {
         public MDMenu(System.IntPtr ptr) : base(ptr) { }
+
+        public static MDMenu Instance { get; private set; }
 
         private GameObject page_Menu;
         private GameObject page_Playhead;
@@ -25,6 +28,8 @@ namespace NEP.MonoDirector.UI
         
         private void Awake()
         {
+            Instance = this;
+
             contentContainer = transform.Find("Content");
             pageContainer = contentContainer.GetChild(0);
 
@@ -62,6 +67,12 @@ namespace NEP.MonoDirector.UI
             {
                 OpenPage(lastPage);
             }
+        }
+
+        private void FixedUpdate()
+        {
+            transform.position = Player.physicsRig.m_chest.position + Player.physicsRig.m_chest.forward * (1f + Player.uiRig.cur_avatarArmScaleMult);
+            transform.LookAt(Player.playerHead);
         }
 
         public void OpenPage(string page)

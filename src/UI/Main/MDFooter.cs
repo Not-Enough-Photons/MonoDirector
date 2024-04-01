@@ -31,31 +31,31 @@ namespace NEP.MonoDirector.UI
         {
             this.actorsPage = actorsPage;
 
-            Action previousPageClicked = new Action(() => 
-            {
-                actorsPage.PreviousPage();
-                pageText.text = $"Page {actorsPage.PageIndex}/{actorsPage.PageCount}";
-            });
-
-            Action nextPageClicked = new Action(() => 
-            {
-                actorsPage.NextPage();
-                pageText.text = $"Page {actorsPage.PageIndex}/{actorsPage.PageCount}";
-            });
-
-            Action goBackClicked = new Action(() => 
-            {
-                actorsPage.GoBack();
-            });
-
-            previousPageButton.onClick.AddListener(previousPageClicked);
-            nextPageButton.onClick.AddListener(nextPageClicked);
-            goBackButton.onClick.AddListener(goBackClicked);
+            previousPageButton.onClick.AddListener(new System.Action(() => OnPreviousPageClicked()));
+            nextPageButton.onClick.AddListener(new System.Action(() => OnNextPageClicked()));
+            goBackButton.onClick.AddListener(new System.Action(() => OnGoBackClicked()));
         }
 
         public void UnlinkToActorView()
         {
-            
+
+        }
+
+        private void OnPreviousPageClicked()
+        {
+            actorsPage.PreviousPage();
+            pageText.text = $"Page {actorsPage.PageIndex}/{actorsPage.PageCount}";
+        }
+
+        private void OnNextPageClicked()
+        {
+            actorsPage.NextPage();
+            pageText.text = $"Page {actorsPage.PageIndex}/{actorsPage.PageCount}";
+        }
+
+        private void OnGoBackClicked()
+        {
+            actorsPage.GoBack();
         }
     }
 }

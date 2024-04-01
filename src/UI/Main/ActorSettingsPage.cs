@@ -39,6 +39,10 @@ namespace NEP.MonoDirector.UI
             visibilityButton = optionsGroup.GetChild(0).GetComponent<Button>();
             recastButton = optionsGroup.GetChild(1).GetComponent<Button>();
             deleteButton = optionsGroup.GetChild(2).GetComponent<Button>();
+
+            visibilityButton.onClick.AddListener(new System.Action(() => OnShowButtonClicked()));
+            recastButton.onClick.AddListener(new System.Action(() => OnRecastButtonClicked()));
+            deleteButton.onClick.AddListener(new System.Action(() => OnDeleteButtonClicked()));
         }
 
         public void UpdateInformation(Actor actor)
@@ -46,6 +50,21 @@ namespace NEP.MonoDirector.UI
             this.actor = actor;
             // actorPortrait.texture = this.actor.actorPortrait;
             actorNameText.text = this.actor.ActorName;
+        }
+
+        public void OnDeleteButtonClicked()
+        {
+            actor.Delete();
+        }
+
+        public void OnRecastButtonClicked()
+        {
+            // Director.instance.Recast(this.actor);
+        }
+
+        public void OnShowButtonClicked()
+        {
+            actor.ClonedAvatar.gameObject.SetActive(false);
         }
     }
 }
