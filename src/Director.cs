@@ -134,8 +134,8 @@ namespace NEP.MonoDirector.Core
 
         public void RemoveActor(Actor actor)
         {
-            actor.Delete();
             Cast.Remove(actor);
+            actor.Delete();
         }
 
         public void RemoveLastActor()
@@ -162,6 +162,18 @@ namespace NEP.MonoDirector.Core
             Cast.Clear();
         }
         
+        public void ClearLastProps()
+        {
+            foreach(var prop in LastRecordedProps)
+            {
+                prop.InteractableRigidbody.isKinematic = false;
+                WorldProps.Remove(prop);
+                GameObject.Destroy(prop);
+            }
+
+            LastRecordedProps.Clear();
+        }
+
         public void ClearScene()
         {
             RemoveAllActors();

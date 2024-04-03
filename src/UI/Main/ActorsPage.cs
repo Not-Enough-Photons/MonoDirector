@@ -35,6 +35,7 @@ namespace NEP.MonoDirector.UI
         private void Start()
         {
             Events.OnActorCasted += OnActorCreated;
+            Events.OnActorUncasted += OnActorRemoved;
         }
 
         public void Initialize(MDMenu menu)
@@ -82,6 +83,28 @@ namespace NEP.MonoDirector.UI
             UpdateEntry(actor, first);
 
             displayPages?.Last().AddActor(actor);
+        }
+
+        public void OnActorRemoved(Actor actor)
+        {
+            ActorEntry target = null;
+
+            for(int i = 0; i < actorEntries.Length; i++)
+            {
+                if (actorEntries[i].gameObject.activeSelf && actorEntries[i].GetActor() == actor)
+                {
+                    target = actorEntries[i];
+                    break;
+                }
+            }
+
+            if (target == null)
+            {
+                Main.Logger.Warning("Target actor entry not found! There might be a problem with the UI.");
+                return;
+            }
+
+            target.Hide();
         }
 
         public void OnPageFilled(Actor actor)
