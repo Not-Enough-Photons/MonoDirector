@@ -40,6 +40,7 @@ namespace NEP.MonoDirector
         }
 
         public static Action<Actor> OnActorCasted;
+        public static Action<Actor> OnActorUncasted;
 
         public static Action<Prop> OnPropCreated;
         public static Action<Prop> OnPropRemoved;

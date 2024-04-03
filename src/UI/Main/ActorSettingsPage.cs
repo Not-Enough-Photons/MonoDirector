@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 using NEP.MonoDirector.Actors;
+using NEP.MonoDirector.Core;
 
 namespace NEP.MonoDirector.UI
 {
@@ -19,6 +20,7 @@ namespace NEP.MonoDirector.UI
         private Button visibilityButton;
         private Button recastButton;
         private Button deleteButton;
+        private Button deletePropsButton;
 
         private Actor actor;
 
@@ -39,10 +41,12 @@ namespace NEP.MonoDirector.UI
             visibilityButton = optionsGroup.GetChild(0).GetComponent<Button>();
             recastButton = optionsGroup.GetChild(1).GetComponent<Button>();
             deleteButton = optionsGroup.GetChild(2).GetComponent<Button>();
+            deletePropsButton = optionsGroup.GetChild(3).GetComponent<Button>();
 
             visibilityButton.onClick.AddListener(new System.Action(() => OnShowButtonClicked()));
             recastButton.onClick.AddListener(new System.Action(() => OnRecastButtonClicked()));
             deleteButton.onClick.AddListener(new System.Action(() => OnDeleteButtonClicked()));
+            deletePropsButton.onClick.AddListener(new System.Action(() => OnDeletePropsButtonClicked()));
         }
 
         public void UpdateInformation(Actor actor)
@@ -55,6 +59,12 @@ namespace NEP.MonoDirector.UI
         public void OnDeleteButtonClicked()
         {
             actor.Delete();
+            MDMenu.Instance.PreviousPage();
+        }
+
+        public void OnDeletePropsButtonClicked()
+        {
+            Director.instance.ClearLastProps();
         }
 
         public void OnRecastButtonClicked()

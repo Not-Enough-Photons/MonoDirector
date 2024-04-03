@@ -267,6 +267,7 @@ namespace NEP.MonoDirector.Actors
 
         public override void Delete()
         {
+            Events.OnActorUncasted?.Invoke(this);
             body.Delete();
             GameObject.Destroy(clonedAvatar.gameObject);
             GameObject.Destroy(microphone.gameObject);
