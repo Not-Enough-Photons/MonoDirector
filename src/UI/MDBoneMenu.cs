@@ -68,14 +68,11 @@ namespace NEP.MonoDirector.UI
             category.CreateFunctionElement(
                 "Show Caster Menu", 
                 Color.white,
-                () => MDMenu.Instance.gameObject.SetActive(true)
-            );
-            
-            category.CreateFunctionElement(
-                "Delete Last Actor", 
-                Color.red,
-                () => Director.instance.RemoveActor(Recorder.instance.LastActor),
-                "Are you sure? This cannot be undone."
+                () => 
+                {
+                    MDMenu.Instance.gameObject.SetActive(true);
+                    BoneLib.BoneMenu.UI.UIManager.Instance.MainPage.gameObject.SetActive(false);
+                }
             );
             
             category.CreateFunctionElement(
