@@ -98,8 +98,7 @@
     <Compile Include="src\State\CameraMode.cs" />
     <Compile Include="src\State\CaptureState.cs" />
     <Compile Include="src\State\PlayState.cs" />
-    <Compile Include="src\Tools\Propifier.cs" />
-    <Compile Include="src\Tools\StudioLight.cs" />
+    <Compile Include="src\Tools\*.cs" />
     <Compile Include="src\UI\Main\*.cs" />
     <Compile Include="src\UI\MDBoneMenu.cs" />
     <Compile Include="src\UI\PropMarkerManager.cs" />
