@@ -61,24 +61,6 @@ namespace NEP.MonoDirector.Cameras
             rightHandle.attachedUpdateDelegate -= new System.Action<Hand>(RightHandUpdate);
         }
 
-        private void Update()
-        {
-            // I don't feel like making more actions that get called when you update a BoneMenu setting
-            // So here's some hack about locking rotations using bit shifting and dividing 
-
-            int bitLockX = Settings.Camera.handheldLockXAxis ? 1 : 0;
-            int bitLockY = Settings.Camera.handheldLockYAxis ? 1 : 0;
-            int bitLockZ = Settings.Camera.handheldLockZAxis ? 1 : 0;
-
-            RigidbodyConstraints constraintX = (RigidbodyConstraints)(16 * bitLockX);
-            RigidbodyConstraints constraintY = (RigidbodyConstraints)(32 * bitLockY);
-            RigidbodyConstraints constraintZ = (RigidbodyConstraints)(64 * bitLockZ);
-
-            cameraRigidbody.constraints = constraintX;
-            cameraRigidbody.constraints = constraintY;
-            cameraRigidbody.constraints = constraintZ;
-        }
-
         private void OnCameraModeChanged(CameraMode mode)
         {
             if(mode == CameraMode.Handheld)
