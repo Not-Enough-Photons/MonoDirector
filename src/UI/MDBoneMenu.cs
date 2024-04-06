@@ -252,7 +252,6 @@ namespace NEP.MonoDirector.UI
                 () =>
                 {
                     RigManager rigManager = BoneLib.Player.rigManager;
-                    
                     rigManager.AvatarCrate.Crate.Spawn(rigManager.ControllerRig.m_head.position, Quaternion.identity);
                 }
             );
