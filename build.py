@@ -46,6 +46,10 @@ if not os.path.exists("Links"):
 debug_build = "--debug" in sys.argv
 run_after = False
 
+quest_run_after = False
+quest_build = False
+quest_uselogcat = False
+
 if "clean" in sys.argv:
     command = "dotnet clean"
 
@@ -60,6 +64,17 @@ if "clean" in sys.argv:
 if "run" in sys.argv:
     print("[Build] Will run BONELAB after building...")
     run_after = True
+
+if "quest" in sys.argv:
+    print("[Build] Building for Quest... make sure the Quest is connected!")
+    quest_build = True
+
+    if "qrun" in sys.argv:
+        quest_run_after = True
+
+    if "logcat" in sys.argv:
+        quest_uselogcat = True
+
 
 command = "dotnet build"
 
@@ -99,6 +114,18 @@ else:
 out_path += "MonoDirector.dll"
 
 print("[Build] Output is located at '" + out_path + "'")
+
+if quest_build:
+    quest_game_path = "/sdcard/Android/data/com.StressLevelZero.BONELAB/files/Mods"
+    with open(out_path, "rb"):
+        os.system(f"C:/adb/adb push {out_path} {quest_game_path}")
+    print("[Build] Copied MonoDirector.dll to the Quest mods folder!")
+
+    if quest_run_after:
+        os.system("C:/adb/adb shell am start -n com.StressLevelZero.BONELAB/com.unity3d.player.UnityPlayerActivity")
+
+        if quest_uselogcat:
+            os.system("C:/adb/adb logcat MelonLoader:I *:S")
 
 if run_after:
     # Forces an overwrite of the existing file

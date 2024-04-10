@@ -166,7 +166,7 @@ namespace NEP.MonoDirector
         {
             PropMarkerManager.Initialize();
             InfoInterfaceManager.Initialize();
-            // UIManager.Warmup(UIManager.casterBarcode, 1, false);
+            UIManager.Warmup(UIManager.casterBarcode, 1, false);
         }
 
         private static AssetBundle GetEmbeddedBundle()
