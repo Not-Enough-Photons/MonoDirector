@@ -51,12 +51,6 @@ namespace NEP.MonoDirector.UI
             );
             
             category.CreateFunctionElement(
-                "Pause", 
-                Color.yellow, 
-                () => Director.instance.Pause()
-            );
-            
-            category.CreateFunctionElement(
                 "Stop", 
                 Color.red, 
                 () => Director.instance.Stop()
