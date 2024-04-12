@@ -13,6 +13,8 @@ using NEP.MonoDirector.UI;
 using NEP.MonoDirector.State;
 
 using BoneLib.BoneMenu.Elements;
+using NEP.MonoDirector.Data;
+using SLZ.Marrow.Warehouse;
 
 namespace NEP.MonoDirector
 {
@@ -54,6 +56,11 @@ namespace NEP.MonoDirector
             bundle = GetEmbeddedBundle();
 
             BoneLib.Hooking.OnLevelInitialized += (info) => MonoDirectorInitialize();
+            AssetWarehouse._onReady += new System.Action(() =>
+            {
+                WarehouseLoader.GenerateSpawnablesFromSounds(null);
+
+            });
 
             MDBoneMenu.Initialize();
 #if DEBUG
@@ -153,7 +160,7 @@ namespace NEP.MonoDirector
         {
             PropMarkerManager.Initialize();
             InfoInterfaceManager.Initialize();
-            // UIManager.Warmup(UIManager.casterBarcode, 1, false);
+            WarehouseLoader.Warmup(WarehouseLoader.casterBarcode, 1, false);
         }
 
         private static AssetBundle GetEmbeddedBundle()

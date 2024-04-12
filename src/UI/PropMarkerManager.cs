@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using NEP.MonoDirector.Actors;
+using NEP.MonoDirector.Data;
 using NEP.MonoDirector.State;
 using SLZ.Marrow.Pool;
 using UnityEngine;
@@ -17,7 +18,7 @@ namespace NEP.MonoDirector.UI
 
         public static void Initialize()
         {
-            loadedMarkerObjects = UIManager.Warmup(UIManager.propMarkerBarcode, 32, false);
+            loadedMarkerObjects = WarehouseLoader.Warmup(WarehouseLoader.propMarkerBarcode, 32, false);
 
             Events.OnPropCreated += AddMarkerToProp;
             Events.OnPropRemoved += RemoveMarkerFromProp;

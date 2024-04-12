@@ -38,28 +38,38 @@ namespace NEP.MonoDirector.Data
             return sounds;
         }
 
-        internal static List<Spawnable> GenerateSpawnablesFromSounds(AudioClip[] sounds)
+        internal static void GenerateSpawnablesFromSounds(AudioClip[] sounds)
         {
-            List<Spawnable> spawnables = new List<Spawnable>();
-
-            if (!AssetWarehouse.Instance.HasPallet("NotEnoughPhotons.MonoDirector"))
+            Barcode mainBarcode = (Barcode)"NotEnoughPhotons.MonoDirector";
+            if (!AssetWarehouse.Instance.HasPallet(mainBarcode))
             {
-                return null;
+                Main.Logger.Error("Pallet doesn't exist in registry.");
+                return;
             }
-
-            var baseBarcode = CreateFullBarcode("SoundHolder");
             
-            if (AssetWarehouse.Instance.InventoryRegistry[(Barcode)CreateFullBarcode("SoundHolder")] == null)
+            var mainPallet = AssetWarehouse.Instance.InventoryRegistry[mainBarcode] as Pallet;
+
+            if (mainPallet == null)
             {
-                return null;
+                Main.Logger.Error("Pallet doesn't exist.");
+                return;
             }
 
-            foreach(var sound in sounds)
+            SpawnableCrate spawnable = null;
+            foreach(Crate crate in mainPallet.Crates)
             {
-                
+                Main.Logger.Msg(crate.Barcode);
+                if (crate.Barcode == (Barcode)CreateFullBarcode("SoundHolder"))
+                {
+                    spawnable = (SpawnableCrate)crate;
+                    break;
+                }
             }
 
-            return spawnables;
+            if (spawnable == null)
+            {
+                return;
+            }
         }
 
         internal static List<AssetPoolee> Warmup(string barcode, int size, bool startActive = false)

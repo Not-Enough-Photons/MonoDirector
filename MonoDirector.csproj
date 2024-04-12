@@ -95,7 +95,6 @@
     <Compile Include="src\UI\PropMarkerManager.cs" />
     <Compile Include="src\UI\InformationInterface.cs" />
     <Compile Include="src\UI\InfoInterfaceManager.cs" />
-    <Compile Include="src\UI\UIManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
