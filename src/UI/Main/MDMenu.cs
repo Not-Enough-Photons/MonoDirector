@@ -9,8 +9,8 @@ namespace NEP.MonoDirector.UI
     public class MDMenu : MonoBehaviour
     {
         public MDMenu(System.IntPtr ptr) : base(ptr) { }
-
-        public static MDMenu Instance { get; private set; }
+        
+        public static MDMenu instance { get; private set; }
 
         private GameObject page_Menu;
         private GameObject page_Playhead;
@@ -28,7 +28,9 @@ namespace NEP.MonoDirector.UI
         
         private void Awake()
         {
-            Instance = this;
+            Main.Logger.Msg("Start Awake");
+
+            instance = this;
 
             contentContainer = transform.Find("Content");
             pageContainer = contentContainer.GetChild(0);
@@ -55,6 +57,8 @@ namespace NEP.MonoDirector.UI
 
             startingPage = "Actors";
             footer.LinkToActorView(page_Actors.GetComponent<ActorsPage>());
+
+            Main.Logger.Msg("End Awake");
         }
 
         private void OnEnable()
@@ -71,7 +75,8 @@ namespace NEP.MonoDirector.UI
 
         private void FixedUpdate()
         {
-            transform.position = Player.physicsRig.m_chest.position + Player.physicsRig.m_chest.forward * (1f + Player.uiRig.cur_avatarArmScaleMult);
+            Vector3 rigHudPosition = Player.uiRig.popUpMenu.transform.position;
+            transform.position = rigHudPosition * (1f / Player.uiRig.cur_avatarArmScaleMult);
             transform.LookAt(Player.playerHead);
         }
 

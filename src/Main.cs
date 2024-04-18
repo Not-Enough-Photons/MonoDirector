@@ -39,6 +39,7 @@ namespace NEP.MonoDirector
         public static FreeCamera camera;
 
         public static FeedbackSFX feedbackSFX;
+        public static MDMenu mainMenu;
 
         public static AssetBundle bundle;
 
@@ -117,11 +118,21 @@ namespace NEP.MonoDirector
 
         private void MonoDirectorInitialize()
         {
+            Logger.Msg("Resetting instances");
             ResetInstances();
+            Logger.Msg("Done");
+            Logger.Msg("Creating camera managers");
             CreateCameraManager();
+            Logger.Msg("Done");
+            Logger.Msg("Creating director");
             CreateDirector();
+            Logger.Msg("Done");
+            Logger.Msg("Creating SFX managers and data banks");
             CreateSFX();
+            Logger.Msg("Done");
+            Logger.Msg("Creating UI elements and spawning those in");
             CreateUI();
+            Logger.Msg("Done");
 
             // Data.AvatarPhotoBuilder.Initialize();
         }
@@ -129,10 +140,15 @@ namespace NEP.MonoDirector
         private void ResetInstances()
         {
             Events.FlushActions();
+            Logger.Msg("Flushed actions");
             director = null;
+            Logger.Msg("Director reset");
             camera = null;
+            Logger.Msg("Camera reset");
             feedbackSFX = null;
+            Logger.Msg("Feedback SFX reset");
             PropMarkerManager.CleanUp();
+            Logger.Msg("Prop markers cleaned up");
         }
 
         private void CreateCameraManager()
@@ -142,7 +158,7 @@ namespace NEP.MonoDirector
 
         private void CreateDirector()
         {
-            GameObject directorObject = new GameObject("Director");
+            GameObject directorObject = new GameObject("MonoDirector - Director");
             director = directorObject.AddComponent<Director>();
             director.SetCamera(camera);
         }
@@ -152,15 +168,15 @@ namespace NEP.MonoDirector
             GameObject audioManager = new GameObject("MonoDirector - Audio Manager");
             audioManager.AddComponent<AudioManager>();
 
-            GameObject feedback = new GameObject("Feedback SFX");
+            GameObject feedback = new GameObject("MonoDirector - Feedback SFX");
             feedbackSFX = feedback.AddComponent<FeedbackSFX>();
         }
 
         private void CreateUI()
         {
-            PropMarkerManager.Initialize();
+            // PropMarkerManager.Initialize();
             InfoInterfaceManager.Initialize();
-            WarehouseLoader.Warmup(WarehouseLoader.casterBarcode, 1, false);
+            WarehouseLoader.SpawnFromBarcode(WarehouseLoader.mainMenuBarcode);
         }
 
         private static AssetBundle GetEmbeddedBundle()

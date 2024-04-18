@@ -79,6 +79,7 @@
     <Compile Include="src\Patches\SFX\GunSFX.cs" />
     <Compile Include="src\Patches\ObjectDestructable.cs" />
     <Compile Include="src\Patches\Vehicles\Atv.cs" />
+    <Compile Include="src\Patches\Test.cs" />
     <Compile Include="src\Photographer.cs" />
     <Compile Include="src\Playback.cs" />
     <Compile Include="src\Proxy\TrackableProxy.cs" />
@@ -215,6 +216,14 @@
     <Reference Include="UnityEngine.VFXModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\Links\MelonLoader\Managed\UnityEngine.VFXModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityExplorer.ML.IL2CPP">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\Links\Mods\UnityExplorer.ML.IL2CPP.dll</HintPath>
+    </Reference>
+    <Reference Include="UniverseLib.IL2CPP.Unhollower">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\Links\Mods\UniverseLib.IL2CPP.Unhollower.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

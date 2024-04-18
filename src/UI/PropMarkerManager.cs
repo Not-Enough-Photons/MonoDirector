@@ -12,13 +12,15 @@ namespace NEP.MonoDirector.UI
 {
     public static class PropMarkerManager
     {
-        private static Dictionary<Prop, AssetPoolee> markers = new Dictionary<Prop, AssetPoolee>();
-        private static List<AssetPoolee> loadedMarkerObjects = new List<AssetPoolee>();
-        private static List<AssetPoolee> activeMarkers = new List<AssetPoolee>();
+        private static Dictionary<Prop, GameObject> markers = new Dictionary<Prop, GameObject>();
+        private static List<GameObject> loadedMarkerObjects = new List<GameObject>();
+        private static List<GameObject> activeMarkers = new List<GameObject>();
 
         public static void Initialize()
         {
-            loadedMarkerObjects = WarehouseLoader.Warmup(WarehouseLoader.propMarkerBarcode, 32, false);
+            var list = WarehouseLoader.SpawnFromBarcode(WarehouseLoader.propMarkerBarcode, 32, false);
+
+            loadedMarkerObjects = list;
 
             Events.OnPropCreated += AddMarkerToProp;
             Events.OnPropRemoved += RemoveMarkerFromProp;
@@ -45,12 +47,12 @@ namespace NEP.MonoDirector.UI
                 return;
             }
 
-            AssetPoolee asset = loadedMarkerObjects.FirstOrDefault((marker) => !activeMarkers.Contains(marker));
+            GameObject asset = loadedMarkerObjects.FirstOrDefault((marker) => !activeMarkers.Contains(marker));
 
             asset.gameObject.SetActive(true);
 
             asset.transform.SetParent(prop.transform);
-            asset.transform.localPosition = new Vector3(0f, 1.25f + asset.spawnableCrate.ColliderBounds.extents.y, 0f);
+            asset.transform.localPosition = new Vector3(0f, 1.25f, 0f);
 
             markers.Add(prop, asset);
             activeMarkers.Add(asset);
@@ -63,13 +65,12 @@ namespace NEP.MonoDirector.UI
                 return;
             }
 
-            AssetPoolee marker = markers[prop];
+            AssetPoolee marker = markers[prop].GetComponent<AssetPoolee>();
             marker.Despawn();
             marker.gameObject.SetActive(false);
             marker.transform.parent = null;
-
             markers.Remove(prop);
-            activeMarkers.Remove(marker);
+            activeMarkers.Remove(marker.gameObject);
         }
 
         private static void ShowMarkers(PlayState playState)

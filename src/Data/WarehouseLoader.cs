@@ -8,6 +8,7 @@ using MelonLoader;
 using System;
 using SLZ.Marrow.Data;
 using SLZ.Marrow.Warehouse;
+using UnhollowerBaseLib;
 
 namespace NEP.MonoDirector.Data
 {
@@ -19,9 +20,9 @@ namespace NEP.MonoDirector.Data
         internal static readonly string modCode = "MonoDirector.";
         internal static readonly string typeCode = "Spawnable.";
 
-        internal static readonly string propMarkerBarcode = CreateFullBarcode("UIPropMarker");
+        internal static readonly string propMarkerBarcode = CreateFullBarcode("PropMarker");
         internal static readonly string infoInterfaceBarcode = CreateFullBarcode("InformationInterface");
-        internal static readonly string casterBarcode = CreateFullBarcode("MonoDirectorCasterUI");
+        internal static readonly string mainMenuBarcode = CreateFullBarcode("MonoDirectorMenu");
 
         internal static List<AudioClip> GetSounds()
         {
@@ -72,27 +73,35 @@ namespace NEP.MonoDirector.Data
             }
         }
 
-        internal static List<AssetPoolee> Warmup(string barcode, int size, bool startActive = false)
+        internal static GameObject SpawnFromBarcode(string barcode, bool active = false)
         {
-            List<AssetPoolee> cache = new List<AssetPoolee>();
-
-            for (int i = 0; i < size; i++)
+            GameObject spawnedObject = null;
+            HelperMethods.SpawnCrate(barcode, Vector3.zero, Quaternion.identity, Vector3.one, false, (obj) => 
             {
-                HelperMethods.SpawnCrate(barcode, Vector3.zero, Quaternion.identity, Vector3.one, false, (obj) => CreateObject(ref cache, obj, startActive));
+                spawnedObject = obj;
+                spawnedObject.SetActive(active);
+            });
+
+            return spawnedObject;
+        }
+
+        internal static List<GameObject> SpawnFromBarcode(string barcode, int amount, bool active = false)
+        {
+            List<GameObject> spawnedObjects = new List<GameObject>();
+
+            for (int i = 0; i < amount; i++)
+            {
+                var obj = SpawnFromBarcode(barcode, active);
+                obj.SetActive(active);
+                spawnedObjects.Add(obj);
             }
 
-            return cache;
+            return spawnedObjects;
         }
 
         private static string CreateFullBarcode(string spawnableName)
         {
             return companyCode + modCode + typeCode + spawnableName;
-        }
-
-        private static void CreateObject(ref List<AssetPoolee> cache, GameObject obj, bool startActive = false)
-        {
-            obj.SetActive(startActive);
-            cache.Add(obj.GetComponent<AssetPoolee>());
         }
     }
 }

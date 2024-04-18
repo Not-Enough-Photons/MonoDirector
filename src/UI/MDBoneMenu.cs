@@ -8,6 +8,7 @@ using NEP.MonoDirector.State;
 using UnityEngine;
 
 using SLZ.Rig;
+using BoneLib;
 
 namespace NEP.MonoDirector.UI
 {
@@ -64,8 +65,7 @@ namespace NEP.MonoDirector.UI
                 Color.white,
                 () => 
                 {
-                    MDMenu.Instance.gameObject.SetActive(true);
-                    BoneLib.BoneMenu.UI.UIManager.Instance.MainPage.gameObject.SetActive(false);
+                    MDMenu.instance.gameObject.SetActive(true);
                 }
             );
             

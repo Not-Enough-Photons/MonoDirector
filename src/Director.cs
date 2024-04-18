@@ -116,10 +116,16 @@ namespace NEP.MonoDirector.Core
             recorder.StartRecordRoutine();
         }
 
-        public void Retake()
+        public void Recast(Actor actor)
         {
-            SetPlayState(PlayState.Stopped);
-            recorder.StartRecordRoutine();
+            Vector3 actorPosition = actor.ClonedAvatar.animator.GetBoneTransform(HumanBodyBones.Hips).position;
+            Player.rigManager.Teleport(actorPosition, true);
+            Player.rigManager.SwapAvatar(actor.ClonedAvatar);
+
+            Cast.Remove(actor);
+            actor.Delete();
+
+            Record();
         }
 
         public void Stop()
