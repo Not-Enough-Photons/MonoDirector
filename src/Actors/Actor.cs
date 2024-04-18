@@ -54,7 +54,7 @@ namespace NEP.MonoDirector.Actors
             
             playerAvatar = avatar;
 
-            GetAvatarBones(playerAvatar, out avatarBones, out avatarBonesValid);
+            avatarBones = GetAvatarBones(playerAvatar);
             avatarFrames = new List<FrameGroup>();
 
             GameObject micObject = new GameObject("Actor Microphone");
@@ -72,21 +72,16 @@ namespace NEP.MonoDirector.Actors
             (int)HumanBodyBones.RightEye,
         };
 
+
         private string avatarBarcode;
         public string AvatarBarcode => avatarBarcode;
         
-        private Avatar playerAvatar = null;
-        public Avatar PlayerAvatar => playerAvatar;
+        public Avatar PlayerAvatar { get => playerAvatar; }
+        public Avatar ClonedAvatar { get => clonedAvatar; }
+        public Transform[] AvatarBones { get => avatarBones; }
 
-        private Avatar clonedAvatar = null;
-        public Avatar ClonedAvatar => clonedAvatar;
+        public IReadOnlyList<FrameGroup> Frames => avatarFrames.AsReadOnly();
 
-        private Transform[] avatarBones = null;
-        public Transform[] AvatarBones => avatarBones;
-
-        // TODO: Expose this?
-        private bool[] avatarBonesValid;
-        
         public ActorBody ActorBody { get => body; }
         public ActorMic Microphone { get => microphone; }
         public Texture2D AvatarPortrait { get => avatarPortrait; }
@@ -101,8 +96,12 @@ namespace NEP.MonoDirector.Actors
 
         private SLZ.Vehicle.Seat activeSeat;
 
+        private Avatar playerAvatar;
+        private Avatar clonedAvatar;
+
         private ObjectFrame[] tempFrames;
-        
+
+        private Transform[] avatarBones;
         private Transform[] clonedRigBones;
 
         private FrameGroup previousFrame;
@@ -121,13 +120,15 @@ namespace NEP.MonoDirector.Actors
         {
             base.OnSceneBegin();
 
-            for (int i = 0; i < avatarBones.Length; i++)
+            for (int i = 0; i < 55; i++)
             {
                 var bone = clonedRigBones[i];
 
-                if (!avatarBonesValid[i])
+                if (bone == null)
+                {
                     continue;
-
+                }
+                
                 bone.position = avatarFrames[0].TransformFrames[i].position;
                 bone.rotation = avatarFrames[0].TransformFrames[i].rotation;
             }
@@ -220,7 +221,7 @@ namespace NEP.MonoDirector.Actors
         public override void RecordFrame()
         {
             FrameGroup frameGroup = new FrameGroup();
-            CaptureBoneFrames(avatarBones, avatarBonesValid);
+            CaptureBoneFrames(avatarBones);
             frameGroup.SetFrames(tempFrames, Recorder.instance.RecordingTime);
             avatarFrames.Add(frameGroup);
         }
@@ -237,8 +238,7 @@ namespace NEP.MonoDirector.Actors
             // stops position overrides, if there are any
             clonedAvatar.GetComponent<Animator>().enabled = false;
 
-            // zCubed: We discard the cloned validity since it *should* be the same 
-            GetAvatarBones(clonedAvatar, out clonedRigBones, out _);
+            clonedRigBones = GetAvatarBones(clonedAvatar);
 
             GameObject.Destroy(clonedAvatar.GetComponent<LODGroup>());
 
@@ -320,11 +320,11 @@ namespace NEP.MonoDirector.Actors
             }
         }
 
-        private void CaptureBoneFrames(Transform[] boneList, bool[] boneValidList)
+        private void CaptureBoneFrames(Transform[] boneList)
         {
             for (int i = 0; i < boneList.Length; i++)
             {
-                if (!boneValidList[i])
+                if (boneList[i] == null)
                 {
                     tempFrames[i] = new ObjectFrame(default, default);
                     continue;
@@ -343,10 +343,9 @@ namespace NEP.MonoDirector.Actors
                 tempFrames[headBone].position += Patches.PlayerAvatarArtPatches.UpdateAvatarHead.calculatedHeadOffset;
         }
 
-        private void GetAvatarBones(Avatar avatar, out Transform[] bones, out bool[] bonesValid)
+        private Transform[] GetAvatarBones(SLZ.VRMK.Avatar avatar)
         {
-            bones = new Transform[(int)HumanBodyBones.LastBone];
-            bonesValid = new bool[bones.Length];
+            Transform[] bones = new Transform[(int)HumanBodyBones.LastBone];
 
             for (int i = 0; i < (int)HumanBodyBones.LastBone - 1; i++)
             {
@@ -354,8 +353,9 @@ namespace NEP.MonoDirector.Actors
 
                 var boneTransform = avatar.animator.GetBoneTransform(currentBone);
                 bones[i] = boneTransform;
-                bonesValid[i] = boneTransform != null;
             }
+
+            return bones;
         }
         
         //

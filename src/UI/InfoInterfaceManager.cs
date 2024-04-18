@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using NEP.MonoDirector.Data;
 
 namespace NEP.MonoDirector.UI
 {
@@ -10,7 +6,7 @@ namespace NEP.MonoDirector.UI
     {
         public static void Initialize()
         {
-            UIManager.Warmup(UIManager.infoInterfaceBarcode, 1, true);
+            WarehouseLoader.SpawnFromBarcode(WarehouseLoader.infoInterfaceBarcode, false);
         }
     }
 }

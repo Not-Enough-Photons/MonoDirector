@@ -116,10 +116,31 @@ namespace NEP.MonoDirector.Core
             recorder.StartRecordRoutine();
         }
 
-        public void Retake()
+        public void Recast(Actor actor)
         {
-            SetPlayState(PlayState.Stopped);
-            recorder.StartRecordRoutine();
+            Vector3 actorPosition = actor.Frames[0].TransformFrames[0].position;
+            Player.rigManager.Teleport(actorPosition, true);
+            Player.rigManager.SwapAvatar(actor.ClonedAvatar);
+
+            // Any props recorded by this actor must be removed if we're recasting
+            // If we don't, the props will still play, but they will be floating in the air aimlessly.
+            // Spooky!
+
+            if (WorldProps.Count != 0)
+            {
+                foreach (var prop in WorldProps)
+                {
+                    if (prop.Actor == actor)
+                    {
+                        GameObject.Destroy(prop);
+                    }
+                }
+            }
+
+            Cast.Remove(actor);
+            actor.Delete();
+
+            Record();
         }
 
         public void Stop()

@@ -13,10 +13,12 @@ using NEP.MonoDirector.UI;
 using NEP.MonoDirector.State;
 
 using BoneLib.BoneMenu.Elements;
+using NEP.MonoDirector.Data;
+using SLZ.Marrow.Warehouse;
 
 namespace NEP.MonoDirector
 {
-    static partial class BuildInfo
+    public static class BuildInfo
     {
         public const string Name = "MonoDirector"; // Name of the Mod.  (MUST BE SET)
         public const string Description = "A movie/photo making utility for BONELAB!"; // Description for the Mod.  (Set as null if none)
@@ -30,43 +32,36 @@ namespace NEP.MonoDirector
     {
         internal static MelonLogger.Instance Logger;
 
-        public static Main Instance;
+        public static Main instance;
 
-        public static Director Director;
+        public static Director director;
 
-        public static FreeCamera Camera;
+        public static FreeCamera camera;
 
-        public static FeedbackSFX FeedbackSFX;
+        public static FeedbackSFX feedbackSFX;
+        public static MDMenu mainMenu;
 
-        public static AssetBundle Bundle;
+        public static AssetBundle bundle;
 
         public override void OnInitializeMelon()
         {
             Logger = new MelonLogger.Instance("MonoDirector", System.ConsoleColor.Magenta);
 
-            Instance = this;
+            instance = this;
 
-            Logger.Msg("Welcome to MonoDirector!");
-            Logger.Msg("-===== MonoDirector Build Info =====-");
-            Logger.Msg($"\tBuild Git Hash: {BuildInfo.GitCommit}");
-            Logger.Msg($"\tBuild UTC Time: {DateTimeOffset.FromUnixTimeSeconds(BuildInfo.Epoch).UtcDateTime}");
-
-            #if DEBUG
-            Logger.Msg($"\tBuild Type: Debug");
-            #else
-            Logger.Msg($"\tBuild Type: Release");
-            #endif
-
-            Logger.Msg("-===================================-");
-            
             Directory.CreateDirectory(Constants.dirBase);
             Directory.CreateDirectory(Constants.dirMod);
             Directory.CreateDirectory(Constants.dirSFX);
             Directory.CreateDirectory(Constants.dirImg);
 
-            Bundle = GetEmbeddedBundle();
+            bundle = GetEmbeddedBundle();
 
             BoneLib.Hooking.OnLevelInitialized += (info) => MonoDirectorInitialize();
+            AssetWarehouse._onReady += new System.Action(() =>
+            {
+                AudioClip[] sounds = WarehouseLoader.GetSounds().ToArray();
+                WarehouseLoader.GenerateSpawnablesFromSounds(sounds);
+            });
 
             MDBoneMenu.Initialize();
 #if DEBUG
@@ -135,9 +130,9 @@ namespace NEP.MonoDirector
         private void ResetInstances()
         {
             Events.FlushActions();
-            Director = null;
-            Camera = null;
-            FeedbackSFX = null;
+            director = null;
+            camera = null;
+            feedbackSFX = null;
             PropMarkerManager.CleanUp();
         }
 
@@ -148,9 +143,9 @@ namespace NEP.MonoDirector
 
         private void CreateDirector()
         {
-            GameObject directorObject = new GameObject("Director");
-            Director = directorObject.AddComponent<Director>();
-            Director.SetCamera(Camera);
+            GameObject directorObject = new GameObject("MonoDirector - Director");
+            director = directorObject.AddComponent<Director>();
+            director.SetCamera(camera);
         }
 
         private void CreateSFX()
@@ -158,15 +153,15 @@ namespace NEP.MonoDirector
             GameObject audioManager = new GameObject("MonoDirector - Audio Manager");
             audioManager.AddComponent<AudioManager>();
 
-            GameObject feedback = new GameObject("Feedback SFX");
-            FeedbackSFX = feedback.AddComponent<FeedbackSFX>();
+            GameObject feedback = new GameObject("MonoDirector - Feedback SFX");
+            feedbackSFX = feedback.AddComponent<FeedbackSFX>();
         }
 
         private void CreateUI()
         {
-            PropMarkerManager.Initialize();
+            // PropMarkerManager.Initialize();
             InfoInterfaceManager.Initialize();
-            // UIManager.Warmup(UIManager.casterBarcode, 1, false);
+            WarehouseLoader.SpawnFromBarcode(WarehouseLoader.mainMenuBarcode);
         }
 
         private static AssetBundle GetEmbeddedBundle()

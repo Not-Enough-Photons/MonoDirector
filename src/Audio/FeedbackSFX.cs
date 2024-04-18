@@ -14,6 +14,7 @@ namespace NEP.MonoDirector.Audio
         private AudioClip sfx_preroll = API.LoadAudioClip(Constants.dirSFX + "preroll.wav");
         private AudioClip sfx_postroll = API.LoadAudioClip(Constants.dirSFX + "postroll.wav");
         private AudioClip sfx_beep = API.LoadAudioClip(Constants.dirSFX + "beep.wav");
+        private AudioClip sfx_linkedaudio = API.LoadAudioClip(Constants.dirSFX + "linkaudio.wav");
 
         private void Awake()
         {
@@ -67,6 +68,11 @@ namespace NEP.MonoDirector.Audio
         {
             source.pitch = 2f;
             Play(sfx_beep);
+        }
+
+        public void LinkAudio()
+        {
+            Play(sfx_linkedaudio);
         }
 
         private void Postroll() 

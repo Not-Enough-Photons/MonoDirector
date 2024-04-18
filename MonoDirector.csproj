@@ -34,9 +34,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="src\Actors\ActorSkeleton.cs" />
-    <Compile Include="src\Audio\AudioManager.cs" />
-    <Compile Include="src\Audio\PooledAudio.cs" />
-    <Compile Include="src\BuildInfo.gen.cs" />
+    <Compile Include="src\Audio\*.cs" />
     <Compile Include="src\Data\IBinaryData.cs" />
     <Compile Include="src\Data\IJSONData.cs" />
     <Compile Include="src\Data\AvatarPhotoBuilder.cs" />
@@ -66,15 +64,8 @@
     <Compile Include="src\Camera\CameraVolume.cs" />
     <Compile Include="src\Camera\FollowCamera.cs" />
     <Compile Include="src\Actors\ActorBody.cs" />
-    <Compile Include="src\Data\ActionFrame.cs" />
-    <Compile Include="src\Data\BodyPartData.cs" />
-    <Compile Include="src\Data\FrameGroup.cs" />
-    <Compile Include="src\Data\Interpolator.cs" />
-    <Compile Include="src\Data\ObjectFrame.cs" />
-    <Compile Include="src\Audio\FeedbackSFX.cs" />
+    <Compile Include="src\Data\*.cs" />
     <Compile Include="src\Constants.cs" />
-    <Compile Include="src\Data\CompressedVector3.cs" />
-    <Compile Include="src\Data\CompressedQuaternion.cs" />
     <Compile Include="src\Events.cs" />
     <Compile Include="src\Director.cs" />
     <Compile Include="src\Camera\FreeCamera.cs" />
@@ -104,7 +95,6 @@
     <Compile Include="src\UI\PropMarkerManager.cs" />
     <Compile Include="src\UI\InformationInterface.cs" />
     <Compile Include="src\UI\InfoInterfaceManager.cs" />
-    <Compile Include="src\UI\UIManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
