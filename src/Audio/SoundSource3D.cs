@@ -19,8 +19,9 @@ namespace NEP.MonoDirector.Audio
         {
             source = GetComponent<AudioSource>();
             sprite = transform.Find("Sprite").gameObject;
-            frame = transform.Find("Frame").gameObject;
+            frame = transform.Find("Sprite/Frame").gameObject;
             grip = transform.Find("Grip").GetComponent<Grip>();
+            grip.GetComponent<Collider>().isTrigger = true;
             rb = GetComponent<Rigidbody>();
         }
 
@@ -29,6 +30,8 @@ namespace NEP.MonoDirector.Audio
             Events.OnPlayStateSet += OnPlayStateSet;
             Events.OnStartRecording += OnStartRecording;
             Events.OnPlay += OnPlay;
+            Events.OnStopRecording += OnStopRecording;
+            Events.OnStopPlayback += OnStopPlayback;
 
             grip.attachedHandDelegate += new System.Action<Hand>(AttachedHand);
             grip.detachedHandDelegate += new System.Action<Hand>(DetachedHand);
@@ -39,6 +42,8 @@ namespace NEP.MonoDirector.Audio
             Events.OnPlayStateSet -= OnPlayStateSet;
             Events.OnStartRecording -= OnStartRecording;
             Events.OnPlay -= OnPlay;
+            Events.OnStopRecording -= OnStopRecording;
+            Events.OnStopPlayback -= OnStopPlayback;
 
             grip.attachedHandDelegate -= new System.Action<Hand>(AttachedHand);
             grip.detachedHandDelegate -= new System.Action<Hand>(DetachedHand);
@@ -46,6 +51,7 @@ namespace NEP.MonoDirector.Audio
 
         private void OnTriggerEnter(Collider other)
         {
+            Main.Logger.Msg(other.name);
             SoundHolder soundHolder = other.GetComponent<SoundHolder>();
 
             if (soundHolder == null)
@@ -54,6 +60,8 @@ namespace NEP.MonoDirector.Audio
             }
 
             source.clip = soundHolder.GetSound();
+            soundHolder.gameObject.SetActive(false);
+            Main.feedbackSFX.LinkAudio();
         }
 
         private void AttachedHand(Hand hand)
@@ -87,6 +95,16 @@ namespace NEP.MonoDirector.Audio
         private void OnPlay()
         {
             source.Play();
+        }
+
+        private void OnStopPlayback()
+        {
+            source.Stop();
+        }
+
+        private void OnStopRecording()
+        {
+            source.Stop();
         }
 
         private void ShowVisuals()

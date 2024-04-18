@@ -32,8 +32,6 @@ namespace NEP.MonoDirector.UI
         
         private void Awake()
         {
-            Main.Logger.Msg("Start Awake");
-
             instance = this;
 
             rb = GetComponent<Rigidbody>();
@@ -76,8 +74,6 @@ namespace NEP.MonoDirector.UI
             {
                 rb.isKinematic = true;
             });
-
-            Main.Logger.Msg("End Awake");
         }
 
         private void OnEnable()
@@ -86,7 +82,7 @@ namespace NEP.MonoDirector.UI
             transform.LookAt(Player.playerHead);
 
             if(lastPage == null)
-            {
+            {   
                 OpenPage(startingPage);
             }
             else

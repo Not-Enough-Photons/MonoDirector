@@ -59,8 +59,8 @@ namespace NEP.MonoDirector
             BoneLib.Hooking.OnLevelInitialized += (info) => MonoDirectorInitialize();
             AssetWarehouse._onReady += new System.Action(() =>
             {
-                WarehouseLoader.GenerateSpawnablesFromSounds(null);
-
+                AudioClip[] sounds = WarehouseLoader.GetSounds().ToArray();
+                WarehouseLoader.GenerateSpawnablesFromSounds(sounds);
             });
 
             MDBoneMenu.Initialize();

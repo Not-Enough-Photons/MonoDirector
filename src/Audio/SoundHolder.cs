@@ -1,3 +1,4 @@
+using NEP.MonoDirector.Data;
 using UnityEngine;
 
 namespace NEP.MonoDirector.Audio
@@ -8,6 +9,12 @@ namespace NEP.MonoDirector.Audio
         public SoundHolder(System.IntPtr ptr) : base(ptr) { }
 
         private AudioClip sound;
+
+        private void Awake()
+        {
+            var sounds = WarehouseLoader.GetSounds();
+            sound = sounds[0];
+        }
 
         public void AssignSound(AudioClip sound)
         {

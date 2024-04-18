@@ -9,6 +9,7 @@ using System;
 using SLZ.Marrow.Data;
 using SLZ.Marrow.Warehouse;
 using UnhollowerBaseLib;
+using NEP.MonoDirector.Audio;
 
 namespace NEP.MonoDirector.Data
 {
@@ -28,11 +29,18 @@ namespace NEP.MonoDirector.Data
         {
             List<AudioClip> sounds = new List<AudioClip>();
             string path = Path.Combine(MelonUtils.UserDataDirectory, "Not Enough Photons/MonoDirector/SFX/Sounds");
+
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+
             IEnumerable<string> files = Directory.EnumerateFiles(path);
 
-            foreach(var file in files)
+            foreach (var file in files)
             {
                 var clip = AudioImportLib.API.LoadAudioClip(file, true);
+                clip.hideFlags = HideFlags.DontUnloadUnusedAsset;
                 sounds.Add(clip);
             }
 
@@ -41,42 +49,73 @@ namespace NEP.MonoDirector.Data
 
         internal static void GenerateSpawnablesFromSounds(AudioClip[] sounds)
         {
+            if (sounds == null)
+            {
+                return;
+            }
+
+            if (sounds.Length == 0)
+            {
+                return;
+            }
+
             Barcode mainBarcode = (Barcode)"NotEnoughPhotons.MonoDirector";
             if (!AssetWarehouse.Instance.HasPallet(mainBarcode))
             {
                 Main.Logger.Error("Pallet doesn't exist in registry.");
                 return;
             }
-            
-            var mainPallet = AssetWarehouse.Instance.InventoryRegistry[mainBarcode] as Pallet;
 
-            if (mainPallet == null)
+            AssetWarehouse.PalletManifest palletManifest = AssetWarehouse.Instance.warehouseManifest[mainBarcode];
+
+            if (palletManifest == null)
             {
-                Main.Logger.Error("Pallet doesn't exist.");
+                Main.Logger.Error("Pallet manifest is null.");
                 return;
             }
 
+            Pallet pallet = palletManifest.pallet;
+
             SpawnableCrate spawnable = null;
-            foreach(Crate crate in mainPallet.Crates)
+            foreach (Crate crate in pallet.Crates)
             {
                 Main.Logger.Msg(crate.Barcode);
                 if (crate.Barcode == (Barcode)CreateFullBarcode("SoundHolder"))
                 {
-                    spawnable = (SpawnableCrate)crate;
+                    spawnable = crate.Cast<SpawnableCrate>();
                     break;
                 }
             }
 
             if (spawnable == null)
             {
+                Main.Logger.Error("Sound holder spawnable is null.");
                 return;
             }
+
+            spawnable.MainAsset.LoadAsset<GameObject>(new Action<GameObject>((obj) =>
+            {
+                foreach (var sound in sounds)
+                {
+                    if (obj == null)
+                    {
+                        Main.Logger.Error("SoundHolder game object is null");
+                        continue;
+                    }
+
+                    Main.Logger.Msg(sound.name);
+                    SoundHolder soundHolder = obj.GetComponent<SoundHolder>();
+                    Main.Logger.Msg(soundHolder.name);
+                    soundHolder.AssignSound(sound);
+                    break;
+                }
+            }));
         }
 
         internal static GameObject SpawnFromBarcode(string barcode, bool active = false)
         {
             GameObject spawnedObject = null;
-            HelperMethods.SpawnCrate(barcode, Vector3.zero, Quaternion.identity, Vector3.one, false, (obj) => 
+            HelperMethods.SpawnCrate(barcode, Vector3.zero, Quaternion.identity, Vector3.one, false, (obj) =>
             {
                 spawnedObject = obj;
                 spawnedObject.SetActive(active);
