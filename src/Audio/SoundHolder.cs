@@ -10,12 +10,6 @@ namespace NEP.MonoDirector.Audio
 
         private AudioClip sound;
 
-        private void Awake()
-        {
-            var sounds = WarehouseLoader.GetSounds();
-            sound = sounds[0];
-        }
-
         public void AssignSound(AudioClip sound)
         {
             this.sound = sound;

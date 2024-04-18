@@ -93,23 +93,29 @@ namespace NEP.MonoDirector.Data
                 return;
             }
 
-            spawnable.MainAsset.LoadAsset<GameObject>(new Action<GameObject>((obj) =>
+            foreach (var sound in sounds)
             {
-                foreach (var sound in sounds)
+                SpawnableCrate copyCrate = new SpawnableCrate()
+                {
+                    Title = $"SFX - {sound.name}",
+                    Barcode = (Barcode)$"NotEnoughPhotons.MonoDirector.Spawnables.SFX{sound.name}",
+                    Pallet = spawnable.Pallet,
+                    MainGameObject = spawnable.MainGameObject
+                };
+
+                copyCrate.LoadAsset(new Action<GameObject>((obj) =>
                 {
                     if (obj == null)
                     {
                         Main.Logger.Error("SoundHolder game object is null");
-                        continue;
+                        return;
                     }
 
-                    Main.Logger.Msg(sound.name);
                     SoundHolder soundHolder = obj.GetComponent<SoundHolder>();
-                    Main.Logger.Msg(soundHolder.name);
                     soundHolder.AssignSound(sound);
-                    break;
-                }
-            }));
+                    AssetWarehouse.Instance.AddCrate(copyCrate);
+                }));
+            }
         }
 
         internal static GameObject SpawnFromBarcode(string barcode, bool active = false)
