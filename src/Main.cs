@@ -118,21 +118,11 @@ namespace NEP.MonoDirector
 
         private void MonoDirectorInitialize()
         {
-            Logger.Msg("Resetting instances");
             ResetInstances();
-            Logger.Msg("Done");
-            Logger.Msg("Creating camera managers");
             CreateCameraManager();
-            Logger.Msg("Done");
-            Logger.Msg("Creating director");
             CreateDirector();
-            Logger.Msg("Done");
-            Logger.Msg("Creating SFX managers and data banks");
             CreateSFX();
-            Logger.Msg("Done");
-            Logger.Msg("Creating UI elements and spawning those in");
             CreateUI();
-            Logger.Msg("Done");
 
             // Data.AvatarPhotoBuilder.Initialize();
         }
@@ -140,15 +130,10 @@ namespace NEP.MonoDirector
         private void ResetInstances()
         {
             Events.FlushActions();
-            Logger.Msg("Flushed actions");
             director = null;
-            Logger.Msg("Director reset");
             camera = null;
-            Logger.Msg("Camera reset");
             feedbackSFX = null;
-            Logger.Msg("Feedback SFX reset");
             PropMarkerManager.CleanUp();
-            Logger.Msg("Prop markers cleaned up");
         }
 
         private void CreateCameraManager()

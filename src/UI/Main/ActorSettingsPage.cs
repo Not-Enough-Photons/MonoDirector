@@ -16,6 +16,7 @@ namespace NEP.MonoDirector.UI
 
         private RawImage actorPortrait;
         private TextMeshProUGUI actorNameText;
+        private TextMeshProUGUI visiblityButtonText;
 
         private Button visibilityButton;
         private Button recastButton;
@@ -39,6 +40,7 @@ namespace NEP.MonoDirector.UI
             actorNameText = transform.GetChild(1).GetComponent<TextMeshProUGUI>();
             Transform optionsGroup = transform.Find("OptionsGroup");
             visibilityButton = optionsGroup.GetChild(0).GetComponent<Button>();
+            visiblityButtonText = visibilityButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
             recastButton = optionsGroup.GetChild(1).GetComponent<Button>();
             deleteButton = optionsGroup.GetChild(2).GetComponent<Button>();
             deletePropsButton = optionsGroup.GetChild(3).GetComponent<Button>();
@@ -74,7 +76,9 @@ namespace NEP.MonoDirector.UI
 
         public void OnShowButtonClicked()
         {
-            actor.ClonedAvatar.gameObject.SetActive(false);
+            bool lastShow = actor.ClonedAvatar.gameObject.activeInHierarchy;
+            visiblityButtonText.text = lastShow ? "Show" : "Hide";
+            actor.ClonedAvatar.gameObject.SetActive(!lastShow);
         }
     }
 }

@@ -13,5 +13,10 @@ namespace NEP.MonoDirector.Audio
         {
             this.sound = sound;
         }
+
+        public AudioClip GetSound()
+        {
+            return sound;
+        }
     }
 }

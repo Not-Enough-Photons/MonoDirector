@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using BoneLib;
+using SLZ.Interaction;
 using UnityEngine;
 
 namespace NEP.MonoDirector.UI
@@ -22,6 +23,9 @@ namespace NEP.MonoDirector.UI
         private Transform contentContainer;
         private Transform pageContainer;
 
+        private Grip grip;
+        private Rigidbody rb;
+
         private string startingPage;
         private string currentPage;
         private string lastPage;
@@ -32,6 +36,8 @@ namespace NEP.MonoDirector.UI
 
             instance = this;
 
+            rb = GetComponent<Rigidbody>();
+
             contentContainer = transform.Find("Content");
             pageContainer = contentContainer.GetChild(0);
 
@@ -41,6 +47,7 @@ namespace NEP.MonoDirector.UI
             Transform actors = pageContainer.Find("Actors");
             Transform settings = pageContainer.Find("Settings");
             Transform actorSettings = actors.Find("ActorSettings");
+            Transform gripBall = transform.Find("GripBall");
 
             page_Menu = menu?.gameObject;
             page_Playhead = playhead?.gameObject;
@@ -58,11 +65,26 @@ namespace NEP.MonoDirector.UI
             startingPage = "Actors";
             footer.LinkToActorView(page_Actors.GetComponent<ActorsPage>());
 
+            grip = gripBall.GetComponent<Grip>();
+
+            grip.attachedHandDelegate += new System.Action<Hand>((hand) => 
+            {
+                rb.isKinematic = false;
+            });
+
+            grip.detachedHandDelegate += new System.Action<Hand>((hand) =>
+            {
+                rb.isKinematic = true;
+            });
+
             Main.Logger.Msg("End Awake");
         }
 
         private void OnEnable()
         {
+            transform.position = Player.physicsRig.m_chest.position + Vector3.forward;
+            transform.LookAt(Player.playerHead);
+
             if(lastPage == null)
             {
                 OpenPage(startingPage);
@@ -71,13 +93,6 @@ namespace NEP.MonoDirector.UI
             {
                 OpenPage(lastPage);
             }
-        }
-
-        private void FixedUpdate()
-        {
-            Vector3 rigHudPosition = Player.uiRig.popUpMenu.transform.position;
-            transform.position = rigHudPosition * (1f / Player.uiRig.cur_avatarArmScaleMult);
-            transform.LookAt(Player.playerHead);
         }
 
         public void OpenPage(string page)

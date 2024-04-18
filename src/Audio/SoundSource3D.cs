@@ -5,9 +5,9 @@ using UnityEngine;
 namespace NEP.MonoDirector.Audio
 {
     [MelonLoader.RegisterTypeInIl2Cpp]
-    public class SoundSource : MonoBehaviour
+    public class SoundSource3D : MonoBehaviour
     {
-        public SoundSource(System.IntPtr ptr) : base(ptr) { }
+        public SoundSource3D(System.IntPtr ptr) : base(ptr) { }
 
         private AudioSource source;
         private GameObject sprite;

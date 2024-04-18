@@ -80,6 +80,8 @@ namespace NEP.MonoDirector.Actors
         public Avatar ClonedAvatar { get => clonedAvatar; }
         public Transform[] AvatarBones { get => avatarBones; }
 
+        public IReadOnlyList<FrameGroup> Frames => avatarFrames.AsReadOnly();
+
         public ActorBody ActorBody { get => body; }
         public ActorMic Microphone { get => microphone; }
         public Texture2D AvatarPortrait { get => avatarPortrait; }
