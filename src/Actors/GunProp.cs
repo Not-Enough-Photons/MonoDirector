@@ -67,6 +67,10 @@ namespace NEP.MonoDirector.Actors
                 gun.slideVirtualController.OnSlideUpdate = gun.slideVirtualController.OnSlideUpdate + new System.Action<float>((float perc) => RecordSlideUpdate(perc));
                 gun.slideVirtualController.OnSlideReturned = gun.slideVirtualController.OnSlideReturned + new System.Action(() => RecordSlideReturned());
             }
+            if(gun.internalMagazine != null)
+            {
+                gun.MagazineState.onAmmoChange = gun.MagazineState.onAmmoChange + new System.Action<int>((int count) => OnAmmoChanged_InternalMagazine(count));
+            }
         }
 
         private void MuzzleFlash()
@@ -107,14 +111,40 @@ namespace NEP.MonoDirector.Actors
 
         public void InsertMagState(CartridgeData cartridgeData, MagazineData magazineData, int count)
         {
-            MagazineState magazineState = new MagazineState()
+            if (gun.internalMagazine != null)
             {
-                cartridgeData = cartridgeData,
-                magazineData = magazineData
-            };
-            magazineState.Initialize(cartridgeData, count);
-            gun.MagazineState = magazineState;
+                gun.MagazineState.Initialize(cartridgeData, count);
+            }
+            else
+            {
+                MagazineState magazineState = new MagazineState()
+                {
+                    cartridgeData = cartridgeData,
+                    magazineData = magazineData
+                };
+                magazineState.Initialize(cartridgeData, count);
+                gun.MagazineState = magazineState;
+            }
+
             gun.UpdateMagazineArt();
+        }
+
+        public void AddMagState(CartridgeData cartridgeData, int amount)
+        {
+            gun.MagazineState.AddCartridge(amount, cartridgeData);
+            gun.UpdateMagazineArt();
+        }
+
+        private int _prevInternalMagazineAmmoCount;
+        public void OnAmmoChanged_InternalMagazine(int count)
+        {
+            if (_prevInternalMagazineAmmoCount < count)
+            {
+                int amount = count - _prevInternalMagazineAmmoCount;
+                _prevInternalMagazineAmmoCount = count;
+                CartridgeData cartridgeData = gun.MagazineState.GetCartridgeData();
+                RecordAction(new System.Action(() => AddMagState(cartridgeData, amount)));
+            }
         }
 
         public void RemoveMagState()
