@@ -69,6 +69,7 @@ namespace NEP.MonoDirector.Actors
             }
             if(gun.internalMagazine != null)
             {
+                _prevInternalMagazineAmmoCount = gun.MagazineState.AmmoCount;
                 gun.MagazineState.onAmmoChange = gun.MagazineState.onAmmoChange + new System.Action<int>((int count) => OnAmmoChanged_InternalMagazine(count));
             }
         }
