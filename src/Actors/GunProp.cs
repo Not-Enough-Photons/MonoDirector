@@ -57,21 +57,16 @@ namespace NEP.MonoDirector.Actors
 
         private void MuzzleFlash()
         {
-            string muzzleFlashBarcode = "c1534c5a-93e8-405b-89e2-e39c466c6172";
-
-            SpawnableCrateReference reference = new SpawnableCrateReference(muzzleFlashBarcode);
-
-            Spawnable muzzleFlash = new Spawnable()
+            Spawnable muzzleFlashSpawnable = new Spawnable()
             {
-                crateRef = reference
+                crateRef = gun.muzzleFlareSpawnable.crateRef
             };
-
-            AssetSpawner.Register(muzzleFlash);
+            AssetSpawner.Register(muzzleFlashSpawnable);
             NullableMethodExtensions.PoolManager_Spawn(
-                muzzleFlash,
+                muzzleFlashSpawnable,
                 gun.firePointTransform.position,
                 gun.firePointTransform.rotation,
-                Vector3.one,
+                null,
                 false,
                 null,
                 null,
@@ -80,18 +75,16 @@ namespace NEP.MonoDirector.Actors
 
         private void EjectCasing()
         {
-            SpawnableCrateReference reference = gun.defaultCartridge.cartridgeCaseSpawnable.crateRef;
-            Spawnable casing = new Spawnable()
+            Spawnable cartridgeSpawnable = new Spawnable()
             {
-                crateRef = reference
+                crateRef = gun.defaultCartridge.cartridgeCaseSpawnable.crateRef
             };
-
-            AssetSpawner.Register(casing);
+            AssetSpawner.Register(cartridgeSpawnable);
             NullableMethodExtensions.PoolManager_Spawn(
-                casing,
+                cartridgeSpawnable,
                 gun.shellSpawnTransform.position,
                 gun.shellOrientationTransform.rotation,
-                new Vector3(2f, 2f, 2f),
+                null,
                 false,
                 null,
                 null,
