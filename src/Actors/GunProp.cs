@@ -51,7 +51,7 @@ namespace NEP.MonoDirector.Actors
             gun.UpdateArt();
             
             MuzzleFlash();
-            EjectCasing();
+            //EjectCasing();
             gun.gunSFX.GunShot();
         }
 
