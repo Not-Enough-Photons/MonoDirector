@@ -13,6 +13,8 @@ using SLZ.Props.Weapons;
 
 using UnityEngine;
 using SLZ.Interaction;
+using SLZ.Props;
+using static SLZ.Props.Weapons.Gun;
 
 namespace NEP.MonoDirector.Actors
 {
@@ -45,33 +47,45 @@ namespace NEP.MonoDirector.Actors
 
         public void GunFakeFire()
         {
+            gun.cartridgeState = CartridgeStates.SPENT;
+            gun.UpdateArt();
+            
             MuzzleFlash();
-            EjectCasing();
+            //EjectCasing();
             gun.gunSFX.GunShot();
         }
 
         public void SetGun(Gun gun)
         {
             this.gun = gun;
+            SlideVirtualController slideVirtualController = gun.slideVirtualController;
+            if (slideVirtualController != null)
+            {
+                gun.slideVirtualController.OnSlideGrabbed = gun.slideVirtualController.OnSlideGrabbed + new System.Action(() => RecordSlideGrabbed());
+                gun.slideVirtualController.OnSlideReleased = gun.slideVirtualController.OnSlideReleased + new System.Action(() => RecordSlideReleased());
+                gun.slideVirtualController.OnSlidePulled = gun.slideVirtualController.OnSlidePulled + new System.Action(() => RecordSlidePulled());
+                gun.slideVirtualController.OnSlideUpdate = gun.slideVirtualController.OnSlideUpdate + new System.Action<float>((float perc) => RecordSlideUpdate(perc));
+                gun.slideVirtualController.OnSlideReturned = gun.slideVirtualController.OnSlideReturned + new System.Action(() => RecordSlideReturned());
+            }
+            if(gun.internalMagazine != null)
+            {
+                _prevInternalMagazineAmmoCount = gun.MagazineState.AmmoCount;
+                gun.MagazineState.onAmmoChange = gun.MagazineState.onAmmoChange + new System.Action<int>((int count) => OnAmmoChanged_InternalMagazine(count));
+            }
         }
 
         private void MuzzleFlash()
         {
-            string muzzleFlashBarcode = "c1534c5a-93e8-405b-89e2-e39c466c6172";
-
-            SpawnableCrateReference reference = new SpawnableCrateReference(muzzleFlashBarcode);
-
-            Spawnable muzzleFlash = new Spawnable()
+            Spawnable muzzleFlashSpawnable = new Spawnable()
             {
-                crateRef = reference
+                crateRef = gun.muzzleFlareSpawnable.crateRef
             };
-
-            AssetSpawner.Register(muzzleFlash);
+            AssetSpawner.Register(muzzleFlashSpawnable);
             NullableMethodExtensions.PoolManager_Spawn(
-                muzzleFlash,
+                muzzleFlashSpawnable,
                 gun.firePointTransform.position,
                 gun.firePointTransform.rotation,
-                Vector3.one,
+                null,
                 false,
                 null,
                 null,
@@ -80,22 +94,84 @@ namespace NEP.MonoDirector.Actors
 
         private void EjectCasing()
         {
-            SpawnableCrateReference reference = gun.defaultCartridge.cartridgeCaseSpawnable.crateRef;
-            Spawnable casing = new Spawnable()
+            Spawnable cartridgeSpawnable = new Spawnable()
             {
-                crateRef = reference
+                crateRef = gun.defaultCartridge.cartridgeCaseSpawnable.crateRef
             };
-
-            AssetSpawner.Register(casing);
+            AssetSpawner.Register(cartridgeSpawnable);
             NullableMethodExtensions.PoolManager_Spawn(
-                casing,
+                cartridgeSpawnable,
                 gun.shellSpawnTransform.position,
                 gun.shellOrientationTransform.rotation,
-                new Vector3(2f, 2f, 2f),
+                null,
                 false,
                 null,
                 null,
                 null);
+        }
+
+        public void InsertMagState(CartridgeData cartridgeData, MagazineData magazineData, int count)
+        {
+            if (gun.internalMagazine != null)
+            {
+                gun.MagazineState.Initialize(cartridgeData, count);
+            }
+            else
+            {
+                MagazineState magazineState = new MagazineState()
+                {
+                    cartridgeData = cartridgeData,
+                    magazineData = magazineData
+                };
+                magazineState.Initialize(cartridgeData, count);
+                gun.MagazineState = magazineState;
+            }
+
+            gun.UpdateMagazineArt();
+        }
+
+        public void AddMagState(CartridgeData cartridgeData, int amount)
+        {
+            gun.MagazineState.AddCartridge(amount, cartridgeData);
+            gun.UpdateMagazineArt();
+        }
+
+        private int _prevInternalMagazineAmmoCount;
+        public void OnAmmoChanged_InternalMagazine(int count)
+        {
+            if (_prevInternalMagazineAmmoCount < count)
+            {
+                int amount = count - _prevInternalMagazineAmmoCount;
+                _prevInternalMagazineAmmoCount = count;
+                CartridgeData cartridgeData = gun.MagazineState.GetCartridgeData();
+                RecordAction(new System.Action(() => AddMagState(cartridgeData, amount)));
+            }
+        }
+
+        public void RemoveMagState()
+        {
+            gun.MagazineState = null;
+        }
+
+        public void RecordSlideGrabbed()
+        {
+            RecordAction(new System.Action(() => gun.slideVirtualController.OnSlideGrabbed.Invoke()));
+        }
+        public void RecordSlideReleased()
+        {
+            RecordAction(new System.Action(() => gun.slideVirtualController.OnSlideReleased.Invoke()));
+        }
+        public void RecordSlidePulled()
+        {
+            RecordAction(new System.Action(() => gun.slideVirtualController.OnSlidePulled.Invoke()));
+        }
+        public void RecordSlideUpdate(float perc)
+        {
+            RecordAction(new System.Action(() => gun.slideVirtualController.OnSlideUpdate.Invoke(perc)));
+        }
+        public void RecordSlideReturned()
+        {
+            RecordAction(new System.Action(() => gun.slideVirtualController.OnSlideReturned.Invoke()));
         }
     }
 }
