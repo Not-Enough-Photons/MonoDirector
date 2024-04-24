@@ -17,21 +17,10 @@ namespace NEP.MonoDirector.Audio
 
         private AudioClip sound;
 
-        private bool init = false;
-
-        private void Update()
+        private void Start()
         {
-            if (gameObject.activeSelf && poolee == null)
-            {
-                poolee = GetComponent<AssetPoolee>();
-
-                if (poolee)
-                {
-                    AssignSound(WarehouseLoader.soundTable[poolee.spawnableCrate.Description]);
-                }
-                
-                return;
-            }
+            poolee = GetComponent<AssetPoolee>();
+            AssignSound(WarehouseLoader.soundTable[poolee.spawnableCrate.Description]);
         }
 
         public void AssignSound(AudioClip sound)
