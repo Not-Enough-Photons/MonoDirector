@@ -12,7 +12,6 @@ namespace NEP.MonoDirector.Cameras
         private CylinderGrip leftHandle;
         private CylinderGrip rightHandle;
 
-        private Transform gimbal;
         private Transform leftHandleTransform;
         private Transform rightHandleTransform;
 
@@ -28,15 +27,13 @@ namespace NEP.MonoDirector.Cameras
 
         private void Awake()
         {
-            gimbal = transform.Find("Gimbal");
+            leftHandleTransform = transform.Find("Grips/Left Handle");
+            rightHandleTransform = transform.Find("Grips/Right Handle");
 
-            leftHandleTransform = gimbal.Find("Grips/Left Handle");
-            rightHandleTransform = gimbal.Find("Grips/Right Handle");
-
-            sensorCamera = gimbal.Find("Sensor").GetComponent<Camera>();
-            backViewfinderScreen = gimbal.Find("Studio Camera/Viewfinder_Back").gameObject;
-            frontViewfinderScreen = gimbal.Find("Studio Camera/Viewfinder_Front").gameObject;
-            displayScreen = gimbal.Find("Studio Camera/Screen").gameObject;
+            sensorCamera = transform.Find("Sensor").GetComponent<Camera>();
+            backViewfinderScreen = transform.Find("Viewfinder_Back").gameObject;
+            frontViewfinderScreen = transform.Find("Viewfinder_Front").gameObject;
+            displayScreen = transform.Find("Screen").gameObject;
 
             leftHandle = leftHandleTransform.GetComponent<CylinderGrip>();
             rightHandle = rightHandleTransform.GetComponent<CylinderGrip>();
