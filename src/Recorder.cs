@@ -273,7 +273,7 @@ namespace NEP.MonoDirector.Core
                 yield return new WaitForSeconds(1);
             }
 
-            Main.FeedbackSFX.BeepHigh();
+            Main.feedbackSFX.BeepHigh();
 
             Events.OnStartRecording?.Invoke();
             

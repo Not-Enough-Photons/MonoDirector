@@ -1,20 +1,16 @@
-﻿using SLZ.Marrow.Pool;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using BoneLib;
-using System.Threading.Tasks;
 using System.IO;
 using MelonLoader;
-using System;
-using SLZ.Marrow.Data;
 using SLZ.Marrow.Warehouse;
-using UnhollowerBaseLib;
 using NEP.MonoDirector.Audio;
 
 namespace NEP.MonoDirector.Data
 {
     public static class WarehouseLoader
     {
+        internal static Dictionary<string, AudioClip> soundTable;
         internal static List<AudioClip> sounds;
 
         internal static readonly string companyCode = "NotEnoughPhotons.";
@@ -28,6 +24,7 @@ namespace NEP.MonoDirector.Data
         internal static List<AudioClip> GetSounds()
         {
             List<AudioClip> sounds = new List<AudioClip>();
+            soundTable = new Dictionary<string, AudioClip>();
             string path = Path.Combine(MelonUtils.UserDataDirectory, "Not Enough Photons/MonoDirector/SFX/Sounds");
 
             if (!Directory.Exists(path))
@@ -99,22 +96,15 @@ namespace NEP.MonoDirector.Data
                 {
                     Title = $"SFX - {sound.name}",
                     Barcode = (Barcode)$"NotEnoughPhotons.MonoDirector.Spawnables.SFX{sound.name}",
+                    Description = sound.name,
                     Pallet = spawnable.Pallet,
                     MainGameObject = spawnable.MainGameObject
                 };
 
-                copyCrate.LoadAsset(new Action<GameObject>((obj) =>
-                {
-                    if (obj == null)
-                    {
-                        Main.Logger.Error("SoundHolder game object is null");
-                        return;
-                    }
-
-                    SoundHolder soundHolder = obj.GetComponent<SoundHolder>();
-                    soundHolder.AssignSound(sound);
-                    AssetWarehouse.Instance.AddCrate(copyCrate);
-                }));
+                copyCrate.name = copyCrate.Title;
+                soundTable.Add(copyCrate.Description, sound);
+                pallet.Crates.Add(copyCrate);
+                AssetWarehouse.Instance.AddCrate(copyCrate);
             }
         }
 
@@ -147,6 +137,11 @@ namespace NEP.MonoDirector.Data
         private static string CreateFullBarcode(string spawnableName)
         {
             return companyCode + modCode + typeCode + spawnableName;
+        }
+
+        private static void Internal_Asset_Detour()
+        {
+            Main.Logger.Msg("hello!");
         }
     }
 }

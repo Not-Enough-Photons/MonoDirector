@@ -15,6 +15,7 @@ using NEP.MonoDirector.State;
 using BoneLib.BoneMenu.Elements;
 using NEP.MonoDirector.Data;
 using SLZ.Marrow.Warehouse;
+using Harmony;
 
 namespace NEP.MonoDirector
 {
