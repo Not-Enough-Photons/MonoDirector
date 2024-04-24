@@ -23,6 +23,11 @@ namespace NEP.MonoDirector.Audio
             AssignSound(WarehouseLoader.soundTable[poolee.spawnableCrate.Description]);
         }
 
+        private void OnDisable()
+        {
+            poolee.Despawn();
+        }
+
         public void AssignSound(AudioClip sound)
         {
             this.sound = sound;

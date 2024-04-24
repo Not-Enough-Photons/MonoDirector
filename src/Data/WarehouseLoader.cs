@@ -98,6 +98,8 @@ namespace NEP.MonoDirector.Data
                     Barcode = (Barcode)$"NotEnoughPhotons.MonoDirector.Spawnables.SFX{sound.name}",
                     Description = sound.name,
                     Pallet = spawnable.Pallet,
+                    packedAssets = spawnable.packedAssets,
+                    MainAsset = spawnable.MainAsset,
                     MainGameObject = spawnable.MainGameObject
                 };
 

@@ -34,6 +34,7 @@ namespace NEP.MonoDirector.Actors
             this.physicsRig = physicsRig;
 
             SetupCollisions();
+            SetupTriggerHull();
             SetupAudio();
         }
 
@@ -61,6 +62,19 @@ namespace NEP.MonoDirector.Actors
         private MeshCollider hipCollider;
         private BoxCollider leftHandCollider;
         private BoxCollider rightHandCollider;
+
+        private void SetupTriggerHull()
+        {
+            GameObject triggerHullObject = new GameObject("Actor Trigger Hull");
+            BoxCollider triggerHull = triggerHullObject.AddComponent<BoxCollider>();
+            triggerHull.isTrigger = true;
+            float avatarHeight = actor.ClonedAvatar.height;
+            float avatarWidth = actor.ClonedAvatar._waistEllipseX + actor.ClonedAvatar._waistEllipseZ;
+            triggerHull.size = new Vector3(avatarWidth, avatarHeight, avatarWidth);
+            triggerHullObject.transform.SetParent(actor.ClonedAvatar.transform);
+            triggerHullObject.transform.localPosition = Vector3.zero;
+            triggerHullObject.transform.localRotation = Quaternion.identity;
+        }
 
         private void SetupCollisions()
         {

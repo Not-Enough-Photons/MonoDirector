@@ -53,7 +53,7 @@
     <Compile Include="src\Actors\Actor.cs" />
     <Compile Include="src\Actors\TrackedVehicle.cs" />
     <Compile Include="src\Actors\PropBuilder.cs" />
-    <Compile Include="src\Audio\ActorMic.cs" />
+    <Compile Include="src\Audio\ActorSpeech.cs" />
     <Compile Include="src\Audio\Spectrum.cs" />
     <Compile Include="src\Camera\CameraDamp.cs" />
     <Compile Include="src\Camera\CameraDisplay.cs" />

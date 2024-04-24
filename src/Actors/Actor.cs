@@ -58,7 +58,7 @@ namespace NEP.MonoDirector.Actors
             avatarFrames = new List<FrameGroup>();
 
             GameObject micObject = new GameObject("Actor Microphone");
-            microphone = micObject.AddComponent<ActorMic>();
+            microphone = micObject.AddComponent<ActorSpeech>();
 
             tempFrames = new ObjectFrame[avatarBones.Length];
         }
@@ -83,7 +83,7 @@ namespace NEP.MonoDirector.Actors
         public IReadOnlyList<FrameGroup> Frames => avatarFrames.AsReadOnly();
 
         public ActorBody ActorBody { get => body; }
-        public ActorMic Microphone { get => microphone; }
+        public ActorSpeech Microphone { get => microphone; }
         public Texture2D AvatarPortrait { get => avatarPortrait; }
 
         public bool Seated { get => activeSeat != null; }
@@ -91,7 +91,7 @@ namespace NEP.MonoDirector.Actors
         protected List<FrameGroup> avatarFrames;
 
         private ActorBody body;
-        private ActorMic microphone;
+        private ActorSpeech microphone;
         private Texture2D avatarPortrait;
 
         private SLZ.Vehicle.Seat activeSeat;

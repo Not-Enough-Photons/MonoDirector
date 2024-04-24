@@ -23,8 +23,6 @@ namespace NEP.MonoDirector.Audio
             grip = transform.Find("Grip").GetComponent<Grip>();
             grip.GetComponent<Collider>().isTrigger = true;
             rb = GetComponent<Rigidbody>();
-
-            source.spatialBlend = 1f;
         }
 
         private void OnEnable()

@@ -8,9 +8,9 @@ using Avatar = SLZ.VRMK.Avatar;
 namespace NEP.MonoDirector.Audio
 {
     [MelonLoader.RegisterTypeInIl2Cpp]
-    public class ActorMic : MonoBehaviour
+    public class ActorSpeech : MonoBehaviour
     {
-        public ActorMic(System.IntPtr ptr) : base(ptr) { }
+        public ActorSpeech(System.IntPtr ptr) : base(ptr) { }
 
         private Avatar avatar;
 
@@ -55,6 +55,11 @@ namespace NEP.MonoDirector.Audio
             transform.localPosition = Vector3.zero;
         }
 
+        public void AssignSound(AudioClip sound)
+        {
+            this.clip = sound;
+        }
+
         public void UpdateJaw()
         {
             if(jaw == null)
@@ -69,11 +74,6 @@ namespace NEP.MonoDirector.Audio
 
         public void Playback()
         {
-            if (!Settings.World.micPlayback)
-            {
-                return;
-            }
-
             if (!beginPlay)
             {
                 source.Play();
@@ -106,7 +106,7 @@ namespace NEP.MonoDirector.Audio
                 return;
             }
 
-            clip = Microphone.Start(null, false, 60 * 4, 44100);
+            AssignSound(Microphone.Start(null, false, 60 * 4, 44100));
         }
 
         public void StopRecording()
