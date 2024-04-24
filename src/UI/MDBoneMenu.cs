@@ -122,27 +122,6 @@ namespace NEP.MonoDirector.UI
             );
 
             cameraCategory.CreateBoolElement(
-                "Lock X Rotation", 
-                Color.white, 
-                false,
-                (value) => Settings.Camera.handheldLockXAxis = value
-            );
-            
-            cameraCategory.CreateBoolElement(
-                "Lock Y Rotation", 
-                Color.white, 
-                false,
-                value => Settings.Camera.handheldLockYAxis = value
-            );
-            
-            cameraCategory.CreateBoolElement(
-                "Lock Z Rotation", 
-                Color.white, 
-                false,
-                (value) => Settings.Camera.handheldLockZAxis = value
-            );
-
-            cameraCategory.CreateBoolElement(
                 "Kinematic On Release", 
                 Color.white, 
                 false,
@@ -354,7 +333,7 @@ namespace NEP.MonoDirector.UI
                 "Lens Distortion", 
                 Color.white, 
                 true,
-                value => CameraRigManager.Instance.CameraVolume.LensDistortion.active = value
+                value => CameraRigManager.Instance.EnableLensDistortion(value)
             );
             
             //vfxCategory.CreateBoolElement("Motion Blur", Color.white, true, (value) => CameraRigManager.Instance.CameraVolume.MotionBlur.active = value);
@@ -363,7 +342,7 @@ namespace NEP.MonoDirector.UI
                 "Chromatic Abberation", 
                 Color.white, 
                 true,
-                value => CameraRigManager.Instance.CameraVolume.ChromaticAberration.active = value
+                value => CameraRigManager.Instance.EnableChromaticAbberation(value)
             );
             
             //vfxCategory.CreateBoolElement("Vignette", Color.white, true, (value) => CameraRigManager.Instance.CameraVolume.Vignette.active = true);

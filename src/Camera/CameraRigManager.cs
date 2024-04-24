@@ -32,7 +32,7 @@ namespace NEP.MonoDirector.Cameras
 
         public FOVController FOVController { get; private set; }
         public CameraDamp CameraDamp { get; private set; }
-        public CameraVolume CameraVolume { get; private set; }
+        public CameraVolume[] CameraVolumes { get; private set; }
         public CameraDisplay CameraDisplay { get; private set; }
         public SmoothFollower SmoothFollower { get; private set; }
 
@@ -94,7 +94,7 @@ namespace NEP.MonoDirector.Cameras
             get => InputController.mouseSensitivity;
             set => InputController.mouseSensitivity = value;
         }
-        
+
         public float MouseSmoothness
         {
             get => InputController.mouseSmoothness;
@@ -134,9 +134,7 @@ namespace NEP.MonoDirector.Cameras
         private void Start()
         {
             Instance = this;
-
             InitializeCamera(RigScreenOptions);
-            //InitializeCameraModel();
         }
 
         private void InitializeCamera(RigScreenOptions screenOptions)
@@ -153,11 +151,16 @@ namespace NEP.MonoDirector.Cameras
             InputController = cameraObject.AddComponent<InputController>();
 
             FreeCamera = cameraObject.AddComponent<FreeCamera>();
-
             FOVController = cameraObject.AddComponent<FOVController>();
             FollowCamera = cameraObject.AddComponent<FollowCamera>();
             CameraDamp = cameraObject.AddComponent<CameraDamp>();
-            CameraVolume = cameraObject.AddComponent<CameraVolume>();
+
+            CameraVolumes = new CameraVolume[2]
+            {
+                cameraObject.AddComponent<CameraVolume>(),
+                ClonedCamera.gameObject.AddComponent<CameraVolume>(),
+            };
+
             //CameraDisplay = cameraObject.AddComponent<CameraDisplay>();
 
             FOVController.SetCamera(Camera);
@@ -169,18 +172,20 @@ namespace NEP.MonoDirector.Cameras
             CameraDisplay = ClonedCamera.gameObject.AddComponent<CameraDisplay>();
         }
 
-        private void InitializeCameraModel()
+        public void EnableLensDistortion(bool enable)
         {
-            // cameraModel = GameObject.Instantiate(Main.Bundle.LoadAsset("md_camera")).Cast<GameObject>();
-            cameraRenderer = cameraModel.transform.Find("geo").GetComponent<MeshRenderer>();
+            foreach (var cameraVolume in CameraVolumes)
+            {
+                cameraVolume.LensDistortion.active = enable;
+            }
+        }
 
-            cameraRenderer.castShadows = false;
-            cameraRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
-
-            cameraRenderer.transform.SetParent(cameraObject.transform);
-            cameraRenderer.transform.localPosition = Vector3.forward * -0.1f;
-            cameraRenderer.transform.eulerAngles = Vector3.zero;
-            cameraRenderer.transform.localScale = new Vector3(0.0075f, 0.0075f, -0.0075f);
+        public void EnableChromaticAbberation(bool enable)
+        {
+            foreach (var cameraVolume in CameraVolumes)
+            {
+                cameraVolume.ChromaticAberration.active = enable;
+            }
         }
     }
 }
