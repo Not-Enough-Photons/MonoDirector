@@ -246,8 +246,6 @@ namespace NEP.MonoDirector.Actors
             clonedAvatar.name = actorName;
             ShowHairMeshes(clonedAvatar);
 
-            GameObject.FindObjectOfType<PullCordDevice>().PlayAvatarParticleEffects();
-
             microphone.SetAvatar(clonedAvatar);
 
             clonedAvatar.gameObject.SetActive(true);
