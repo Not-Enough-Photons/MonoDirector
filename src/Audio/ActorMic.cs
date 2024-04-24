@@ -64,7 +64,7 @@ namespace NEP.MonoDirector.Audio
 
             Quaternion lastJawRotation = jaw.localRotation;
             Quaternion nextJawRotation = Quaternion.Euler(new Vector3(initialJawRotation.x, initialJawRotation.y, initialJawRotation.z + spectrum.BandVol(0f, 44100f) * 10000f));
-            jaw.localRotation = Quaternion.Slerp(lastJawRotation, nextJawRotation, Time.deltaTime);
+            jaw.localRotation = Quaternion.Slerp(lastJawRotation, nextJawRotation, 8f * Time.deltaTime);
         }
 
         public void Playback()
