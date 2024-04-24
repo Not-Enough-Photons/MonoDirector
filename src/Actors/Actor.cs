@@ -257,7 +257,6 @@ namespace NEP.MonoDirector.Actors
 
         public void SwitchToActor(Actor actor)
         {
-            Main.Logger.Msg("SwitchToAvatar");
             clonedAvatar.gameObject.SetActive(false);
             actor.clonedAvatar.gameObject.SetActive(true);
         }
