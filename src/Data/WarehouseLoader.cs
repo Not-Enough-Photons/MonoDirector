@@ -140,10 +140,5 @@ namespace NEP.MonoDirector.Data
         {
             return companyCode + modCode + typeCode + spawnableName;
         }
-
-        private static void Internal_Asset_Detour()
-        {
-            Main.Logger.Msg("hello!");
-        }
     }
 }
