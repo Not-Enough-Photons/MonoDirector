@@ -60,6 +60,10 @@ When all is said and done, and you have all the actors in their right places, no
 - **Rexmeck** for helping with grip event recording
 - **Stress Level Zero** for BONELAB and the Marrow SDK
 
+![](https://github.com/Not-Enough-Photons/MonoDirector/blob/main/img/banner_support.png?raw=true)
+Want to support me and my future projects? 
+[You can donate at my Ko-fi!](https://ko-fi.com/adamdev)
+
 ## Tester/Feedback Group
 <table>
   <tbody>
