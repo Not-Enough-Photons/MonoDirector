@@ -28,7 +28,7 @@ namespace NEP.MonoDirector.Cameras
 
         private void Start()
         {
-            FollowCamera.SetFollowTarget(smoothFollower.targetTransform);
+            FollowCamera.SetFollowTarget(FollowCamera.FollowTarget);
         }
     }
 }
