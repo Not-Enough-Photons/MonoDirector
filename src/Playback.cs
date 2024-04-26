@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.IO;
 using Il2CppSystem;
 using MelonLoader;
 using NEP.MonoDirector.Actors;
@@ -205,7 +206,7 @@ namespace NEP.MonoDirector.Core
         /// TODO: Is PlayRoutine() having a delay necessary?
         
         /// <summary>
-        /// A routine that delays playback by a certain delay
+        /// Playback coroutine. Supports a delay of any duration.
         /// </summary>
         /// <returns></returns>
         public IEnumerator PlayRoutine()

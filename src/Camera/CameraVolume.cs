@@ -26,9 +26,6 @@ namespace NEP.MonoDirector.Cameras
             LensDistortion = RenderingVolume.profile.components[0].Cast<LensDistortion>();
             ChromaticAberration = RenderingVolume.profile.components[1].Cast<ChromaticAberration>();
             MkGlow = RenderingVolume.profile.components[4].Cast<MKGlow>();
-
-            Vignette = RenderingVolume.profile.Add<Vignette>(true);
-            Bloom = RenderingVolume.profile.Add<Bloom>(true);
         }
 
         public void EnableAll(bool enabled)

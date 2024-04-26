@@ -30,6 +30,7 @@ namespace NEP.MonoDirector.Cameras
         {
             if(followTarget == null)
             {
+                Main.Logger.Msg("Follow target is null!");
                 return;
             }
 

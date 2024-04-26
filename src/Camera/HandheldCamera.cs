@@ -1,5 +1,6 @@
 ﻿using NEP.MonoDirector.State;
 using SLZ.Interaction;
+using SLZ.Marrow.Interaction;
 using UnityEngine;
 
 namespace NEP.MonoDirector.Cameras
@@ -12,7 +13,6 @@ namespace NEP.MonoDirector.Cameras
         private CylinderGrip leftHandle;
         private CylinderGrip rightHandle;
 
-        private Transform gimbal;
         private Transform leftHandleTransform;
         private Transform rightHandleTransform;
 
@@ -28,20 +28,18 @@ namespace NEP.MonoDirector.Cameras
 
         private void Awake()
         {
-            gimbal = transform.Find("Gimbal");
+            leftHandleTransform = transform.Find("Grips/Left Handle");
+            rightHandleTransform = transform.Find("Grips/Right Handle");
 
-            leftHandleTransform = gimbal.Find("Grips/Left Handle");
-            rightHandleTransform = gimbal.Find("Grips/Right Handle");
-
-            sensorCamera = gimbal.Find("Sensor").GetComponent<Camera>();
-            backViewfinderScreen = gimbal.Find("Studio Camera/Viewfinder_Back").gameObject;
-            frontViewfinderScreen = gimbal.Find("Studio Camera/Viewfinder_Front").gameObject;
-            displayScreen = gimbal.Find("Studio Camera/Screen").gameObject;
+            sensorCamera = transform.Find("Sensor").GetComponent<Camera>();
+            backViewfinderScreen = transform.Find("Viewfinder_Back").gameObject;
+            frontViewfinderScreen = transform.Find("Viewfinder_Front").gameObject;
+            displayScreen = transform.Find("Screen").gameObject;
 
             leftHandle = leftHandleTransform.GetComponent<CylinderGrip>();
             rightHandle = rightHandleTransform.GetComponent<CylinderGrip>();
 
-            cameraRigidbody = transform.GetChild(0).GetComponent<Rigidbody>();
+            cameraRigidbody = GetComponent<Rigidbody>();
         }
 
         private void OnEnable()
@@ -51,6 +49,7 @@ namespace NEP.MonoDirector.Cameras
             leftHandle.attachedUpdateDelegate += new System.Action<Hand>(LeftHandUpdate);
             rightHandle.attachedUpdateDelegate += new System.Action<Hand>(RightHandUpdate);
             leftHandle.detachedHandDelegate += new System.Action<Hand>(LeftHandDetached);
+            leftHandle.detachedHandDelegate += new System.Action<Hand>(RightHandDetached);
         }
 
         private void OnDisable()
@@ -59,26 +58,25 @@ namespace NEP.MonoDirector.Cameras
 
             leftHandle.attachedUpdateDelegate -= new System.Action<Hand>(LeftHandUpdate);
             rightHandle.attachedUpdateDelegate -= new System.Action<Hand>(RightHandUpdate);
+            leftHandle.detachedHandDelegate -= new System.Action<Hand>(LeftHandDetached);
+            leftHandle.detachedHandDelegate -= new System.Action<Hand>(RightHandDetached);
         }
 
         private void OnCameraModeChanged(CameraMode mode)
         {
             if(mode == CameraMode.Handheld)
             {
-                sensorCamera.enabled = false;
                 displayScreen.active = true;
                 backViewfinderScreen.active = true;
                 frontViewfinderScreen.active = true;
 
                 CameraRigManager.Instance.ClonedCamera.targetTexture = displayTexture;
-
                 CameraRigManager.Instance.ClonedCamera.gameObject.SetActive(true);
-                CameraRigManager.Instance.CameraDisplay.FollowCamera.SetFollowTarget(sensorCamera.transform);
                 CameraRigManager.Instance.FollowCamera.SetFollowTarget(sensorCamera.transform);
+                CameraRigManager.Instance.CameraDisplay.FollowCamera.SetFollowTarget(sensorCamera.transform);
             }
             else
             {
-                sensorCamera.enabled = false;
                 displayScreen.active = false;
                 backViewfinderScreen.active = false;
                 frontViewfinderScreen.active = false;
@@ -115,6 +113,14 @@ namespace NEP.MonoDirector.Cameras
         }
 
         private void LeftHandDetached(Hand hand)
+        {
+            if (Settings.Camera.handheldKinematicOnRelease)
+            {
+                cameraRigidbody.isKinematic = true;
+            }
+        }
+
+        private void RightHandDetached(Hand hand)
         {
             if (Settings.Camera.handheldKinematicOnRelease)
             {
