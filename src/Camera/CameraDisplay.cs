@@ -26,9 +26,9 @@ namespace NEP.MonoDirector.Cameras
             FOVController.SetCamera(GetComponent<Camera>());
         }
 
-        private void Start()
+        private void OnEnable()
         {
-            FollowCamera.SetFollowTarget(smoothFollower.targetTransform);
+            FollowCamera.SetFollowTarget(FollowCamera.FollowTarget);
         }
     }
 }

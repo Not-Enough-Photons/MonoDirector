@@ -28,9 +28,9 @@ namespace NEP.MonoDirector.Cameras
 
         protected void Update()
         {
-            if(followTarget == null)
+            if (followTarget == null)
             {
-                Main.Logger.Msg("Follow target is null!");
+                Main.Logger.Msg("Follow target is null");
                 return;
             }
 
@@ -45,6 +45,7 @@ namespace NEP.MonoDirector.Cameras
 
         public void SetFollowTarget(Transform target)
         {
+            Main.Logger.Msg("Set follow target to " + target.name);
             followTarget = target;
         }
 
