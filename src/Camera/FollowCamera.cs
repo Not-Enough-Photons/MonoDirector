@@ -45,7 +45,6 @@ namespace NEP.MonoDirector.Cameras
 
         public void SetFollowTarget(Transform target)
         {
-            Main.Logger.Msg("Set follow target to " + target.name);
             followTarget = target;
         }
 

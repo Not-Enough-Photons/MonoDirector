@@ -69,7 +69,7 @@ namespace NEP.MonoDirector.Cameras
                 }
 
                 // Modified spectator camera with smooth rotations and custom targets
-                if (cameraMode == CameraMode.Head)
+                if (cameraMode == CameraMode.Head || cameraMode == CameraMode.Handheld)
                 {
                     SmoothFollower.enabled = false;
 
