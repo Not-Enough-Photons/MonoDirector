@@ -80,6 +80,8 @@ namespace NEP.MonoDirector.UI
         public void OnActorCreated(Actor actor)
         {
             ActorEntry first = GetFirst();
+            Main.Logger.Msg(first.name);
+            Main.Logger.Msg("Hash code: " + first.GetHashCode());
             UpdateEntry(actor, first);
 
             displayPages?.Last().AddActor(actor);
@@ -167,6 +169,7 @@ namespace NEP.MonoDirector.UI
         {
             if(entry == null)
             {
+                Main.Logger.Msg("Entry was null.");
                 return;
             }
             
@@ -174,6 +177,8 @@ namespace NEP.MonoDirector.UI
             entry.avatarNameText.text = actor.ActorName;
             entry.SetActor(actor);
             entry.gameObject.SetActive(true);
+
+            Main.Logger.Msg("Entry added successfully!");
         }
 
         private void ClearEntries()
@@ -188,7 +193,7 @@ namespace NEP.MonoDirector.UI
         {
             for (int i = 0; i < actorEntries.Length; i++)
             {
-                if (!actorEntries[i].gameObject.activeInHierarchy)
+                if (!actorEntries[i].gameObject.activeSelf)
                 {
                     return actorEntries[i];
                 }
