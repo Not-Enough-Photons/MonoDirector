@@ -38,6 +38,12 @@ namespace NEP.MonoDirector.UI
             Events.OnActorUncasted += OnActorRemoved;
         }
 
+        private void OnDestroy()
+        {
+            Events.OnActorCasted -= OnActorCreated;
+            Events.OnActorUncasted -= OnActorRemoved;
+        }
+
         public void Initialize(MDMenu menu)
         {
             if (initialized)
