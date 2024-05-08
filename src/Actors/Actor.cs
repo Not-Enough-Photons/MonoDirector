@@ -61,6 +61,7 @@ namespace NEP.MonoDirector.Actors
             microphone = micObject.AddComponent<ActorSpeech>();
 
             tempFrames = new ObjectFrame[avatarBones.Length];
+            OwnedProps = new List<Prop>();
         }
 
         // For a traditional rig, this should be all the "head" bones
@@ -80,6 +81,7 @@ namespace NEP.MonoDirector.Actors
         public Avatar ClonedAvatar { get => clonedAvatar; }
         public Transform[] AvatarBones { get => avatarBones; }
 
+        public List<Prop> OwnedProps { get; private set; }
         public IReadOnlyList<FrameGroup> Frames => avatarFrames.AsReadOnly();
 
         public ActorBody ActorBody { get => body; }
@@ -269,6 +271,24 @@ namespace NEP.MonoDirector.Actors
             GameObject.Destroy(microphone.gameObject);
             microphone = null;
             avatarFrames.Clear();
+            DeleteOwnedProps();
+        }
+
+        public void DeleteProp(Prop prop)
+        {
+            Events.OnPropRemoved?.Invoke(prop);
+            OwnedProps.Remove(prop);
+            GameObject.Destroy(prop);
+        }
+
+        public void DeleteOwnedProps()
+        {
+            foreach (var prop in OwnedProps)
+            {
+                DeleteProp(prop);
+            }
+            
+            OwnedProps.Clear();
         }
 
         public void ParentToSeat(SLZ.Vehicle.Seat seat)

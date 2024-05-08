@@ -250,13 +250,14 @@ namespace NEP.MonoDirector.Core
             Director.instance.Cast.Add(activeActor);
             lastActor = activeActor;
 
+            activeActor.OwnedProps.AddRange(Director.instance.RecordingProps);
+
             activeActor = null;
 
             Director.instance.Cast.AddRange(ActiveActors);
             ActiveActors.Clear();
 
             Director.instance.WorldProps.AddRange(Director.instance.RecordingProps);
-            Director.instance.LastRecordedProps = Director.instance.RecordingProps;
             Director.instance.RecordingProps.Clear();
 
             if (recordRoutine != null)
