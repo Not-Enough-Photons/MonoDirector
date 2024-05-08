@@ -29,11 +29,11 @@ namespace NEP.MonoDirector.UI
             mdCategory = rootCategory.CreateCategory("Mono<color=red>Director</color>", Color.white);
 
             playbackCategory = mdCategory.CreateCategory("Playback", Color.white);
-            actorCategory = mdCategory.CreateCategory("Actors", Color.white);
+            mdCategory.CreateFunctionElement("Actors", Color.white, () => { MDMenu.instance.gameObject.SetActive(true); });
             settingsCategory = mdCategory.CreateCategory("Settings", Color.white);
 
             BuildPlaybackMenu(playbackCategory);
-            BuildActorMenu(actorCategory);
+            // BuildActorMenu(actorCategory);
             BuildSettingsMenu(settingsCategory);
         }
 
@@ -67,20 +67,6 @@ namespace NEP.MonoDirector.UI
                 {
                     MDMenu.instance.gameObject.SetActive(true);
                 }
-            );
-            
-            category.CreateFunctionElement(
-                "Remove All Actors", 
-                Color.red, 
-                () => Director.instance.RemoveAllActors(),
-                "Are you sure? This cannot be undone."
-            );
-            
-            category.CreateFunctionElement(
-                "Clear Scene", 
-                Color.red, 
-                () => Director.instance.ClearScene(),
-                "Are you sure? This cannot be undone."
             );
         }
 
