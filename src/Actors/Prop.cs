@@ -114,6 +114,7 @@ namespace NEP.MonoDirector.Actors
             transform.position = PropFrames[0].position;
             transform.rotation = PropFrames[0].rotation;
             transform.localScale = PropFrames[0].scale;
+            gameObject.SetActive(PropFrames[0].activeThisFrame);
 
             if(interactableRigidbody != null)
             {
@@ -123,8 +124,6 @@ namespace NEP.MonoDirector.Actors
 
         public virtual void Act()
         {
-            gameObject.SetActive(true);
-
             if(interactableRigidbody == null)
             {
                 interactableRigidbody = GetComponent<Rigidbody>();
@@ -160,7 +159,8 @@ namespace NEP.MonoDirector.Actors
                 position = transform.position,
                 rotation = transform.rotation,
                 scale = transform.localScale,
-                frameTime = Recorder.instance.RecordingTime
+                frameTime = Recorder.instance.RecordingTime,
+                activeThisFrame = gameObject.activeSelf
             };
 
             if (frame == 0 || interactableRigidbody != null && interactableRigidbody.IsSleeping())

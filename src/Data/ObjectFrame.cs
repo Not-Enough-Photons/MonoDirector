@@ -24,6 +24,7 @@ namespace NEP.MonoDirector.Data
             rigidbody = null;
             rigidbodyVelocity = Vector3.zero;
             rigidbodyAngularVelocity = Vector3.zero;
+            activeThisFrame = true;
         }
 
         public ObjectFrame(Vector3 position, Quaternion rotation)
@@ -39,6 +40,7 @@ namespace NEP.MonoDirector.Data
             rigidbody = null;
             rigidbodyVelocity = Vector3.zero;
             rigidbodyAngularVelocity = Vector3.zero;
+            activeThisFrame = true;
         }
 
         public ObjectFrame(Vector3 position, Quaternion rotation, Vector3 scale)
@@ -54,6 +56,7 @@ namespace NEP.MonoDirector.Data
             rigidbody = null;
             rigidbodyVelocity = Vector3.zero;
             rigidbodyAngularVelocity = Vector3.zero;
+            activeThisFrame = true;
         }
 
         public ObjectFrame(Quaternion rotation)
@@ -69,6 +72,7 @@ namespace NEP.MonoDirector.Data
             rigidbody = null;
             rigidbodyVelocity = Vector3.zero;
             rigidbodyAngularVelocity = Vector3.zero;
+            activeThisFrame = true;
         }
 
         public ObjectFrame(Transform transform)
@@ -85,6 +89,7 @@ namespace NEP.MonoDirector.Data
             rigidbody = null;
             rigidbodyVelocity = Vector3.zero;
             rigidbodyAngularVelocity = Vector3.zero;
+            activeThisFrame = transform.gameObject.activeSelf;
         }
 
         public ObjectFrame(Rigidbody rigidbody)
@@ -101,6 +106,7 @@ namespace NEP.MonoDirector.Data
             this.rigidbody = rigidbody;
             rigidbodyVelocity = rigidbody.velocity;
             rigidbodyAngularVelocity = rigidbody.angularVelocity;
+            activeThisFrame = rigidbody.gameObject.activeSelf;
         }
 
         public void SetDelta(float frameTime)
@@ -145,6 +151,7 @@ namespace NEP.MonoDirector.Data
         public Vector3 scale;
 
         public float frameTime;
+        public bool activeThisFrame;
 
         public Vector3 rigidbodyVelocity;
         public Vector3 rigidbodyAngularVelocity;
