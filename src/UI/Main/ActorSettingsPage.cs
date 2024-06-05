@@ -60,13 +60,13 @@ namespace NEP.MonoDirector.UI
 
         public void OnDeleteButtonClicked()
         {
-            actor.Delete();
+            Director.instance.RemoveActor(actor);
             MDMenu.instance.PreviousPage();
         }
 
         public void OnDeletePropsButtonClicked()
         {
-            Director.instance.ClearLastProps();
+            actor.DeleteOwnedProps();
         }
 
         public void OnRecastButtonClicked()

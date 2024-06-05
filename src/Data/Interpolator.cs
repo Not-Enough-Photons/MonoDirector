@@ -139,6 +139,7 @@ namespace NEP.MonoDirector.Data
 
             transform.position = Vector3.Lerp(previousPosition, nextPosition, delta);
             transform.rotation = Quaternion.Slerp(previousRotation, nextRotation, delta);
+            transform.gameObject.SetActive(previous.activeThisFrame);
         }
 
         public static void GetSteppedPosition(ObjectFrame previousFrame, ObjectFrame nextFrame, out Vector3 previous, out Vector3 next)

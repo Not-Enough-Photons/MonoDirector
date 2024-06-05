@@ -91,6 +91,7 @@ namespace NEP.MonoDirector.Core
             foreach (var castMember in Director.instance.Cast)
             {
                 castMember.OnSceneBegin();
+                castMember.ActorBody.AllowCollisions(false);
             }
 
             foreach (var prop in Director.instance.WorldProps)
@@ -109,6 +110,7 @@ namespace NEP.MonoDirector.Core
             {
                 if(actor is Actor actorPlayer)
                 {
+                    actorPlayer.ActorBody.AllowCollisions(true);
                     actorPlayer?.Microphone?.Playback();
                 }
             }
@@ -138,6 +140,7 @@ namespace NEP.MonoDirector.Core
             {
                 if (castMember != null && castMember is Actor actorPlayer)
                 {
+                    actorPlayer?.ActorBody?.AllowCollisions(false);
                     actorPlayer?.Microphone?.StopPlayback();
                 }
             }

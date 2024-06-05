@@ -91,6 +91,11 @@ namespace NEP.MonoDirector.UI
             }
         }
 
+        private void OnDisable()
+        {
+            
+        }
+
         public void OpenPage(string page)
         {
             lastPage = currentPage;

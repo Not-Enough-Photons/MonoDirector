@@ -5,7 +5,7 @@ namespace NEP.MonoDirector
 {
     static partial class BuildInfo
     {
-		public const int Epoch = 1714120934;
-		public const string GitCommit = "dec70f421436de09fc2083ad60f66313a37b10bf";
+		public const int Epoch = 1715193422;
+		public const string GitCommit = "49c701b38662292f49746f0caa12ed928dc9556b";
     }
 }

@@ -125,6 +125,7 @@ namespace NEP.MonoDirector.Core
             foreach (var castMember in Director.instance.Cast)
             {
                 castMember.OnSceneBegin();
+                castMember.ActorBody.AllowCollisions(false);
             }
 
             foreach(var prop in Director.instance.WorldProps)
@@ -145,6 +146,7 @@ namespace NEP.MonoDirector.Core
             {
                 if (castMember != null && castMember is Actor actorPlayer)
                 {
+                    actorPlayer.ActorBody.AllowCollisions(true);
                     actorPlayer?.Microphone?.Playback();
                 }
             }
@@ -201,6 +203,7 @@ namespace NEP.MonoDirector.Core
             {
                 if (castMember != null && castMember is Actor actorPlayer)
                 {
+                    actorPlayer?.ActorBody?.AllowCollisions(false);
                     actorPlayer?.Microphone?.StopPlayback();
                 }
             }
@@ -247,13 +250,14 @@ namespace NEP.MonoDirector.Core
             Director.instance.Cast.Add(activeActor);
             lastActor = activeActor;
 
+            activeActor.OwnedProps.AddRange(Director.instance.RecordingProps);
+
             activeActor = null;
 
             Director.instance.Cast.AddRange(ActiveActors);
             ActiveActors.Clear();
 
             Director.instance.WorldProps.AddRange(Director.instance.RecordingProps);
-            Director.instance.LastRecordedProps = Director.instance.RecordingProps;
             Director.instance.RecordingProps.Clear();
 
             if (recordRoutine != null)

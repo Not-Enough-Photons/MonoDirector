@@ -22,7 +22,6 @@ namespace NEP.MonoDirector.Cameras
         private void Start()
         {
             RenderingVolume = GetComponent<Volume>();
-
             LensDistortion = RenderingVolume.profile.components[0].Cast<LensDistortion>();
             ChromaticAberration = RenderingVolume.profile.components[1].Cast<ChromaticAberration>();
             MkGlow = RenderingVolume.profile.components[4].Cast<MKGlow>();
