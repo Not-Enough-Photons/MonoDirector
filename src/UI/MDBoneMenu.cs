@@ -320,7 +320,7 @@ namespace NEP.MonoDirector.UI
             //vfxCategory.CreateBoolElement("Motion Blur", Color.white, true, (value) => CameraRigManager.Instance.CameraVolume.MotionBlur.active = value);
             
             vfxCategory.CreateBoolElement(
-                "Chromatic Abberation", 
+                "Chromatic Aberration", 
                 Color.white, 
                 true,
                 value => CameraRigManager.Instance.EnableChromaticAbberation(value)
