@@ -23,10 +23,6 @@ namespace NEP.MonoDirector.Cameras
             }
         }
 
-        private void LateUpdate()
-        {
-        }
-
         private void MouseFOV()
         {
             m_lastFOV = m_camera.fieldOfView;

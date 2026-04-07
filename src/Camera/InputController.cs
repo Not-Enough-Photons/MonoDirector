@@ -22,7 +22,7 @@ namespace NEP.MonoDirector.Cameras
 
         private void Update()
         {
-            if (ModCompatibility.HasWideEye)
+            if (ModCompatibility.HasFlatPlayer)
                 return;
 
             m_lockCursor = Input.GetMouseButton(1);
