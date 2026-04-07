@@ -17,12 +17,14 @@ namespace NEP.MonoDirector.Cameras
         private void Update()
         {
             if (!ModCompatibility.HasFlatPlayer)
+            {
+                m_camera.fieldOfView = Mathf.Lerp(m_lastFOV, m_fov, fovChangeSmoothing * Time.deltaTime);
                 MouseFOV();
+            }
         }
 
         private void LateUpdate()
         {
-            m_camera.fieldOfView = Mathf.Lerp(m_lastFOV, m_fov, fovChangeSmoothing * Time.deltaTime);
         }
 
         private void MouseFOV()
