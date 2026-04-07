@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using NEP.MonoDirector.Compatibility;
+using UnityEngine;
 
 namespace NEP.MonoDirector.Cameras
 {
@@ -60,6 +61,9 @@ namespace NEP.MonoDirector.Cameras
 
         protected void Update()
         {
+            if (ModCompatibility.HasFlatPlayer)
+                return;
+
             MoveUpdate();
             MouseUpdate();
         }

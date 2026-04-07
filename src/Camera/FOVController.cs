@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using NEP.MonoDirector.Compatibility;
+using UnityEngine;
 
 namespace NEP.MonoDirector.Cameras
 {
@@ -15,7 +16,8 @@ namespace NEP.MonoDirector.Cameras
 
         private void Update()
         {
-            MouseFOV();
+            if (!ModCompatibility.HasFlatPlayer)
+                MouseFOV();
         }
 
         private void LateUpdate()
