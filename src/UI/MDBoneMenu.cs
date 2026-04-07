@@ -8,6 +8,7 @@ using BoneLib.BoneMenu;
 using Il2CppSLZ.Marrow;
 using Il2CppSystem;
 using BoneLib;
+using NEP.MonoDirector.Compatibility;
 
 namespace NEP.MonoDirector.UI
 {
@@ -105,8 +106,9 @@ namespace NEP.MonoDirector.UI
         {
             Page audioCategory = category.CreatePage("Audio", Color.white);
 
+            // WideEye already has good camera settings. Don't want to interfere with that.
             // Camera settings on Quest wouldn't make much sense.
-            if (!HelperMethods.IsAndroid())
+            if (ModCompatibility.HasWideEye || !HelperMethods.IsAndroid())
             {
                 Page cameraCategory = category.CreatePage("Camera", Color.white);
                 BuildCameraCategory(cameraCategory);

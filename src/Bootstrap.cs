@@ -14,6 +14,7 @@ using MelonLoader;
 using Il2CppSLZ.Marrow.Warehouse;
 using BoneLib.Notifications;
 using System.Linq.Expressions;
+using NEP.MonoDirector.Compatibility;
 
 namespace NEP.MonoDirector.Core
 {
@@ -27,6 +28,7 @@ namespace NEP.MonoDirector.Core
 
         internal static void Initialize()
         {
+            ModCompatibility.Scan();
             Logging.Initialize();
             BundleLoader.Initialize();
 
