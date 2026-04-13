@@ -3,6 +3,15 @@ This is the changelog for MonoDirector! This changelog only features public rele
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
+## [1.2.10] - 4/13/2026
+
+### Fixed
+- Fixed issues with WideEye interfering with MonoDirector. This means that if you prefer using WideEye's features, you can use them seamlessly with MonoDirector.
+- Fixed potential problems that may come up when using FlatPlayer and the FreeCam controls
+- Fixed an issue with null props being removed
+- Fixed an issue with prop markers not going to the top of props
+- Fixed an issue with actor recasting not cleaning up props correctly
+
 ## [1.2.9] - 3/20/2026
 
 ### Updated

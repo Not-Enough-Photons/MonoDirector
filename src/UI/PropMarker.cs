@@ -1,4 +1,5 @@
-﻿using NEP.MonoDirector.Actors;
+﻿using Il2CppSLZ.Marrow.Interaction;
+using NEP.MonoDirector.Actors;
 using UnityEngine;
 
 namespace NEP.MonoDirector.UI
@@ -12,6 +13,8 @@ namespace NEP.MonoDirector.UI
         private Prop m_prop;
         private Vector3 m_target;
         private Vector3 m_offset;
+
+        private const float m_markerPadding = 0.25f;
 
         public void SetTarget(Vector3 target)
         {
@@ -35,7 +38,22 @@ namespace NEP.MonoDirector.UI
             if (m_prop != null)
             {
                 m_gameObject.transform.position = m_prop.transform.position;
-                SetTarget(m_prop.transform.position + m_offset);
+
+                if (!m_prop.InteractableRigidbody)
+                {
+                    Hide();
+                    return;
+                }
+
+                // Temp hack for 1.2.0
+                if (!MarrowBody.Cache.TryGet(m_prop.InteractableRigidbody.gameObject, out MarrowBody mb))
+                {
+                    Hide();
+                    return;
+                }
+
+                Bounds bounds = mb.Bounds;
+                SetOffset(new Vector3(0f, (bounds.center.y + bounds.extents.y) + m_markerPadding, 0f));
             }
         }
 
@@ -52,7 +70,7 @@ namespace NEP.MonoDirector.UI
             }
 
             m_target = m_prop.transform.position;
-            m_gameObject.transform.position = Vector3.Lerp(m_gameObject.transform.position, m_target, 8f * Time.deltaTime);
+            m_gameObject.transform.position = Vector3.Lerp(m_gameObject.transform.position, m_target + m_offset, 8f * Time.deltaTime);
         }
 
         public void Show()

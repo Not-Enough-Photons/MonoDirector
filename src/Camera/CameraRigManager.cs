@@ -5,6 +5,7 @@ using UnityEngine;
 
 using Il2CppSLZ.Bonelab;
 using Il2CppSLZ.Marrow;
+using NEP.MonoDirector.Compatibility;
 
 namespace NEP.MonoDirector.Cameras
 {
@@ -12,6 +13,10 @@ namespace NEP.MonoDirector.Cameras
     {
         public CameraRigManager(RigScreenOptions options)
         {
+            // Do not interfere with WideEye
+            if (ModCompatibility.HasWideEye)
+                return;
+
             RigScreenOptions = options;
             Start();
         }

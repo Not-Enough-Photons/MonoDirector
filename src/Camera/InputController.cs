@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using NEP.MonoDirector.Compatibility;
+using UnityEngine;
 
 namespace NEP.MonoDirector.Cameras
 {
@@ -21,6 +22,9 @@ namespace NEP.MonoDirector.Cameras
 
         private void Update()
         {
+            if (ModCompatibility.HasFlatPlayer)
+                return;
+
             m_lockCursor = Input.GetMouseButton(1);
             Cursor.lockState = m_lockCursor ? CursorLockMode.Locked : CursorLockMode.None;
             Cursor.visible = !m_lockCursor;
