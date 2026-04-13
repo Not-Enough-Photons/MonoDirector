@@ -60,18 +60,22 @@ namespace NEP.MonoDirector.Core
 
             Events.OnPrePlayback += () => SetPlayState(PlayState.Preplaying);
             Events.OnPreRecord += () => SetPlayState(PlayState.Prerecording);
+            Events.OnStopPlayback += () => SetPlayState(PlayState.Stopped);
 
             Events.OnPlay += () => SetPlayState(PlayState.Playing);
             Events.OnStartRecording += () => SetPlayState(PlayState.Recording);
+            Events.OnStopRecording += () => SetPlayState(PlayState.Stopped);
         }
 
         internal static void Shutdown()
         {
             Events.OnPrePlayback -= () => SetPlayState(PlayState.Preplaying);
             Events.OnPreRecord -= () => SetPlayState(PlayState.Prerecording);
+            Events.OnStopPlayback -= () => SetPlayState(PlayState.Stopped);
 
             Events.OnPlay -= () => SetPlayState(PlayState.Playing);
             Events.OnStartRecording -= () => SetPlayState(PlayState.Recording);
+            Events.OnStopRecording -= () => SetPlayState(PlayState.Stopped);
         }
 
         private static void Update()
@@ -134,14 +138,17 @@ namespace NEP.MonoDirector.Core
             // If we don't, the props will still play, but they will be floating in the air aimlessly.
             // Spooky!
 
-            if (WorldProps.Count != 0)
+            for (int i = WorldProps.Count - 1; i >= 0; i--)
             {
-                foreach (var prop in WorldProps)
+                Prop prop = WorldProps[i];
+
+                if (prop.Actor == actor)
                 {
-                    if (prop.Actor == actor)
-                    {
-                        GameObject.Destroy(prop);
-                    }
+                    // Restore kinematic state
+                    prop.InteractableRigidbody.isKinematic = false;
+
+                    GameObject.Destroy(prop);
+                    WorldProps.Remove(prop);
                 }
             }
 
