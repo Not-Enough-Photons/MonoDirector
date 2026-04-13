@@ -118,14 +118,15 @@ namespace NEP.MonoDirector.Actors
             Prop actorProp = gameObject.GetComponent<Prop>();
             bool isProp = actorProp != null;
 
+            if (!isProp)
+                return;
+
             TrackedVehicle vehicle = actorProp.TryCast<TrackedVehicle>();
             
             if (vehicle != null)
-            {
                 vehicle.RemoveVehicle();
-            }
             
-            if (isProp && Director.PlayState == State.PlayState.Stopped)
+            if (Director.PlayState == State.PlayState.Stopped)
             {
                 MelonLoader.MelonLogger.Msg($"Removing component from {gameObject.name}");
 
