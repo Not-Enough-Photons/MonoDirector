@@ -55,6 +55,7 @@
 		<Compile Include="src\Audio\SoundHolder.cs" />
 		<Compile Include="src\Bootstrap.cs" />
 		<Compile Include="src\Caster.cs" />
+		<Compile Include="src\Compatibility\ModCompatibility.cs" />
 		<Compile Include="src\Data\BundleLoader.cs" />
 		<Compile Include="src\Downloading\AssetDownloader.cs" />
 		<Compile Include="src\Downloading\DataResult.cs" />
