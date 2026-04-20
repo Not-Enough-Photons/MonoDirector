@@ -1,4 +1,5 @@
-﻿using Il2CppSLZ.Bonelab;
+﻿using Il2CppCysharp.Threading.Tasks.Triggers;
+using Il2CppSLZ.Bonelab;
 using NEP.MonoDirector.Actors;
 using UnityEngine;
 
@@ -65,12 +66,11 @@ namespace NEP.MonoDirector.Core
             // If we don't, the props will still play, but they will be floating in the air aimlessly.
             // Spooky!
 
-            if (actor.OwnedProps.Count != 0)
+            for (int i = actor.OwnedProps.Count - 1; i >= 0; i--)
             {
-                foreach (var prop in actor.OwnedProps)
-                {
-                    GameObject.Destroy(prop);
-                }
+                Prop prop = actor.OwnedProps[i];
+                actor.DisownProp(prop);
+                GameObject.Destroy(prop);
             }
 
             UncastActor(actor);

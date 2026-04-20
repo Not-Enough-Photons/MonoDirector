@@ -39,20 +39,13 @@ namespace NEP.MonoDirector.UI
             {
                 m_gameObject.transform.position = m_prop.transform.position;
 
-                if (!m_prop.InteractableRigidbody)
+                if (!m_prop.Entity)
                 {
                     Hide();
                     return;
                 }
 
-                // Temp hack for 1.2.0
-                if (!MarrowBody.Cache.TryGet(m_prop.InteractableRigidbody.gameObject, out MarrowBody mb))
-                {
-                    Hide();
-                    return;
-                }
-
-                Bounds bounds = mb.Bounds;
+                Bounds bounds = m_prop.Entity.AnchorBody.Bounds;
                 SetOffset(new Vector3(0f, (bounds.center.y + bounds.extents.y) + m_markerPadding, 0f));
             }
         }
