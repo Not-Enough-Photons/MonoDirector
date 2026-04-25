@@ -1,18 +1,31 @@
-﻿using Il2CppSLZ.Marrow.Interaction;
+﻿using Il2CppSLZ.Marrow;
 using NEP.MonoDirector.Actors;
 using UnityEngine;
 
 namespace NEP.MonoDirector.UI
 {
+    [Obsolete("The generic MarkerManager class should be used!")]
     public sealed class PropMarker
     {
+        public enum PropType
+        {
+            None,
+            Generic,
+            Gun,
+            Magazine,
+            Vehicle,
+            NPC
+        }
+
         public bool Active => m_gameObject.activeInHierarchy;
         public bool HasProp => m_prop != null;
+        public PropType Type => m_type;
 
         private GameObject m_gameObject;
         private Prop m_prop;
         private Vector3 m_target;
         private Vector3 m_offset;
+        private PropType m_type;
 
         private const float m_markerPadding = 0.25f;
 
@@ -33,21 +46,30 @@ namespace NEP.MonoDirector.UI
 
         public void SetProp(Prop prop)
         {
+            if (prop == null)
+                return;
+
             m_prop = prop;
 
-            if (m_prop != null)
+            if (Prop.EligibleWithType<GunProp>(prop.Entity))
+                m_type = PropType.Gun;
+            else if (Prop.EligibleWithType<Magazine>(prop.Entity))
+                m_type = PropType.Magazine;
+            else if (Prop.EligibleWithType<Atv>(prop.Entity))
+                m_type = PropType.Vehicle;
+            else
+                m_type = PropType.Generic;
+            
+            m_gameObject.transform.position = m_prop.transform.position;
+
+            if (!m_prop.Entity)
             {
-                m_gameObject.transform.position = m_prop.transform.position;
-
-                if (!m_prop.Entity)
-                {
-                    Hide();
-                    return;
-                }
-
-                Bounds bounds = m_prop.Entity.AnchorBody.Bounds;
-                SetOffset(new Vector3(0f, (bounds.center.y + bounds.extents.y) + m_markerPadding, 0f));
+                Hide();
+                return;
             }
+
+            Bounds bounds = m_prop.Entity.AnchorBody.Bounds;
+            SetOffset(new Vector3(0f, (bounds.center.y + bounds.extents.y) + m_markerPadding, 0f));
         }
 
         public void Update()
@@ -74,6 +96,14 @@ namespace NEP.MonoDirector.UI
         public void Hide()
         {
             m_gameObject.SetActive(false);
+        }
+
+        private void UpdateIcon()
+        {
+            if (m_type == PropType.None)
+            {
+                return;
+            }
         }
     }
 }

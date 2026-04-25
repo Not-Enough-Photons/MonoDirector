@@ -88,6 +88,7 @@ namespace NEP.MonoDirector.Actors
         public Texture2D AvatarPortrait { get => m_avatarPortrait; }
 
         public bool Seated { get => m_activeSeat != null; }
+        public bool Hidden { get => m_hidden; }
 
         protected List<FrameGroup> m_avatarFrames;
 
@@ -115,6 +116,7 @@ namespace NEP.MonoDirector.Actors
 
         private Transform m_lastPelvisParent;
         private int m_headIndex;
+        private bool m_hidden;
         
         // Debug build stuff
         #if DEBUG
@@ -126,7 +128,7 @@ namespace NEP.MonoDirector.Actors
         {
             base.OnSceneBegin();
 
-            m_body.AllowCollisions(true);
+            // m_body.AllowCollisions(true);
 
             for (int i = 0; i < 55; i++)
             {
@@ -305,7 +307,7 @@ namespace NEP.MonoDirector.Actors
         {
             foreach (var ownedProp in m_ownedProps)
             {
-                PropMarkerManager.RemoveMarkerFromProp(ownedProp);
+                MarkerManager.RemoveMarkerFromProp(ownedProp);
                 Caster.RemoveProp(ownedProp);
                 ownedProp.DeleteAllFrames();
                 PropBuilder.RemoveProp(ownedProp.Entity);
@@ -320,11 +322,26 @@ namespace NEP.MonoDirector.Actors
             m_avatarFrames.Clear();
         }
 
+        public void SetHidden(bool hidden)
+        {
+            m_hidden = hidden;
+        }
+
+        public void Show()
+        {
+            ClonedAvatar.gameObject.SetActive(true);
+        }
+
+        public void Hide()
+        {
+            ClonedAvatar.gameObject.SetActive(false);
+        }
+
         public void ParentToSeat(MarrowSeat seat)
         {
             m_activeSeat = seat;
 
-            Transform pelvis = m_clonedAvatar.animator.GetBoneTransform(HumanBodyBones.Hips);
+            Transform pelvis = m_clonedRigBones[(int)HumanBodyBones.Hips];
 
             m_lastPelvisParent = pelvis.GetParent();
 
@@ -339,7 +356,7 @@ namespace NEP.MonoDirector.Actors
         public void UnparentSeat()
         {
             m_activeSeat = null;
-            Transform pelvis = m_clonedAvatar.animator.GetBoneTransform(HumanBodyBones.Hips);
+            Transform pelvis = m_clonedRigBones[(int)HumanBodyBones.Hips];
             pelvis.SetParent(m_lastPelvisParent);
         }
 

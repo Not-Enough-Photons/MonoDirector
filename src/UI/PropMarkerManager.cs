@@ -7,6 +7,7 @@ using UnityEngine;
 
 namespace NEP.MonoDirector.UI
 {
+    [Obsolete("The generic MarkerManager class should be used!")]
     public static class PropMarkerManager
     {
         private static GameObject container;

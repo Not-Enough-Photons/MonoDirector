@@ -54,7 +54,8 @@ namespace NEP.MonoDirector.Core
 
         internal static void Update()
         {
-            PropMarkerManager.Update();
+            MarkerManager.Update();
+            //PropMarkerManager.Update();
         }
 
         internal static void Shutdown()
@@ -159,9 +160,11 @@ namespace NEP.MonoDirector.Core
 
         internal static void CreateUI()
         {
-            PropMarkerManager.Initialize();
+            MarkerManager.Initialize();
+            //PropMarkerManager.Initialize();
             InfoInterfaceManager.Initialize();
             ActorFrameManager.Initialize();
+            PropFrameManager.Initialize();
             WarehouseLoader.SpawnFromBarcode(WarehouseLoader.actorPanelBarcode);
             WarehouseLoader.SpawnFromBarcode(WarehouseLoader.mainMenuBarcode);
             WarehouseLoader.SpawnFromBarcode(WarehouseLoader.stageShelfBarcode);

@@ -3,7 +3,9 @@ using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.Interaction;
 using NEP.MonoDirector.Core;
 using NEP.MonoDirector.Proxy;
+using NEP.MonoDirector.UI;
 using UnityEngine;
+using static Il2CppSLZ.Marrow.PuppetMasta.Muscle;
 
 namespace NEP.MonoDirector.Actors
 {
@@ -30,6 +32,7 @@ namespace NEP.MonoDirector.Actors
                 prop.SetGun(entity.GetComponent<Gun>());
 
                 Caster.AddRecordProp(prop);
+                PropFrameManager.AddFrameToProp(prop);
                 return;
             }
 
@@ -43,6 +46,7 @@ namespace NEP.MonoDirector.Actors
                 prop.SetBreakableObject(entity.GetComponent<ObjectDestructible>());
 
                 Caster.AddRecordProp(prop);
+                PropFrameManager.AddFrameToProp(prop);
                 return;
             }
 
@@ -55,6 +59,7 @@ namespace NEP.MonoDirector.Actors
                 prop.SetEntity(entity);
 
                 Caster.AddRecordProp(prop);
+                PropFrameManager.AddFrameToProp(prop);
                 return;
             }
 
@@ -68,6 +73,7 @@ namespace NEP.MonoDirector.Actors
                 //prop.SetVehicle(entity.GetComponent<Atv>());
 
                 Caster.AddRecordProp(prop);
+                PropFrameManager.AddFrameToProp(prop);
                 return;
             }
 
@@ -80,6 +86,7 @@ namespace NEP.MonoDirector.Actors
                 prop.SetEntity(entity);
 
                 Caster.AddRecordProp(prop);
+                PropFrameManager.AddFrameToProp(prop);
             }
         }
         
@@ -98,6 +105,7 @@ namespace NEP.MonoDirector.Actors
                 }
 
                 Caster.RemoveProp(actorProp);
+                PropFrameManager.RemoveFrameFromProp(actorProp);
                 Director.ActiveStage.RemoveProp(actorProp);
                 GameObject.Destroy(actorProp);
             }

@@ -15,11 +15,14 @@ namespace NEP.MonoDirector.UI
         private TextMeshProUGUI m_actorNameText;
         private Button m_recastButton;
         private Button m_deleteButton;
+        private Button m_hideButton;
 
         private Action m_onRecastClicked;
         private Action m_onDeleteClicked;
+        private Action m_onHideClicked;
 
         private Vector3 m_targetPosition;
+        private bool m_hidden;
 
         private void Awake()
         {
@@ -28,9 +31,11 @@ namespace NEP.MonoDirector.UI
             m_actorNameText = m_root.Find("ActorName").GetComponent<TextMeshProUGUI>();
             m_recastButton = m_root.Find("Management/Recast").GetComponent<Button>();
             m_deleteButton = m_root.Find("Management/Delete").GetComponent<Button>();
+            m_hideButton = m_root.Find("Management/Hide").GetComponent<Button>();
 
             m_onRecastClicked = OnRecastClicked;
             m_onDeleteClicked = OnDeleteClicked;
+            m_onHideClicked = OnHideClicked;
 
             m_root.gameObject.SetActive(false);
         }
@@ -42,6 +47,7 @@ namespace NEP.MonoDirector.UI
 
             m_recastButton.onClick.AddListener(m_onRecastClicked);
             m_deleteButton.onClick.AddListener(m_onDeleteClicked);
+            m_hideButton.onClick.AddListener(m_onHideClicked);
         }
 
         private void OnDisable()
@@ -51,6 +57,7 @@ namespace NEP.MonoDirector.UI
 
             m_recastButton.onClick.RemoveListener(m_onRecastClicked);
             m_deleteButton.onClick.RemoveListener(m_onDeleteClicked);
+            m_hideButton.onClick.RemoveListener(m_onHideClicked);
         }
 
         private void Update()
@@ -86,6 +93,12 @@ namespace NEP.MonoDirector.UI
             // TODO: Move this into Caster or something
             Director.ActiveStage.RemoveActor(Caster.SelectedActor);
             m_root.gameObject.SetActive(false);
+        }
+
+        private void OnHideClicked()
+        {
+            m_hidden = !m_hidden;
+            Caster.SelectedActor.SetHidden(m_hidden);
         }
     }
 }

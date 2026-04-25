@@ -187,6 +187,9 @@ namespace NEP.MonoDirector.Core
                     if (castMember != null && castMember is Actor actorPlayer)
                     {
                         actorPlayer?.Microphone?.Playback();
+
+                        if (actorPlayer.Hidden)
+                            actorPlayer.Hide();
                     }
                 }
             }
@@ -270,6 +273,9 @@ namespace NEP.MonoDirector.Core
                     if (castMember != null && castMember is Actor actorPlayer)
                     {
                         actorPlayer?.Microphone?.StopPlayback();
+
+                        if (actorPlayer.Hidden)
+                            actorPlayer.Show();
                     }
                 }
 
@@ -399,7 +405,8 @@ namespace NEP.MonoDirector.Core
 
                 yield return null;
             }
-            
+
+            Director.Stop();
             Events.OnStopRecording?.Invoke();
             yield return null;
         }
