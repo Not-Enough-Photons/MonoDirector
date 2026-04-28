@@ -40,16 +40,19 @@ namespace NEP.MonoDirector.Tools
             if (Physics.Raycast(ray, out RaycastHit hit, float.PositiveInfinity, (int)BoneLib.GameLayers.DEFAULT, QueryTriggerInteraction.Collide))
             {
                 if (hit.collider.attachedRigidbody == null)
-                {
                     return;
-                }
 
                 MarrowBody body = hit.collider.attachedRigidbody.GetComponent<MarrowBody>();
                 MarrowEntity entity = body.Entity;
                 ActorProxy proxy = entity.GetComponent<ActorProxy>();
 
                 if (proxy == null)
+                    return;
+
+                if (m_selectedProxy != null)
                 {
+                    m_selectedProxy.OnDeselected();
+                    m_selectedProxy = null;
                     return;
                 }
 
