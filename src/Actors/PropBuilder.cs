@@ -28,8 +28,16 @@ namespace NEP.MonoDirector.Actors
                 Logging.Msg($"Adding gun component to {entity.name}");
 #endif
                 GunProp prop = entity.gameObject.AddComponent<GunProp>();
+
                 prop.SetEntity(entity);
                 prop.SetGun(entity.GetComponent<Gun>());
+
+                // Check for a loaded magazine
+                if (prop.Gun.HasMagazine())
+                {
+                    Magazine magazine = prop.Gun.ammoSocket._magazinePlug.magazine;
+                    BuildProp(magazine.interactableHost.marrowEntity);
+                }
 
                 Caster.AddRecordProp(prop);
                 PropFrameManager.AddFrameToProp(prop);
