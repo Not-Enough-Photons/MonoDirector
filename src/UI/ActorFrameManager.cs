@@ -5,6 +5,7 @@ using Il2CppSLZ.Marrow.Warehouse;
 using NEP.MonoDirector.Core;
 using NEP.MonoDirector.Data;
 using NEP.MonoDirector.Proxy;
+using NEP.MonoDirector.State;
 using UnityEngine;
 
 namespace NEP.MonoDirector.UI
@@ -33,10 +34,14 @@ namespace NEP.MonoDirector.UI
                 obj.transform.localPosition = Vector3.zero;
                 loadedFrameObjects.Add(obj);
             }
+
+            Events.OnPlayStateSet += ShowFrames;
         }
 
         public static void CleanUp()
         {
+            Events.OnPlayStateSet -= ShowFrames;
+
             frames.Clear();
             loadedFrameObjects.Clear();
             activeFrames.Clear();
@@ -70,8 +75,7 @@ namespace NEP.MonoDirector.UI
                 return;
             }
 
-            Poolee frame = frames[proxy].GetComponent<Poolee>();
-            frame.Despawn();
+            GameObject frame = frames[proxy];
             frame.gameObject.SetActive(false);
             frame.transform.parent = container.transform;
             frame.transform.localScale = Vector3.one;
@@ -84,6 +88,21 @@ namespace NEP.MonoDirector.UI
             frameObject.SetActive(false);
             frameObject.transform.SetParent(container.transform);
             loadedFrameObjects.Add(frameObject);
+        }
+
+        private static void ShowFrames(PlayState playState)
+        {
+            if (playState == PlayState.Preplaying || playState == PlayState.Prerecording)
+            {
+                foreach (var frame in activeFrames)
+                    frame.gameObject.SetActive(false);
+            }
+
+            if (playState == PlayState.Stopped)
+            {
+                foreach (var frame in activeFrames)
+                    frame.gameObject.SetActive(true);
+            }
         }
     }
 }

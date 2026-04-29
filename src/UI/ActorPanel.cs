@@ -4,6 +4,7 @@ using NEP.MonoDirector.Core;
 using NEP.MonoDirector.Actors;
 using Il2CppTMPro;
 using UnityEngine.UI;
+using NEP.MonoDirector.State;
 
 namespace NEP.MonoDirector.UI
 {
@@ -44,6 +45,7 @@ namespace NEP.MonoDirector.UI
         {
             Caster.OnActorSelected += OnActorSelected;
             Caster.OnActorDeselected += OnActorDeselected;
+            Events.OnPlayStateSet += OnPlayStateSet;
 
             m_recastButton.onClick.AddListener(m_onRecastClicked);
             m_deleteButton.onClick.AddListener(m_onDeleteClicked);
@@ -54,6 +56,7 @@ namespace NEP.MonoDirector.UI
         {
             Caster.OnActorSelected -= OnActorSelected;
             Caster.OnActorDeselected -= OnActorDeselected;
+            Events.OnPlayStateSet -= OnPlayStateSet;
 
             m_recastButton.onClick.RemoveListener(m_onRecastClicked);
             m_deleteButton.onClick.RemoveListener(m_onDeleteClicked);
@@ -99,6 +102,20 @@ namespace NEP.MonoDirector.UI
         {
             m_hidden = !m_hidden;
             Caster.SelectedActor.SetHidden(m_hidden);
+        }
+
+        private void OnPlayStateSet(PlayState state)
+        {
+            if (Caster.SelectedActor == null)
+                return;
+
+            if (state != PlayState.Stopped)
+            {
+                gameObject.SetActive(false);
+                return;
+            }
+
+            gameObject.SetActive(true);
         }
     }
 }

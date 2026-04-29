@@ -23,11 +23,6 @@ namespace NEP.MonoDirector.Proxy
             BuildHull();
         }
 
-        private void OnDestroy()
-        {
-            MarkerManager.RemoveMarkerFromActor(this);
-        }
-
         private void BuildHull()
         {
             GameObject triggerHullObject = new GameObject("Actor Trigger Hull");

@@ -84,6 +84,7 @@ namespace NEP.MonoDirector.Actors
         public IReadOnlyList<Prop> OwnedProps => m_ownedProps.AsReadOnly();
 
         public ActorBody ActorBody { get => m_body; }
+        public ActorProxy Proxy { get => m_proxy; }
         public ActorSpeech Microphone { get => m_microphone; }
         public Texture2D AvatarPortrait { get => m_avatarPortrait; }
 
@@ -312,6 +313,9 @@ namespace NEP.MonoDirector.Actors
                 ownedProp.DeleteAllFrames();
                 PropBuilder.RemoveProp(ownedProp.Entity);
             }
+
+            ActorFrameManager.RemoveFrameFromActor(m_proxy);
+            MarkerManager.RemoveMarkerFromActor(m_proxy);
 
             m_ownedProps.Clear();
             m_body.Delete();
