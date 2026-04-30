@@ -143,6 +143,7 @@
 		<Compile Include="src\UI\ActorPanel.cs" />
 		<Compile Include="src\UI\InfoInterfaceManager.cs" />
 		<Compile Include="src\UI\InformationInterface.cs" />
+		<Compile Include="src\UI\Interaction\UIButton.cs" />
 		<Compile Include="src\UI\Main\ActorDisplayPage.cs" />
 		<Compile Include="src\UI\Main\ActorEntry.cs" />
 		<Compile Include="src\UI\Main\ActorSettingsPage.cs" />
