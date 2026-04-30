@@ -1,4 +1,5 @@
-﻿using NEP.MonoDirector.Data;
+﻿using MelonLoader;
+using NEP.MonoDirector.Data;
 
 namespace NEP.MonoDirector.UI
 {
@@ -6,7 +7,7 @@ namespace NEP.MonoDirector.UI
     {
         public static void Initialize()
         {
-            WarehouseLoader.SpawnFromBarcode(WarehouseLoader.infoInterfaceBarcode, false);
+            MelonCoroutines.Start(WarehouseLoader.SpawnFromBarcode(WarehouseLoader.infoInterfaceBarcode, true));
         }
     }
 }
