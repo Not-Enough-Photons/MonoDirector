@@ -1,7 +1,7 @@
 ﻿using Il2CppSLZ.Bonelab;
 
 using MelonLoader;
-
+using NEP.MonoDirector.Core;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -59,12 +59,12 @@ namespace NEP.MonoDirector.UI.Interaction
 
         private void FixedUpdate()
         {
-            float curDistance = m_contactTransform.localPosition.z;
-            float maxDistance = MaxTolerance - ValueEpsilon;
+            float curDistance = Mathf.Abs(m_contactTransform.localPosition.z);
+            float maxDistance = MaxTolerance;
 
-            m_value = Mathf.Clamp01(Mathf.Abs(curDistance / maxDistance));
+            m_value = Mathf.Clamp01(curDistance / maxDistance);
             
-            if (curDistance <= -maxDistance)
+            if (curDistance >= maxDistance)
             {
                 if (!m_pressed)
                     Press();
