@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
 using MelonLoader;
-using NEP.MonoDirector.Core;
 using Il2CppTMPro;
 using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.Pool;
+
+using NEP.MonoDirector.Core;
+using NEP.MonoDirector.UI.Interaction;
 
 namespace NEP.MonoDirector.Tools
 {
@@ -43,20 +45,17 @@ namespace NEP.MonoDirector.Tools
             m_connect2 = transform.Find("SFX/Connect 2").GetComponent<AudioSource>();
             m_disconnect1 = transform.Find("SFX/Disconnect 1").GetComponent<AudioSource>();
             m_disconnect2 = transform.Find("SFX/Disconnect 2").GetComponent<AudioSource>();
-
+            
             m_onHandAttached = OnHandAttached;
             m_onHandReleased = OnHandReleased;
 
             m_rigidbody.isKinematic = true;
-        }
 
-        protected void OnEnable()
-        {
             m_grip.attachedHandDelegate += m_onHandAttached;
             m_grip.detachedHandDelegate += m_onHandReleased;
         }
 
-        protected void OnDisable()
+        protected void OnDestroy()
         {
             m_grip.attachedHandDelegate -= m_onHandAttached;
             m_grip.detachedHandDelegate -= m_onHandReleased;
@@ -85,6 +84,8 @@ namespace NEP.MonoDirector.Tools
             if (m_hoveredSocket.Empty)
             {
                 m_hoveredSocket.HoverOver();
+                //m_grip.GetController(out BaseController controller);
+                //controller.Haptic(0.25f);
             }
         }
 
@@ -130,6 +131,11 @@ namespace NEP.MonoDirector.Tools
 
         public void AttachToSocket(StageShelfSocket socket)
         {
+            if (m_lastConnectedSocket)
+            {
+                m_lastConnectedSocket.SetReel(null);
+            }
+
             m_attachedSocket = socket;
             m_lastConnectedSocket = m_attachedSocket;
             m_attachedSocket.SetReel(this);
@@ -180,8 +186,8 @@ namespace NEP.MonoDirector.Tools
                 return;
             }
 
-            // Already hovering over a socket?
-            if (m_hoveredSocket)
+            // Already hovering over an empty socket?
+            if (m_hoveredSocket && m_hoveredSocket.Empty)
             {
                 // If there's no stage already, make one.
                 if (m_stage == null)
@@ -189,7 +195,7 @@ namespace NEP.MonoDirector.Tools
                     m_stage = new Stage("Stage");
                     SetStage(m_stage);
                     Director.SetStage(m_stage);
-                    Director.ActiveFilm.AddStage(m_stage);
+                    Director.AddStage(m_stage);
                 }
 
                 AttachToSocket(m_hoveredSocket);
@@ -204,6 +210,16 @@ namespace NEP.MonoDirector.Tools
 
                 AttachToSocket(m_lastConnectedSocket);
             }
+        }
+        
+        public void Show()
+        {
+            gameObject.SetActive(true);
+        }
+
+        public void Hide()
+        {
+            gameObject.SetActive(false);
         }
     }
 }

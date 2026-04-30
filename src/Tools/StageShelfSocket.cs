@@ -100,5 +100,15 @@ namespace NEP.MonoDirector.Tools
 
             OnDisconnected?.Invoke(m_reel);
         }
+
+        public void Show()
+        {
+            gameObject.SetActive(true);
+        }
+
+        public void Hide()
+        {
+            gameObject.SetActive(false);
+        }
     }
 }

@@ -165,9 +165,9 @@ namespace NEP.MonoDirector.Core
             InfoInterfaceManager.Initialize();
             ActorFrameManager.Initialize();
             PropFrameManager.Initialize();
-            WarehouseLoader.SpawnFromBarcode(WarehouseLoader.actorPanelBarcode);
-            WarehouseLoader.SpawnFromBarcode(WarehouseLoader.mainMenuBarcode);
-            WarehouseLoader.SpawnFromBarcode(WarehouseLoader.stageShelfBarcode);
+            MelonCoroutines.Start(WarehouseLoader.SpawnFromBarcode(WarehouseLoader.actorPanelBarcode));
+            //MelonCoroutines.Start(WarehouseLoader.SpawnFromBarcode(WarehouseLoader.mainMenuBarcode));
+            MelonCoroutines.Start(WarehouseLoader.SpawnFromBarcode(WarehouseLoader.stageShelfBarcode));
         }
 
         private static void CheckAudioImport()

@@ -8,8 +8,7 @@ using MelonLoader;
 using NEP.MonoDirector.Core;
 
 using System.Collections;
-using System.Collections.Generic;
-
+using NEP.MonoDirector.UI.Interaction;
 using UnityEngine;
 
 namespace NEP.MonoDirector.Tools
@@ -25,6 +24,8 @@ namespace NEP.MonoDirector.Tools
         private StageShelfSocket m_deleteStageSocket;
         private StageShelfSocket m_activeStageSocket;
 
+        private UIButton m_closeButton;
+        
         private Spawnable m_reelSpawnable;
         private Coroutine m_reelSpawnRoutine;
 
@@ -50,17 +51,26 @@ namespace NEP.MonoDirector.Tools
             m_activeStageSocket = transform.Find("Canvas/ActiveStage").GetComponent<StageShelfSocket>();
             m_deleteSfx = transform.Find("Canvas/Trash/DeleteSFX").GetComponent<AudioSource>();
 
+            m_closeButton = transform.Find("Canvas/CloseButton").GetComponent<UIButton>();
+            
             MelonCoroutines.Start(SpawnReels());
+
+            gameObject.SetActive(false);
         }
 
         private void OnEnable()
         {
             m_film = Director.ActiveFilm;
-            transform.position += Vector3.up * 0.8f;
+
+            Transform playerChest = BoneLib.Player.PhysicsRig.m_chest;
+            transform.position = playerChest.position + playerChest.forward * 2f;
+            // Calculate look at
+            Vector3 lookRotation = Quaternion.LookRotation(playerChest.position - transform.position).eulerAngles;
+            Quaternion yRotation = Quaternion.Euler(0f, lookRotation.y, 0f);
+            transform.rotation = yRotation;
 
             foreach (var socket in m_sockets)
             {
-                socket.gameObject.SetActive(false);
                 socket.OnConnected += OnReelConnected;
                 socket.OnDisconnected += OnReelDisconnected;
             }
@@ -69,7 +79,14 @@ namespace NEP.MonoDirector.Tools
             m_deleteStageSocket.OnConnected += OnDeleteReel;
             m_activeStageSocket.OnConnected += OnActiveReelSet;
 
-            UpdateSockets();
+            m_newStageSocket.Reel.transform.position = m_newStageSocket.transform.position;
+            m_newStageSocket.Reel.transform.rotation = m_newStageSocket.transform.rotation;
+            m_newStageSocket.Reel.Show();
+
+            UpdateSocketLayout();
+            UpdateUtilitySockets();
+            
+            m_closeButton.OnClicked += Hide;
         }
 
         private void OnDisable()
@@ -83,26 +100,50 @@ namespace NEP.MonoDirector.Tools
             m_newStageSocket.OnDisconnected -= OnNewReel;
             m_deleteStageSocket.OnConnected -= OnDeleteReel;
             m_activeStageSocket.OnConnected -= OnActiveReelSet;
+            
+            m_closeButton.OnClicked -= Hide;
+        }
+
+        public void Show()
+        {
+            for (int i = 0; i < m_sockets.Length; i++)
+                m_sockets[i].Reel.Show();
+
+            if (m_activeStageSocket.Reel)
+                m_activeStageSocket.Reel.Show();
+            
+            m_newStageSocket.Reel.Show();
+            
+            gameObject.SetActive(true);
+        }
+
+        public void Hide()
+        {
+            for (int i = 0; i < m_sockets.Length; i++)
+                m_sockets[i].Reel.Hide();
+
+            if (m_activeStageSocket.Reel)
+                m_activeStageSocket.Reel.Hide();
+            
+            m_newStageSocket.Reel.Hide();
+            
+            gameObject.SetActive(false);
         }
 
         private void OnReelConnected(StageReel reel)
         {
             if (reel == null)
-            {
                 return;
-            }
 
-            UpdateSockets();
+            UpdateSocketLayout();
         }
 
         private void OnReelDisconnected(StageReel reel)
         {
             if (reel == null)
-            {
                 return;
-            }
 
-            UpdateSockets();
+            UpdateSocketLayout();
         }
 
         private void OnNewReel(StageReel reel)
@@ -122,9 +163,7 @@ namespace NEP.MonoDirector.Tools
             int index = Director.ActiveFilm.Stages.Count - 1;
 
             if (index <= 0)
-            {
                 index = 0;
-            }
 
             Stage previousStage = null;
 
@@ -132,11 +171,17 @@ namespace NEP.MonoDirector.Tools
             {
                 previousStage = new Stage();
                 Director.SetStage(previousStage);
+
+                // Create a new reel and attach it to the very first socket.
+                StageReel newReel = m_newStageSocket.Reel;
+                m_newStageSocket.Disconnect();
+                newReel.SetStage(previousStage);
+                newReel.AttachToSocket(m_sockets[0]);
             }
             else
             {
                 previousStage = Director.ActiveFilm.Stages[index];
-                Director.ActiveFilm.RemoveStage(m_deleteStageSocket.Reel.Stage);
+                Director.RemoveStage(m_deleteStageSocket.Reel.Stage);
             }
             
             Director.SetStage(previousStage);
@@ -145,7 +190,7 @@ namespace NEP.MonoDirector.Tools
             m_deleteStageSocket.Reel.SetStage(null);
             m_deleteStageSocket.Reel.AttachToSocket(m_newStageSocket);
 
-            UpdateSockets();
+            UpdateSocketLayout();
 
             m_deleteSfx.Play();
         }
@@ -153,9 +198,7 @@ namespace NEP.MonoDirector.Tools
         private void OnActiveReelSet(StageReel reel)
         {
             if (reel == null)
-            {
                 return;
-            }
 
             Director.SetStage(reel.Stage);
         }
@@ -194,6 +237,8 @@ namespace NEP.MonoDirector.Tools
                 crateRef = crateRef
             };
 
+            // TODO: Clean up this very messy code
+            // A lot of this can be refactored into dedicated spawn functions
             AssetSpawner.Register(m_reelSpawnable);
 
             for (int i = 0; i < m_sockets.Length; i++)
@@ -219,7 +264,7 @@ namespace NEP.MonoDirector.Tools
             for (int i = 0; i < Director.ActiveFilm.Stages.Count; i++)
             {
                 m_sockets[i].Reel.SetStage(Director.ActiveFilm.Stages[i]);
-                m_sockets[i].Reel.gameObject.SetActive(true);
+                m_sockets[i].Reel.gameObject.SetActive(false);
                 m_sockets[i].Reel.AttachToSocket(m_sockets[i]);
             }
 
@@ -239,29 +284,43 @@ namespace NEP.MonoDirector.Tools
             StageReel reel = newReelEntity.GetComponent<StageReel>();
             reel.AttachToSocket(m_newStageSocket);
             m_newStageSocket.SetReel(reel);
+            reel.Hide();
         }
 
-        private void UpdateSockets()
+        private void UpdateSocketLayout()
         {
             for (int i = 0; i < m_sockets.Length; i++)
-            {
-                m_sockets[i].gameObject.SetActive(false);
-            }
-
+                m_sockets[i].Hide();
+            
             for (int i = 0; i < m_sockets.Length && i < m_film.Stages.Count; i++)
             {
                 StageShelfSocket socket = m_sockets[i];
-                socket.gameObject.SetActive(true);
+                socket.Show();
 
                 if (socket.Reel)
                 {
+                    socket.Reel.Show();
                     socket.Reel.transform.position = socket.transform.position;
                     socket.Reel.transform.rotation = socket.transform.rotation;
                 }
             }
 
             // Set the last socket active to add new reels to the end
-            m_sockets[m_film.Stages.Count].gameObject.SetActive(true);
+            m_sockets[m_film.Stages.Count].Show();
+        }
+        
+        private void UpdateUtilitySockets()
+        {
+            // Reset the position and rotation of the new stage socket's reel
+            m_newStageSocket.Reel.transform.position = m_newStageSocket.transform.position;
+            m_newStageSocket.Reel.transform.rotation = m_newStageSocket.transform.rotation;
+            
+            // Reset the active stage reel position and rotation too
+            if (m_activeStageSocket.Reel)
+            {
+                m_activeStageSocket.Reel.transform.position = m_activeStageSocket.transform.position;
+                m_activeStageSocket.Reel.transform.rotation = m_activeStageSocket.transform.rotation;
+            }
         }
     }
 }

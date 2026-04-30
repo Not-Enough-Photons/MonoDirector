@@ -1,7 +1,9 @@
-﻿using UnityEngine;
+﻿using System.Collections;
 
-using BoneLib;
+using UnityEngine;
 
+using Il2CppSLZ.Marrow.Data;
+using Il2CppSLZ.Marrow.Pool;
 using MelonLoader.Utils;
 
 using Il2CppSLZ.Marrow.Warehouse;
@@ -24,6 +26,7 @@ namespace NEP.MonoDirector.Data
         internal static readonly Barcode mainMenuBarcode = CreateFullBarcode("MonoDirectorMenu");
         internal static readonly Barcode frameBarcode = CreateFullBarcode("Frame");
         internal static readonly Barcode actorPanelBarcode = CreateFullBarcode("ActorPanel");
+        internal static readonly Barcode stageShelfBarcode = CreateFullBarcode("StageShelf");
 
         internal static void LoadSounds()
         {
@@ -112,30 +115,30 @@ namespace NEP.MonoDirector.Data
             }
         }
 
-        internal static GameObject SpawnFromBarcode(Barcode barcode, bool active = false)
+        internal static IEnumerator SpawnFromBarcode(Barcode barcode, bool active = false)
         {
-            GameObject spawnedObject = null;
-            HelperMethods.SpawnCrate(barcode.ID, Vector3.zero, Quaternion.identity, Vector3.one, false, (obj) =>
-            {
-                spawnedObject = obj;
-                spawnedObject.SetActive(active);
-            });
+            SpawnableCrateReference crateRef = new SpawnableCrateReference(barcode);
+            Spawnable spawnable = new Spawnable();
+            spawnable.crateRef = crateRef;
+            
+            AssetSpawner.Register(spawnable);
 
-            return spawnedObject;
-        }
+            var task = AssetSpawner.SpawnAsync(
+                spawnable,
+                Vector3.zero,
+                Quaternion.identity,
+                new Il2CppSystem.Nullable<Vector3>(Vector3.one),
+                null,
+                false,
+                new Il2CppSystem.Nullable<int>(0)).GetAwaiter();
 
-        internal static List<GameObject> SpawnFromBarcode(Barcode barcode, int amount, bool active = false)
-        {
-            List<GameObject> spawnedObjects = new List<GameObject>();
+            while (!task.IsCompleted) yield return null;
 
-            for (int i = 0; i < amount; i++)
-            {
-                var obj = SpawnFromBarcode(new Barcode(barcode), active);
-                obj.SetActive(active);
-                spawnedObjects.Add(obj);
-            }
-
-            return spawnedObjects;
+            GameObject spawnedObject = task.GetResult().gameObject;
+            
+            spawnedObject.SetActive(active);
+            
+            yield return null;
         }
 
         private static Barcode CreateFullBarcode(string spawnableName)

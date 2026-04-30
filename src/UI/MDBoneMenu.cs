@@ -9,6 +9,7 @@ using Il2CppSLZ.Marrow;
 using Il2CppSystem;
 using BoneLib;
 using NEP.MonoDirector.Compatibility;
+using NEP.MonoDirector.Tools;
 
 namespace NEP.MonoDirector.UI
 {
@@ -42,22 +43,31 @@ namespace NEP.MonoDirector.UI
         private static void BuildPlaybackMenu(Page category)
         {
             category.CreateFunction(
-                "Record", 
-                Color.red, 
+                "Record",
+                Color.red,
                 () => Director.Record()
             );
-            
+
             category.CreateFunction(
-                "Play", 
-                Color.green, 
+                "Play",
+                Color.green,
                 () => Director.Play()
             );
-            
+
             category.CreateFunction(
-                "Stop", 
-                Color.red, 
+                "Stop",
+                Color.red,
                 () => Director.Stop()
             );
+
+            category.CreateFunction(
+                "Show Stage Shelf",
+                Color.white,
+                () =>
+                {
+                    StageShelf.Instance.gameObject.SetActive(false);
+                    StageShelf.Instance.gameObject.SetActive(true);
+                });
         }
 
         private static void BuildActorMenu(Page category)

@@ -1,15 +1,17 @@
-﻿using Il2CppSLZ.Marrow.Interaction;
+﻿using Il2CppSLZ.Bonelab;
+
 using MelonLoader;
-using NEP.MonoDirector.Core;
+
 using UnityEngine;
 using UnityEngine.UI;
+
 
 namespace NEP.MonoDirector.UI.Interaction
 {
     [RegisterTypeInIl2Cpp]
     public class UIButton(IntPtr ptr) : MonoBehaviour(ptr)
     {
-        public Button.ButtonClickedEvent OnClicked => m_button.onClick;
+        public event Action OnClicked;
         
         private const float MaxTolerance = 0.01f;
         private const float ValueEpsilon = 0.001f;
@@ -18,6 +20,8 @@ namespace NEP.MonoDirector.UI.Interaction
         private Rigidbody m_body;
         private Button m_button;
 
+        private Feedback_Audio m_feedbackAudio;
+        
         private float m_value;
         
         private bool m_pressed;
@@ -27,6 +31,8 @@ namespace NEP.MonoDirector.UI.Interaction
             m_button = GetComponent<Button>();
             m_contactTransform = transform.Find("Contact");
             m_body = m_contactTransform.GetComponent<Rigidbody>();
+
+            m_feedbackAudio = GetComponent<Feedback_Audio>();
         }
 
         private void OnEnable()
@@ -73,12 +79,15 @@ namespace NEP.MonoDirector.UI.Interaction
         private void Press()
         {
             m_pressed = true;
+            BoneLib.Audio.Play2DOneShot(m_feedbackAudio.clips_Click, BoneLib.Audio.UI);
         }
 
         private void Release()
         {
             m_pressed = false;
             OnClicked?.Invoke();
+            
+            BoneLib.Audio.Play2DOneShot(m_feedbackAudio.clips_Deny, BoneLib.Audio.UI);
         }
     }
 }

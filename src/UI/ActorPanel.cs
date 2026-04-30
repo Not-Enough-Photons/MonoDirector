@@ -19,10 +19,12 @@ namespace NEP.MonoDirector.UI
         private UIButton m_recastButton;
         private UIButton m_deleteButton;
         private UIButton m_hideButton;
+        private UIButton m_closeButton;
 
         private Action m_onRecastClicked;
         private Action m_onDeleteClicked;
         private Action m_onHideClicked;
+        private Action m_onCloseClicked;
 
         private Vector3 m_targetPosition;
         private bool m_hidden;
@@ -35,12 +37,14 @@ namespace NEP.MonoDirector.UI
             m_recastButton = m_root.Find("Management/Recast").GetComponent<UIButton>();
             m_deleteButton = m_root.Find("Management/Delete").GetComponent<UIButton>();
             m_hideButton = m_root.Find("Management/Hide").GetComponent<UIButton>();
-
+            m_closeButton = m_root.Find("Close").GetComponent<UIButton>();
+            
             m_onRecastClicked = OnRecastClicked;
             m_onDeleteClicked = OnDeleteClicked;
             m_onHideClicked = OnHideClicked;
+            m_onCloseClicked = OnCloseClicked;
 
-            m_root.gameObject.SetActive(false);
+            //m_root.gameObject.SetActive(false);
         }
 
         private void OnEnable()
@@ -49,9 +53,13 @@ namespace NEP.MonoDirector.UI
             Caster.OnActorDeselected += OnActorDeselected;
             Events.OnPlayStateSet += OnPlayStateSet;
 
-            m_recastButton.OnClicked.AddListener(m_onRecastClicked);
-            m_deleteButton.OnClicked.AddListener(m_onDeleteClicked);
-            m_hideButton.OnClicked.AddListener(m_onHideClicked);
+            m_recastButton.OnClicked += m_onRecastClicked;
+            m_deleteButton.OnClicked += m_onDeleteClicked;
+            m_hideButton.OnClicked += m_onHideClicked;
+            m_closeButton.OnClicked += m_onCloseClicked;
+            
+            Vector3 rotation = Quaternion.LookRotation(Constants.RigManager.physicsRig.m_head.position - transform.position).eulerAngles;
+            transform.rotation = Quaternion.Euler(0f, rotation.y, 0f);
         }
 
         private void OnDisable()
@@ -60,21 +68,20 @@ namespace NEP.MonoDirector.UI
             Caster.OnActorDeselected -= OnActorDeselected;
             Events.OnPlayStateSet -= OnPlayStateSet;
 
-            m_recastButton.OnClicked.RemoveListener(m_onRecastClicked);
-            m_deleteButton.OnClicked.RemoveListener(m_onDeleteClicked);
-            m_hideButton.OnClicked.RemoveListener(m_onHideClicked);
+            m_recastButton.OnClicked -= m_onRecastClicked;
+            m_deleteButton.OnClicked -= m_onDeleteClicked;
+            m_hideButton.OnClicked -= m_onHideClicked;
+            m_closeButton.OnClicked -= m_onCloseClicked;
         }
 
         private void Update()
         {
-            Vector3 rotation = Quaternion.LookRotation(Constants.RigManager.physicsRig.m_head.position - transform.position).eulerAngles;
             transform.position = Vector3.Lerp(transform.position, m_targetPosition, 8f * Time.deltaTime);
-            transform.rotation = Quaternion.Euler(0f, rotation.y, 0f);
         }
 
         private void OnActorSelected(Actor actor)
         {
-            m_root.gameObject.SetActive(true);
+            gameObject.SetActive(true);
 
             m_targetPosition = actor.ActorBody.Chest.transform.position + Vector3.right;
 
@@ -83,13 +90,13 @@ namespace NEP.MonoDirector.UI
 
         private void OnActorDeselected(Actor actor)
         {
-            m_root.gameObject.SetActive(false);
+            gameObject.SetActive(false);
         }
 
         private void OnRecastClicked()
         {
             Caster.RecastActor(Caster.SelectedActor);
-            m_root.gameObject.SetActive(false);
+            gameObject.SetActive(false);
         }
 
         private void OnDeleteClicked()
@@ -97,13 +104,18 @@ namespace NEP.MonoDirector.UI
             Caster.UncastActor(Caster.SelectedActor);
             // TODO: Move this into Caster or something
             Director.ActiveStage.RemoveActor(Caster.SelectedActor);
-            m_root.gameObject.SetActive(false);
+            gameObject.SetActive(false);
         }
 
         private void OnHideClicked()
         {
             m_hidden = !m_hidden;
             Caster.SelectedActor.SetHidden(m_hidden);
+        }
+
+        private void OnCloseClicked()
+        {
+            gameObject.SetActive(false);
         }
 
         private void OnPlayStateSet(PlayState state)
