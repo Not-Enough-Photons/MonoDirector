@@ -15,7 +15,7 @@ namespace NEP.MonoDirector.UI
     {
         private Transform m_root;
 
-        private TextMeshProUGUI m_actorNameText;
+        private TextMeshPro m_actorNameText;
         private UIButton m_recastButton;
         private UIButton m_deleteButton;
         private UIButton m_hideButton;
@@ -29,22 +29,25 @@ namespace NEP.MonoDirector.UI
         private Vector3 m_targetPosition;
         private bool m_hidden;
 
+        private GameObject m_hiddenCheckmark;
+
         private void Awake()
         {
             m_root = transform.GetChild(0);
 
-            m_actorNameText = m_root.Find("ActorName").GetComponent<TextMeshProUGUI>();
-            m_recastButton = m_root.Find("Management/Recast").GetComponent<UIButton>();
-            m_deleteButton = m_root.Find("Management/Delete").GetComponent<UIButton>();
-            m_hideButton = m_root.Find("Management/Hide").GetComponent<UIButton>();
-            m_closeButton = m_root.Find("Close").GetComponent<UIButton>();
+            m_actorNameText = m_root.Find("Data/Title").GetComponent<TextMeshPro>();
+            m_recastButton = m_root.Find("Data/Options/OptionsGroup/RecastButton").GetComponent<UIButton>();
+            m_deleteButton = m_root.Find("Data/Options/OptionsGroup/DeleteButton").GetComponent<UIButton>();
+            m_hideButton = m_root.Find("Data/Options/OptionsGroup/HideControl").GetComponent<UIButton>();
+            m_closeButton = m_root.Find("Data/Exit").GetComponent<UIButton>();
+            m_hiddenCheckmark = m_hideButton.transform.Find("Toggle/Checkmark").gameObject;
             
             m_onRecastClicked = OnRecastClicked;
             m_onDeleteClicked = OnDeleteClicked;
             m_onHideClicked = OnHideClicked;
             m_onCloseClicked = OnCloseClicked;
-
-            //m_root.gameObject.SetActive(false);
+            
+            m_root.gameObject.SetActive(false);
         }
 
         private void OnEnable()
@@ -81,22 +84,22 @@ namespace NEP.MonoDirector.UI
 
         private void OnActorSelected(Actor actor)
         {
-            gameObject.SetActive(true);
+            m_root.gameObject.SetActive(true);
 
             m_targetPosition = actor.ActorBody.Chest.transform.position + Vector3.right;
 
-            m_actorNameText.text = actor.ActorName;
+            m_actorNameText.text = $"Actor Settings - {actor.ActorName}";
         }
 
         private void OnActorDeselected(Actor actor)
         {
-            gameObject.SetActive(false);
+            m_root.gameObject.SetActive(false);
         }
 
         private void OnRecastClicked()
         {
             Caster.RecastActor(Caster.SelectedActor);
-            gameObject.SetActive(false);
+            m_root.gameObject.SetActive(false);
         }
 
         private void OnDeleteClicked()
@@ -104,18 +107,19 @@ namespace NEP.MonoDirector.UI
             Caster.UncastActor(Caster.SelectedActor);
             // TODO: Move this into Caster or something
             Director.ActiveStage.RemoveActor(Caster.SelectedActor);
-            gameObject.SetActive(false);
+            m_root.gameObject.SetActive(false);
         }
 
         private void OnHideClicked()
         {
             m_hidden = !m_hidden;
             Caster.SelectedActor.SetHidden(m_hidden);
+            m_hiddenCheckmark.SetActive(m_hidden);
         }
 
         private void OnCloseClicked()
         {
-            gameObject.SetActive(false);
+            m_root.gameObject.SetActive(false);
         }
 
         private void OnPlayStateSet(PlayState state)
@@ -125,11 +129,11 @@ namespace NEP.MonoDirector.UI
 
             if (state != PlayState.Stopped)
             {
-                gameObject.SetActive(false);
+                m_root.gameObject.SetActive(false);
                 return;
             }
 
-            gameObject.SetActive(true);
+            m_root.gameObject.SetActive(true);
         }
     }
 }

@@ -16,7 +16,6 @@ namespace NEP.MonoDirector.UI.Interaction
         private const float MaxTolerance = 0.01f;
         private const float ValueEpsilon = 0.001f;
 
-        private Transform m_contactTransform;
         private Rigidbody m_body;
         private Button m_button;
 
@@ -29,18 +28,18 @@ namespace NEP.MonoDirector.UI.Interaction
         private void Awake()
         {
             m_button = GetComponent<Button>();
-            m_contactTransform = transform.Find("Contact");
-            m_body = m_contactTransform.GetComponent<Rigidbody>();
+            m_body = GetComponent<Rigidbody>();
 
             m_feedbackAudio = GetComponent<Feedback_Audio>();
         }
 
         private void OnEnable()
         {
+            if (!m_body)
+                return;
+
             m_body.velocity = Vector3.zero;
             m_body.angularVelocity = Vector3.zero;
-            m_contactTransform.localPosition = Vector3.zero;
-            m_contactTransform.localRotation = Quaternion.identity;
 
             m_value = 0f;
         }
@@ -59,8 +58,8 @@ namespace NEP.MonoDirector.UI.Interaction
 
         private void FixedUpdate()
         {
-            float curDistance = Mathf.Abs(m_contactTransform.localPosition.z);
-            float maxDistance = MaxTolerance;
+            float curDistance = Mathf.Abs(transform.localPosition.z);
+            float maxDistance = MaxTolerance - ValueEpsilon;
 
             m_value = Mathf.Clamp01(curDistance / maxDistance);
             
@@ -79,6 +78,10 @@ namespace NEP.MonoDirector.UI.Interaction
         private void Press()
         {
             m_pressed = true;
+
+            if (m_feedbackAudio.clips_Click == null)
+                return;
+
             BoneLib.Audio.Play2DOneShot(m_feedbackAudio.clips_Click, BoneLib.Audio.UI);
         }
 
@@ -86,7 +89,10 @@ namespace NEP.MonoDirector.UI.Interaction
         {
             m_pressed = false;
             OnClicked?.Invoke();
-            
+
+            if (m_feedbackAudio.clips_Deny == null)
+                return;
+
             BoneLib.Audio.Play2DOneShot(m_feedbackAudio.clips_Deny, BoneLib.Audio.UI);
         }
     }
