@@ -1,10 +1,12 @@
 ﻿using UnityEngine;
 using MelonLoader;
-using NEP.MonoDirector.Core;
-using NEP.MonoDirector.Actors;
 using Il2CppTMPro;
 using UnityEngine.UI;
+
+using NEP.MonoDirector.Core;
+using NEP.MonoDirector.Actors;
 using NEP.MonoDirector.State;
+using NEP.MonoDirector.UI.Interaction;
 
 namespace NEP.MonoDirector.UI
 {
@@ -14,9 +16,9 @@ namespace NEP.MonoDirector.UI
         private Transform m_root;
 
         private TextMeshProUGUI m_actorNameText;
-        private Button m_recastButton;
-        private Button m_deleteButton;
-        private Button m_hideButton;
+        private UIButton m_recastButton;
+        private UIButton m_deleteButton;
+        private UIButton m_hideButton;
 
         private Action m_onRecastClicked;
         private Action m_onDeleteClicked;
@@ -30,9 +32,9 @@ namespace NEP.MonoDirector.UI
             m_root = transform.GetChild(0);
 
             m_actorNameText = m_root.Find("ActorName").GetComponent<TextMeshProUGUI>();
-            m_recastButton = m_root.Find("Management/Recast").GetComponent<Button>();
-            m_deleteButton = m_root.Find("Management/Delete").GetComponent<Button>();
-            m_hideButton = m_root.Find("Management/Hide").GetComponent<Button>();
+            m_recastButton = m_root.Find("Management/Recast").GetComponent<UIButton>();
+            m_deleteButton = m_root.Find("Management/Delete").GetComponent<UIButton>();
+            m_hideButton = m_root.Find("Management/Hide").GetComponent<UIButton>();
 
             m_onRecastClicked = OnRecastClicked;
             m_onDeleteClicked = OnDeleteClicked;
@@ -47,9 +49,9 @@ namespace NEP.MonoDirector.UI
             Caster.OnActorDeselected += OnActorDeselected;
             Events.OnPlayStateSet += OnPlayStateSet;
 
-            m_recastButton.onClick.AddListener(m_onRecastClicked);
-            m_deleteButton.onClick.AddListener(m_onDeleteClicked);
-            m_hideButton.onClick.AddListener(m_onHideClicked);
+            m_recastButton.OnClicked.AddListener(m_onRecastClicked);
+            m_deleteButton.OnClicked.AddListener(m_onDeleteClicked);
+            m_hideButton.OnClicked.AddListener(m_onHideClicked);
         }
 
         private void OnDisable()
@@ -58,9 +60,9 @@ namespace NEP.MonoDirector.UI
             Caster.OnActorDeselected -= OnActorDeselected;
             Events.OnPlayStateSet -= OnPlayStateSet;
 
-            m_recastButton.onClick.RemoveListener(m_onRecastClicked);
-            m_deleteButton.onClick.RemoveListener(m_onDeleteClicked);
-            m_hideButton.onClick.RemoveListener(m_onHideClicked);
+            m_recastButton.OnClicked.RemoveListener(m_onRecastClicked);
+            m_deleteButton.OnClicked.RemoveListener(m_onDeleteClicked);
+            m_hideButton.OnClicked.RemoveListener(m_onHideClicked);
         }
 
         private void Update()
