@@ -6,7 +6,7 @@ using MelonLoader;
 using NEP.MonoDirector.Tools;
 using UnityEngine;
 
-namespace NEP.MonoDirector.UI
+namespace NEP.MonoDirector.UI.Menus
 {
     [RegisterTypeInIl2Cpp]
     public class Menu(IntPtr ptr) : MonoBehaviour(ptr)

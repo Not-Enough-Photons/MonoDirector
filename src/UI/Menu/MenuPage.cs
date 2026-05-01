@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace NEP.MonoDirector.UI
+namespace NEP.MonoDirector.UI.Menus
 {
     [MelonLoader.RegisterTypeInIl2Cpp]
     public class MenuPage(IntPtr ptr) : MonoBehaviour(ptr)

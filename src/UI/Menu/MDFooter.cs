@@ -5,7 +5,7 @@ using Il2CppTMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace NEP.MonoDirector.UI
+namespace NEP.MonoDirector.UI.Menus
 {
     [MelonLoader.RegisterTypeInIl2Cpp]
     public class MDFooter(IntPtr ptr) : MonoBehaviour(ptr)

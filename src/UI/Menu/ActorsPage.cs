@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using NEP.MonoDirector.Actors;
 using NEP.MonoDirector.Core;
 
-namespace NEP.MonoDirector.UI
+namespace NEP.MonoDirector.UI.Menus
 {
     [MelonLoader.RegisterTypeInIl2Cpp]
     public class ActorsPage(IntPtr ptr) : MonoBehaviour(ptr)

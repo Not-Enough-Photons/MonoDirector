@@ -4,7 +4,7 @@ using UnityEngine;
 
 using NEP.MonoDirector.Actors;
 
-namespace NEP.MonoDirector.UI
+namespace NEP.MonoDirector.UI.Menus
 {
     public class ActorDisplayPage
     {

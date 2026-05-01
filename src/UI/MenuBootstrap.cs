@@ -1,7 +1,10 @@
 ﻿using Il2CppSLZ.Bonelab;
-using NEP.MonoDirector.Data;
 using UnityEngine;
 using UnityEngine.UI;
+
+using NEP.MonoDirector.Data;
+using NEP.MonoDirector.UI.Menus;
+
 using Page = BoneLib.BoneMenu.Page;
 
 namespace NEP.MonoDirector.UI
