@@ -82,7 +82,7 @@ namespace NEP.MonoDirector.Tools
             m_newStageSocket.Reel.transform.position = m_newStageSocket.transform.position;
             m_newStageSocket.Reel.transform.rotation = m_newStageSocket.transform.rotation;
             m_newStageSocket.Reel.Show();
-
+            
             UpdateSocketLayout();
             UpdateUtilitySockets();
             
@@ -107,7 +107,7 @@ namespace NEP.MonoDirector.Tools
         public void Show()
         {
             for (int i = 0; i < m_sockets.Length; i++)
-                m_sockets[i].Reel.Show();
+                m_sockets[i].Show();
 
             if (m_activeStageSocket.Reel)
                 m_activeStageSocket.Reel.Show();
@@ -120,7 +120,7 @@ namespace NEP.MonoDirector.Tools
         public void Hide()
         {
             for (int i = 0; i < m_sockets.Length; i++)
-                m_sockets[i].Reel.Hide();
+                m_sockets[i].Hide();
 
             if (m_activeStageSocket.Reel)
                 m_activeStageSocket.Reel.Hide();
@@ -256,7 +256,6 @@ namespace NEP.MonoDirector.Tools
 
                 Poolee obj = task.GetResult();
                 MarrowEntity reelEntity = obj.GetComponent<MarrowEntity>();
-
                 reelEntity.gameObject.SetActive(false);
                 m_sockets[i].SetReel(reelEntity.GetComponent<StageReel>());
             }
@@ -264,7 +263,6 @@ namespace NEP.MonoDirector.Tools
             for (int i = 0; i < Director.ActiveFilm.Stages.Count; i++)
             {
                 m_sockets[i].Reel.SetStage(Director.ActiveFilm.Stages[i]);
-                m_sockets[i].Reel.gameObject.SetActive(false);
                 m_sockets[i].Reel.AttachToSocket(m_sockets[i]);
             }
 
@@ -299,9 +297,9 @@ namespace NEP.MonoDirector.Tools
 
                 if (socket.Reel)
                 {
-                    socket.Reel.Show();
                     socket.Reel.transform.position = socket.transform.position;
                     socket.Reel.transform.rotation = socket.transform.rotation;
+                    socket.Reel.Show();
                 }
             }
 

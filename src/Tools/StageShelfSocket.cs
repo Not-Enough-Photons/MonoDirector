@@ -103,11 +103,17 @@ namespace NEP.MonoDirector.Tools
 
         public void Show()
         {
+            if (m_reel)
+                m_reel.Show();
+            
             gameObject.SetActive(true);
         }
 
         public void Hide()
         {
+            if (m_reel)
+                m_reel.Hide();
+            
             gameObject.SetActive(false);
         }
     }
