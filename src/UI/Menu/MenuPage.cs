@@ -1,43 +1,82 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
+
+using MelonLoader;
+
+using NEP.MonoDirector.Tools;
+using NEP.MonoDirector.UI.Interaction;
 
 namespace NEP.MonoDirector.UI.Menus
 {
-    [MelonLoader.RegisterTypeInIl2Cpp]
+    [RegisterTypeInIl2Cpp]
     public class MenuPage(IntPtr ptr) : MonoBehaviour(ptr)
     {
-        private Menu _menu;
+        private Menu m_menu;
 
-        private Button button_Playhead;
-        private Button button_Actors;
-        private Button button_Settings;
-        private Button button_Exit;
+        private UIButton m_playbackButton;
+        private UIButton m_actorsButton;
+        private UIButton m_stagesButton;
+        private UIButton m_settingsButton;
+        private UIButton m_exitButton;
 
-        private bool initialized = false;
-
-        public void Initialize(Menu menu)
+        private void Awake()
         {
-            if (initialized)
-            {
-                return;
-            }
-            
-            button_Playhead = transform.GetChild(0).GetComponent<Button>();
-            button_Actors = transform.GetChild(1).GetComponent<Button>();
-            button_Settings = transform.GetChild(2).GetComponent<Button>();
-            button_Exit = transform.GetChild(3).GetComponent<Button>();
+            m_menu = transform.root.GetComponent<Menu>();
 
-            //button_Playhead.onClick.AddListener(() => menu.OpenPage("Playhead"));
-            //button_Actors.onClick.AddListener(() => menu.OpenPage("Actors"));
-            //button_Settings.onClick.AddListener(() => menu.OpenPage("Settings"));
-            //button_Exit.onClick.AddListener(() => menu.Hide());
+            if (!m_menu)
+                throw new NullReferenceException("Menu is null!");
+            
+            m_playbackButton = transform.Find("Option_Playback").GetComponent<UIButton>();
+            m_actorsButton = transform.Find("Option_Actors").GetComponent<UIButton>();
+            m_stagesButton = transform.Find("Option_Stages").GetComponent<UIButton>();
+            m_settingsButton = transform.Find("Option_Settings").GetComponent<UIButton>();
+            m_exitButton = transform.Find("Option_Exit").GetComponent<UIButton>();
         }
 
-        public void SetRoot(Menu menu)
+        private void OnEnable()
         {
-            this._menu = menu;
+            m_playbackButton.OnClicked += OnPlaybackButtonClicked;
+            m_actorsButton.OnClicked += OnActorsButtonClicked;
+            m_stagesButton.OnClicked += OnStagesButtonClicked;
+            m_settingsButton.OnClicked += OnSettingsButtonClicked;
+            m_exitButton.OnClicked += OnExitButtonClicked;
+            
+        }
+
+        private void OnDisable()
+        {
+            m_playbackButton.OnClicked -= OnPlaybackButtonClicked;
+            m_actorsButton.OnClicked -= OnActorsButtonClicked;
+            m_stagesButton.OnClicked -= OnStagesButtonClicked;
+            m_settingsButton.OnClicked -= OnSettingsButtonClicked;
+            m_exitButton.OnClicked -= OnExitButtonClicked;
+        }
+        
+        private void OnPlaybackButtonClicked()
+        {
+            m_menu.GoToPage("Playback");
+        }
+        
+        private void OnActorsButtonClicked()
+        {
+        }
+        
+        private void OnStagesButtonClicked()
+        {
+            StageShelf.Instance.Hide();
+            StageShelf.Instance.Show();
+            m_menu.Hide();
+            MenuBootstrap.HideGameMenu();
+        }
+
+        private void OnSettingsButtonClicked()
+        {
+            MenuBootstrap.OpenPage(MDBoneMenu.SettingsPage);
+            m_menu.Hide();
+        }
+
+        private void OnExitButtonClicked()
+        {
+            m_menu.Hide();
         }
     }
 }

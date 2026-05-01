@@ -12,27 +12,52 @@ namespace NEP.MonoDirector.UI.Menus
     public class Menu(IntPtr ptr) : MonoBehaviour(ptr)
     {
         public static Menu Instance { get; private set; }
+
+        public GameObject DefaultPage => m_defaultPage;
         
-        private UIButton m_playbackButton;
-        private UIButton m_actorsButton;
-        private UIButton m_stagesButton;
-        private UIButton m_settingsButton;
-        private UIButton m_exitButton;
+        private List<GameObject> m_pages;
+        private GameObject m_defaultPage;
+        private GameObject m_currentPage;
+        private GameObject m_previousPage;
+
         private UIButton m_closeButton;
+        private UIButton m_backButton;
         
         private void Awake()
         {
             Instance = this;
 
-            m_playbackButton = transform.Find("Body/Pages/Menu/Option_Playback").GetComponent<UIButton>();
-            m_actorsButton = transform.Find("Body/Pages/Menu/Option_Actors").GetComponent<UIButton>();
-            m_stagesButton = transform.Find("Body/Pages/Menu/Option_Stages").GetComponent<UIButton>();
-            m_settingsButton = transform.Find("Body/Pages/Menu/Option_Settings").GetComponent<UIButton>();
-            m_exitButton = transform.Find("Body/Pages/Menu/Option_Exit").GetComponent<UIButton>();
+            m_pages = new List<GameObject>();
+
+            Transform pageGroup = transform.Find("Body/Pages");
+
+            for (int i = 0; i < pageGroup.childCount; i++)
+            {
+                GameObject pageObject = pageGroup.GetChild(i).gameObject;
+                pageObject.SetActive(false);
+                m_pages.Add(pageObject);
+            }
+            
             m_closeButton = transform.Find("Header/Button").GetComponent<UIButton>();
+            m_backButton = transform.Find("Header/Back").GetComponent<UIButton>();
+            
+            m_defaultPage = GetPage("Menu");
+            GoToPage(m_defaultPage.name);
         }
 
         private void OnEnable()
+        {
+            m_closeButton.OnClicked += OnCloseButtonClicked;
+            m_backButton.OnClicked += OnBackButtonClicked;
+        }
+
+        private void OnDisable()
+        {
+            m_closeButton.OnClicked -= OnCloseButtonClicked;
+            m_backButton.OnClicked -= OnBackButtonClicked;
+        }
+
+        public void Teleport()
         {
             Transform playerChest = BoneLib.Player.PhysicsRig.m_chest;
             transform.position = playerChest.position + playerChest.forward;
@@ -40,53 +65,47 @@ namespace NEP.MonoDirector.UI.Menus
             Vector3 lookRotation = Quaternion.LookRotation(playerChest.position - transform.position).eulerAngles;
             Quaternion yRotation = Quaternion.Euler(0f, lookRotation.y + 180f, 0f);
             transform.rotation = yRotation;
-
-            m_playbackButton.OnClicked += OnPlaybackButtonClicked;
-            m_actorsButton.OnClicked += OnActorsButtonClicked;
-            m_stagesButton.OnClicked += OnStagesButtonClicked;
-            m_settingsButton.OnClicked += OnSettingsButtonClicked;
-            m_exitButton.OnClicked += OnExitButtonClicked;
-            m_closeButton.OnClicked += OnExitButtonClicked;
         }
-
-        private void OnDisable()
-        {
-            m_playbackButton.OnClicked -= OnPlaybackButtonClicked;
-            m_actorsButton.OnClicked -= OnActorsButtonClicked;
-            m_stagesButton.OnClicked -= OnStagesButtonClicked;
-            m_settingsButton.OnClicked -= OnSettingsButtonClicked;
-            m_exitButton.OnClicked -= OnExitButtonClicked;
-            m_closeButton.OnClicked -= OnExitButtonClicked;
-        }
-
+        
         public void Hide() => gameObject.SetActive(false);
         public void Show() => gameObject.SetActive(true);
 
-        private void OnPlaybackButtonClicked()
+        public GameObject GetPage(string name)
         {
-            MenuBootstrap.OpenPage(MDBoneMenu.PlaybackPage);
-            Hide();
-        }
-        
-        private void OnActorsButtonClicked()
-        {
-        }
-        
-        private void OnStagesButtonClicked()
-        {
-            StageShelf.Instance.Hide();
-            StageShelf.Instance.Show();
-            Hide();
-            MenuBootstrap.HideBoneMenu();
+            foreach (var page in m_pages)
+            {
+                if (page.name != name)
+                    continue;
+
+                return page;
+            }
+
+            return null;
         }
 
-        private void OnSettingsButtonClicked()
+        public void GoToPage(string name)
         {
-            MenuBootstrap.OpenPage(MDBoneMenu.SettingsPage);
-            Hide();
+            foreach (var pageToDisable in m_pages)
+                pageToDisable.SetActive(false);
+            
+            m_previousPage = m_currentPage;
+            GameObject page = GetPage(name);
+            m_currentPage = page;
+            m_currentPage.SetActive(true);
+            
+            if (m_currentPage == m_defaultPage)
+                m_backButton.gameObject.SetActive(false);
+            else
+                m_backButton.gameObject.SetActive(true);
         }
 
-        private void OnExitButtonClicked()
+        private void OnBackButtonClicked()
+        {
+            string pageName = m_previousPage.name;
+            GoToPage(pageName);
+        }
+        
+        private void OnCloseButtonClicked()
         {
             Hide();
         }

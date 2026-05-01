@@ -151,7 +151,7 @@
 		<Compile Include="src\UI\Menu\MDFooter.cs" />
 		<Compile Include="src\UI\Menu\Menu.cs" />
 		<Compile Include="src\UI\Menu\MenuPage.cs" />
-		<Compile Include="src\UI\Menu\PlayheadPage.cs" />
+		<Compile Include="src\UI\Menu\PlaybackPage.cs" />
 		<Compile Include="src\UI\Menu\SettingsPage.cs" />
 		<Compile Include="src\UI\Marker.cs" />
 		<Compile Include="src\UI\MarkerManager.cs" />
