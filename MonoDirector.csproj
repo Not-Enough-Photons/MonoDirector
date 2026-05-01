@@ -149,7 +149,7 @@
 		<Compile Include="src\UI\Main\ActorSettingsPage.cs" />
 		<Compile Include="src\UI\Main\ActorsPage.cs" />
 		<Compile Include="src\UI\Main\MDFooter.cs" />
-		<Compile Include="src\UI\Main\MDMenu.cs" />
+		<Compile Include="src\UI\Main\Menu.cs" />
 		<Compile Include="src\UI\Main\MenuPage.cs" />
 		<Compile Include="src\UI\Main\PlayheadPage.cs" />
 		<Compile Include="src\UI\Main\SettingsPage.cs" />

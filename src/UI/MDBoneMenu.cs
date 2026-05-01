@@ -16,6 +16,8 @@ namespace NEP.MonoDirector.UI
     internal static class MDBoneMenu
     {
         public static Page MonoDirectorPage => mdCategory;
+        public static Page PlaybackPage => playbackCategory;
+        public static Page SettingsPage => settingsCategory;
 
         internal static Page rootCategory;
 
@@ -88,7 +90,7 @@ namespace NEP.MonoDirector.UI
                         Secondary = secondary
                     };
 
-                    Menu.DisplayDialog(data);
+                    BoneLib.BoneMenu.Menu.DisplayDialog(data);
                     Director.RemoveAllActors();
                 }
             );
@@ -109,7 +111,7 @@ namespace NEP.MonoDirector.UI
                         Secondary = secondary
                     };
 
-                    Menu.DisplayDialog(data);
+                    BoneLib.BoneMenu.Menu.DisplayDialog(data);
                 }
             );
         }

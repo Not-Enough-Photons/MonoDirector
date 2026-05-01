@@ -5,7 +5,6 @@ using NEP.MonoDirector.Core;
 using UnityEngine;
 using UnityEngine.UI;
 
-
 namespace NEP.MonoDirector.UI.Interaction
 {
     [RegisterTypeInIl2Cpp]

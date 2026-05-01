@@ -16,7 +16,7 @@ namespace NEP.MonoDirector.UI
         private List<ActorDisplayPage> displayPages;
         private ActorDisplayPage currentDisplayPage;
 
-        private MDMenu menu;
+        private Menu _menu;
 
         private ActorSettingsPage settingsPage;
 
@@ -34,14 +34,14 @@ namespace NEP.MonoDirector.UI
             Events.OnActorUncasted += OnActorRemoved;
         }
 
-        public void Initialize(MDMenu menu)
+        public void Initialize(Menu menu)
         {
             if (initialized)
             {
                 return;
             }
 
-            this.menu = menu;
+            this._menu = menu;
             castListContainer = transform.GetChild(0);
             settingsPage = transform.GetChild(1).GetComponent<ActorSettingsPage>();
             actorEntries = new ActorEntry[castListContainer.childCount];
@@ -156,7 +156,7 @@ namespace NEP.MonoDirector.UI
         {
             castListContainer.gameObject.SetActive(false);
             settingsPage.UpdateInformation(entry.GetActor());
-            menu.OpenPage("ActorSettings");
+            // menu.OpenPage("ActorSettings");
         }
 
         private void UpdateEntry(Actor actor, ActorEntry entry)

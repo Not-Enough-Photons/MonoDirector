@@ -10,7 +10,7 @@ namespace NEP.MonoDirector.UI
     [MelonLoader.RegisterTypeInIl2Cpp]
     public class ActorSettingsPage(IntPtr ptr) : MonoBehaviour(ptr)
     {
-        private MDMenu menu;
+        private Menu _menu;
 
         private RawImage actorPortrait;
         private TextMeshProUGUI actorNameText;
@@ -25,14 +25,14 @@ namespace NEP.MonoDirector.UI
 
         private bool initialized = false;
 
-        public void Initialize(MDMenu menu)
+        public void Initialize(Menu menu)
         {
             if (initialized)
             {
                 return;
             }
 
-            this.menu = menu;
+            this._menu = menu;
 
             actorPortrait = transform.GetChild(0).GetComponent<RawImage>();
             actorNameText = transform.GetChild(1).GetComponent<TextMeshProUGUI>();
@@ -59,7 +59,7 @@ namespace NEP.MonoDirector.UI
         public void OnDeleteButtonClicked()
         {
             actor.Delete();
-            MDMenu.Instance.PreviousPage();
+            // Menu.Instance.PreviousPage();
         }
 
         public void OnDeletePropsButtonClicked()

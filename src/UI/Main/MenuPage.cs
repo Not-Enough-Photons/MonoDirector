@@ -8,7 +8,7 @@ namespace NEP.MonoDirector.UI
     [MelonLoader.RegisterTypeInIl2Cpp]
     public class MenuPage(IntPtr ptr) : MonoBehaviour(ptr)
     {
-        private MDMenu menu;
+        private Menu _menu;
 
         private Button button_Playhead;
         private Button button_Actors;
@@ -17,7 +17,7 @@ namespace NEP.MonoDirector.UI
 
         private bool initialized = false;
 
-        public void Initialize(MDMenu menu)
+        public void Initialize(Menu menu)
         {
             if (initialized)
             {
@@ -35,9 +35,9 @@ namespace NEP.MonoDirector.UI
             //button_Exit.onClick.AddListener(() => menu.Hide());
         }
 
-        public void SetRoot(MDMenu menu)
+        public void SetRoot(Menu menu)
         {
-            this.menu = menu;
+            this._menu = menu;
         }
     }
 }

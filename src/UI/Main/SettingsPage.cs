@@ -8,7 +8,7 @@ namespace NEP.MonoDirector.UI
     [MelonLoader.RegisterTypeInIl2Cpp]
     public class SettingsPage(IntPtr ptr) : MonoBehaviour(ptr)
     {
-        private MDMenu menu;
+        private Menu _menu;
 
         private Button button_Audio;
         private Button button_Camera;
@@ -25,7 +25,7 @@ namespace NEP.MonoDirector.UI
 
         private bool initialized = false;
 
-        public void Initialize(MDMenu menu)
+        public void Initialize(Menu menu)
         {
             if(initialized)
             {
