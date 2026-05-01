@@ -35,7 +35,8 @@ namespace NEP.MonoDirector.UI
             var buttonAction = () =>
             {
                 Menu.Instance.Show();
-                HideBoneMenu();
+                Menu.Instance.Teleport();
+                HideGameMenu();
             };
             
             m_button.onClick.AddListener(buttonAction);
@@ -43,22 +44,13 @@ namespace NEP.MonoDirector.UI
 
         public static void OpenPage(Page page)
         {
-            if (!m_panelView.isActiveAndEnabled)
-                m_panelView.Activate();
-
-            m_popUpMenuView.m_IsActivated = true;
-            m_popUpMenuView.m_IsRadialMenu = false;
-            
             m_panelView.PAGESELECT(11);
             BoneLib.BoneMenu.Menu.OpenPage(page);
         }
 
-        public static void HideBoneMenu()
+        public static void HideGameMenu()
         {
-            m_panelView.Deactivate();
-            //m_popUpMenuView.m_IsRadialMenu = false;
-            m_popUpMenuView.m_IsCursorHidden = true;
-            m_popUpMenuView.m_IsCursorShown = false;
+            m_popUpMenuView.Deactivate();
         }
     }
 }
