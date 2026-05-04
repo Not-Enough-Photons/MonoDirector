@@ -1,7 +1,7 @@
 using NEP.MonoDirector.UI.Interaction;
 
 using BoneLib;
-
+using Il2CppTMPro;
 using MelonLoader;
 using NEP.MonoDirector.Tools;
 using UnityEngine;
@@ -22,6 +22,8 @@ namespace NEP.MonoDirector.UI.Menus
 
         private UIButton m_closeButton;
         private UIButton m_backButton;
+
+        private TextMeshProUGUI m_title;
         
         private void Awake()
         {
@@ -40,6 +42,7 @@ namespace NEP.MonoDirector.UI.Menus
             
             m_closeButton = transform.Find("Header/Button").GetComponent<UIButton>();
             m_backButton = transform.Find("Header/Back").GetComponent<UIButton>();
+            m_title = transform.Find("Header/Title").GetComponent<TextMeshProUGUI>();
             
             m_defaultPage = GetPage("Menu");
             GoToPage(m_defaultPage.name);
@@ -92,6 +95,7 @@ namespace NEP.MonoDirector.UI.Menus
             GameObject page = GetPage(name);
             m_currentPage = page;
             m_currentPage.SetActive(true);
+            m_title.text = m_currentPage.name;
             
             if (m_currentPage == m_defaultPage)
                 m_backButton.gameObject.SetActive(false);
