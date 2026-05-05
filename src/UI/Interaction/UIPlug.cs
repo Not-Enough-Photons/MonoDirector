@@ -46,14 +46,31 @@ namespace NEP.MonoDirector.UI.Interaction
             m_hoveredSocket = null;
         }
 
+        public void Parent(UISocket socket)
+        {
+            if (!socket)
+                return;
+
+            m_rigidbody.transform.SetParent(socket.transform);
+            m_rigidbody.transform.localPosition = Vector3.zero;
+            m_rigidbody.transform.localRotation = Quaternion.identity;
+        }
+
+        public void Unparent()
+        {
+            m_rigidbody.transform.SetParent(null);
+            m_rigidbody.transform.localPosition = Vector3.zero;
+            m_rigidbody.transform.localRotation = Quaternion.identity;
+        }
+
         public void SetPosition(Vector3 position)
         {
-            m_rigidbody.position = position;
+            m_rigidbody.transform.position = position;
         }
 
         public void SetRotation(Quaternion rotation)
         {
-            m_rigidbody.rotation = rotation;
+            m_rigidbody.transform.rotation = rotation;
         }
 
         public void Connect(UISocket socket)

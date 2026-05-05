@@ -13,6 +13,7 @@ namespace NEP.MonoDirector.Tools
     public class StageReel(IntPtr ptr) : MonoBehaviour(ptr)
     {
         public Stage Stage => m_stage;
+        public UIPlug Plug => m_plug;
         public StageShelfSocket AttachedSocket => m_attachedSocket;
 
         private Stage m_stage;
@@ -32,10 +33,13 @@ namespace NEP.MonoDirector.Tools
         private Action<Hand> m_onHandAttached;
         private Action<Hand> m_onHandReleased;
 
+        private UIPlug m_plug;
+        
         private bool m_hackDespawnFlag;
 
         private void Awake()
         {
+            m_plug = GetComponent<UIPlug>() ?? transform.Find("Plug").GetComponent<UIPlug>();
             m_title = transform.Find("Text").GetComponent<TextMeshPro>();
             m_grip = transform.Find("Grip").GetComponent<Grip>();
             m_poolee = GetComponent<Poolee>();
@@ -53,6 +57,11 @@ namespace NEP.MonoDirector.Tools
 
             m_grip.attachedHandDelegate += m_onHandAttached;
             m_grip.detachedHandDelegate += m_onHandReleased;
+
+            m_connect1.playOnAwake = false;
+            m_connect2.playOnAwake = false;
+            m_disconnect1.playOnAwake = false;
+            m_disconnect2.playOnAwake = false;
         }
 
         protected void OnDestroy()
@@ -69,24 +78,15 @@ namespace NEP.MonoDirector.Tools
                 m_hackDespawnFlag = false;
             }
         }
-
+        
         private void OnTriggerEnter(Collider collider)
         {
             StageShelfSocket socket = collider.GetComponent<StageShelfSocket>();
 
             if (socket == null)
-            {
                 return;
-            }
 
             m_hoveredSocket = socket;
-
-            if (m_hoveredSocket.Empty)
-            {
-                m_hoveredSocket.HoverOver();
-                //m_grip.GetController(out BaseController controller);
-                //controller.Haptic(0.25f);
-            }
         }
 
         private void OnTriggerExit(Collider collider)
@@ -94,15 +94,10 @@ namespace NEP.MonoDirector.Tools
             StageShelfSocket socket = collider.GetComponent<StageShelfSocket>();
 
             if (socket == null)
-            {
                 return;
-            }
 
-            if (m_hoveredSocket)
-            {
-                m_hoveredSocket.HoverAway();
+            if (m_hoveredSocket == socket)
                 m_hoveredSocket = null;
-            }
         }
 
         public void Despawn()
@@ -120,50 +115,39 @@ namespace NEP.MonoDirector.Tools
             m_stage = stage;
 
             if (m_stage == null)
-            {
                 m_title.text = "None";
-            }
             else
-            {
                 m_title.text = m_stage.Name;
-            }
         }
 
-        public void AttachToSocket(StageShelfSocket socket)
+        public void Connect(StageShelfSocket socket)
         {
             if (m_lastConnectedSocket)
             {
                 m_lastConnectedSocket.SetReel(null);
+                m_lastConnectedSocket.Socket.Unbind();
             }
 
             m_attachedSocket = socket;
             m_lastConnectedSocket = m_attachedSocket;
             m_attachedSocket.SetReel(this);
-            m_attachedSocket.Connect();
-            m_rigidbody.isKinematic = true;
-            transform.position = m_attachedSocket.transform.position;
-            transform.rotation = m_attachedSocket.transform.rotation;
+            m_plug.Connect(socket.Socket);
 
             m_connect1.Play();
             m_connect2.Play();
         }
 
-        public void DetachFromSocket()
+        public void Disconnect()
         {
-            if (!m_attachedSocket)
-            {
+            if (!m_attachedSocket || !m_attachedSocket.Socket)
                 return;
-            }
 
             if (m_attachedSocket.IsDisconnected)
-            {
                 return;
-            }
 
             m_attachedSocket.SetReel(null);
-            m_attachedSocket.Disconnect();
             m_attachedSocket = null;
-            m_rigidbody.isKinematic = false;
+            m_plug.Disconnect();
 
             m_disconnect1.Play();
             m_disconnect2.Play();
@@ -172,22 +156,18 @@ namespace NEP.MonoDirector.Tools
         private void OnHandAttached(Hand hand)
         {
             if (m_grip.attachedHands.Count > 1)
-            {
                 return;
-            }
 
-            DetachFromSocket();
+            Disconnect();
         }
 
         private void OnHandReleased(Hand hand)
         {
             if (m_grip.attachedHands.Count > 1)
-            {
                 return;
-            }
 
             // Already hovering over an empty socket?
-            if (m_hoveredSocket && m_hoveredSocket.Empty)
+            if (m_hoveredSocket && m_hoveredSocket.Socket.Empty)
             {
                 // If there's no stage already, make one.
                 if (m_stage == null)
@@ -198,17 +178,15 @@ namespace NEP.MonoDirector.Tools
                     Director.AddStage(m_stage);
                 }
 
-                AttachToSocket(m_hoveredSocket);
+                Connect(m_hoveredSocket);
             }
             // If we let go of the reel, it should go back to the previously connected socket.
             else if (m_lastConnectedSocket)
             {
                 if (m_stage == null)
-                {
                     Despawn();
-                }
 
-                AttachToSocket(m_lastConnectedSocket);
+                Connect(m_lastConnectedSocket);
             }
         }
         

@@ -1,19 +1,19 @@
 ﻿using UnityEngine;
 using MelonLoader;
-using Il2CppSLZ.Marrow.Interaction;
+
 using UnityEngine.UI;
-using NEP.MonoDirector.Core;
-using System.Threading.Tasks.Sources;
+
+using NEP.MonoDirector.UI.Interaction;
 
 namespace NEP.MonoDirector.Tools
 {
     [RegisterTypeInIl2Cpp]
     public class StageShelfSocket(IntPtr ptr) : MonoBehaviour(ptr)
     {
+        public UISocket Socket => m_socket;
         public Rigidbody Body { get => m_body; }
         public StageReel Reel { get => m_reel; }
         public int Index => transform.GetSiblingIndex();
-        public bool Empty { get => m_empty; }
         public bool IsSpawner { get => m_isSpawner; }
         public bool IsDisconnected { get => m_isDisconnected; }
 
@@ -22,36 +22,36 @@ namespace NEP.MonoDirector.Tools
 
         private StageReel m_reel;
         private StageReel m_hoveredReel;
+        
         private Rigidbody m_body;
-        private Image m_image;
-        private bool m_empty;
         private bool m_isSpawner;
         private bool m_isDisconnected;
 
-        private Color m_regularColor;
-        private Color m_hoverColor;
-
-
+        private UISocket m_socket;
+        
         private void Awake()
         {
-            m_image = transform.Find("Outline")?.GetComponent<Image>();
             m_body = GetComponent<Rigidbody>();
-
-            m_regularColor = Color.white;
-            m_hoverColor = Color.blue;
-
-            m_empty = true;
+            Initialize();
             m_isSpawner = false;
         }
 
         private void OnEnable()
         {
-            if (m_image == null)
-            {
-                return;
-            }
+            m_socket.OnConnected += Connect;
+            m_socket.OnDisconnected += Disconnect;
+        }
 
-            m_image.color = m_regularColor;
+        private void OnDisable()
+        {
+            m_socket.OnConnected -= Connect;
+            m_socket.OnDisconnected -= Disconnect;
+        }
+
+        public void Initialize()
+        {
+            if (!m_socket)
+                m_socket = GetComponent<UISocket>();
         }
 
         public void SetReel(StageReel reel)
@@ -59,32 +59,10 @@ namespace NEP.MonoDirector.Tools
             if (reel == null)
             {
                 m_reel = null;
-                m_empty = true;
                 return;
             }
 
             m_reel = reel;
-            m_empty = false;
-        }
-
-        public void HoverOver()
-        {
-            if (m_image == null)
-            {
-                return;
-            }
-
-            m_image.color = m_hoverColor;
-        }
-
-        public void HoverAway()
-        {
-            if (m_image == null)
-            {
-                return;
-            }
-
-            m_image.color = m_regularColor;
         }
 
         public void Connect()
@@ -103,7 +81,7 @@ namespace NEP.MonoDirector.Tools
 
         public void Show()
         {
-            if (m_reel)
+            if (m_reel && m_reel.Stage != null)
                 m_reel.Show();
             
             gameObject.SetActive(true);

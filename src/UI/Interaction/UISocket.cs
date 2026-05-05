@@ -35,7 +35,7 @@ namespace NEP.MonoDirector.UI.Interaction
             if (!m_image)
                 return;
             
-            m_image.CrossFadeColor(m_hoverColor, 0.25f, true, true);
+            m_image.CrossFadeColor(m_hoverColor, 0.1f, true, true);
             m_hovered = true;
         }
 
@@ -44,13 +44,16 @@ namespace NEP.MonoDirector.UI.Interaction
             if (!m_image)
                 return;
             
-            m_image.CrossFadeColor(m_normalColor, 0.25f, true, true);
+            m_image.CrossFadeColor(m_normalColor, 0.1f, true, true);
             m_hovered = false;
         }
         
         public void Bind(UIPlug plug)
         {
             if (!plug)
+                return;
+
+            if (!m_empty)
                 return;
             
             m_plug = plug;
@@ -66,7 +69,7 @@ namespace NEP.MonoDirector.UI.Interaction
         {
             if (!m_plug || !m_plug.Body)
                 return;
-            
+
             m_plug.Body.isKinematic = false;
             m_plug = null;
             m_empty = true;

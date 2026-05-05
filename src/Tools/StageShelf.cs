@@ -10,6 +10,7 @@ using NEP.MonoDirector.Core;
 using System.Collections;
 using NEP.MonoDirector.UI.Interaction;
 using UnityEngine;
+using NEP.MonoDirector.Yielding;
 
 namespace NEP.MonoDirector.Tools
 {
@@ -27,7 +28,6 @@ namespace NEP.MonoDirector.Tools
         private UIButton m_closeButton;
         
         private Spawnable m_reelSpawnable;
-        private Coroutine m_reelSpawnRoutine;
 
         private AudioSource m_deleteSfx;
 
@@ -52,7 +52,9 @@ namespace NEP.MonoDirector.Tools
             m_deleteSfx = transform.Find("Canvas/Trash/DeleteSFX").GetComponent<AudioSource>();
 
             m_closeButton = transform.Find("Canvas/CloseButton").GetComponent<UIButton>();
-            
+
+            RegisterSpawnable();
+
             MelonCoroutines.Start(SpawnReels());
 
             gameObject.SetActive(false);
@@ -155,7 +157,7 @@ namespace NEP.MonoDirector.Tools
         {
             if (m_deleteStageSocket.Reel.Stage == null)
             {
-                m_deleteStageSocket.Reel.DetachFromSocket();
+                m_deleteStageSocket.Reel.Disconnect();
                 m_deleteStageSocket.Reel.Despawn();
                 return;
             }
@@ -176,7 +178,7 @@ namespace NEP.MonoDirector.Tools
                 StageReel newReel = m_newStageSocket.Reel;
                 m_newStageSocket.Disconnect();
                 newReel.SetStage(previousStage);
-                newReel.AttachToSocket(m_sockets[0]);
+                newReel.Connect(m_sockets[0]);
             }
             else
             {
@@ -188,7 +190,7 @@ namespace NEP.MonoDirector.Tools
 
             m_deleteStageSocket.Reel.Despawn();
             m_deleteStageSocket.Reel.SetStage(null);
-            m_deleteStageSocket.Reel.AttachToSocket(m_newStageSocket);
+            m_deleteStageSocket.Reel.Connect(m_newStageSocket);
 
             UpdateSocketLayout();
 
@@ -205,84 +207,45 @@ namespace NEP.MonoDirector.Tools
 
         private IEnumerator SpawnNewReel()
         {
-            var spawnTask = AssetSpawner.SpawnAsync(
-                    m_reelSpawnable,
-                    Vector3.zero,
-                    Quaternion.identity,
-                    new Il2CppSystem.Nullable<Vector3>(Vector3.one),
-                    null,
-                    false,
-                    new Il2CppSystem.Nullable<int>(0)).GetAwaiter();
-
-            while (!spawnTask.IsCompleted) yield return null;
-
-            Poolee newReelObj = spawnTask.GetResult();
-            MarrowEntity newReelEntity = newReelObj.GetComponent<MarrowEntity>();
-            StageReel reel = newReelEntity.GetComponent<StageReel>();
-            reel.AttachToSocket(m_newStageSocket);
-            m_newStageSocket.SetReel(reel);
-
-            yield return null;
+            yield return new
+                    WaitForAssetSpawn<StageReel>(m_reelSpawnable, Vector3.zero, Quaternion.identity)
+                    .Then(reel =>
+                    {
+                        reel.Connect(m_newStageSocket);
+                        m_newStageSocket.SetReel(reel);
+                    });
         }
 
         private IEnumerator SpawnReels()
         {
-            SpawnableCrateReference crateRef = new SpawnableCrateReference()
-            {
-                Barcode = new Barcode("NEP.MonoDirector.Spawnable.StageReel")
-            };
-
-            m_reelSpawnable = new Spawnable()
-            {
-                crateRef = crateRef
-            };
-
-            // TODO: Clean up this very messy code
-            // A lot of this can be refactored into dedicated spawn functions
-            AssetSpawner.Register(m_reelSpawnable);
-
             for (int i = 0; i < m_sockets.Length; i++)
-            { 
-                var task = AssetSpawner.SpawnAsync(
-                    m_reelSpawnable,
-                    Vector3.zero,
-                    Quaternion.identity,
-                    new Il2CppSystem.Nullable<Vector3>(Vector3.one),
-                    null,
-                    false,
-                    new Il2CppSystem.Nullable<int>(0)).GetAwaiter();
-
-                while (!task.IsCompleted) yield return null;
-
-                Poolee obj = task.GetResult();
-                MarrowEntity reelEntity = obj.GetComponent<MarrowEntity>();
-                reelEntity.gameObject.SetActive(false);
-                m_sockets[i].SetReel(reelEntity.GetComponent<StageReel>());
+            {
+                yield return new
+                    WaitForAssetSpawn<StageReel>(m_reelSpawnable, Vector3.zero, Quaternion.identity)
+                    .Then(reel =>
+                    {
+                        reel.Hide();
+                        m_sockets[i].SetReel(reel);
+                    });
             }
 
             for (int i = 0; i < Director.ActiveFilm.Stages.Count; i++)
             {
                 m_sockets[i].Reel.SetStage(Director.ActiveFilm.Stages[i]);
-                m_sockets[i].Reel.AttachToSocket(m_sockets[i]);
+                m_sockets[i].Reel.Connect(m_sockets[i]);
             }
 
-            var spawnTask = AssetSpawner.SpawnAsync(
-                    m_reelSpawnable,
-                    Vector3.zero,
-                    Quaternion.identity,
-                    new Il2CppSystem.Nullable<Vector3>(Vector3.one),
-                    null,
-                    false,
-                    new Il2CppSystem.Nullable<int>(0)).GetAwaiter();
-
-            while (!spawnTask.IsCompleted) yield return null;
-
-            Poolee newReelObj = spawnTask.GetResult();
-            MarrowEntity newReelEntity = newReelObj.GetComponent<MarrowEntity>();
-            StageReel reel = newReelEntity.GetComponent<StageReel>();
-            reel.AttachToSocket(m_newStageSocket);
-            m_newStageSocket.SetReel(reel);
-            reel.Hide();
+            yield return new
+                WaitForAssetSpawn<StageReel>(m_reelSpawnable, Vector3.zero, Quaternion.identity)
+                .Then(reel =>
+                {
+                    // this does fuck-all because of the Awake function not getting called in time
+                    // on this instance of StageShelfSocket
+                    m_newStageSocket.Initialize();
+                    reel.Connect(m_newStageSocket);
+                    m_newStageSocket.SetReel(reel);
+                    reel.Hide();
+                });
         }
 
         private void UpdateSocketLayout()
@@ -295,12 +258,13 @@ namespace NEP.MonoDirector.Tools
                 StageShelfSocket socket = m_sockets[i];
                 socket.Show();
 
-                if (socket.Reel)
-                {
-                    socket.Reel.transform.position = socket.transform.position;
-                    socket.Reel.transform.rotation = socket.transform.rotation;
-                    socket.Reel.Show();
-                }
+                if (!socket.Reel)
+                    continue;
+
+                Vector3 position = socket.transform.position;
+                Quaternion rotation = socket.transform.rotation;
+                socket.Reel.transform.position = position;
+                socket.Reel.transform.rotation = rotation;
             }
 
             // Set the last socket active to add new reels to the end
@@ -319,6 +283,23 @@ namespace NEP.MonoDirector.Tools
                 m_activeStageSocket.Reel.transform.position = m_activeStageSocket.transform.position;
                 m_activeStageSocket.Reel.transform.rotation = m_activeStageSocket.transform.rotation;
             }
+        }
+
+        private void RegisterSpawnable()
+        {
+            SpawnableCrateReference crateRef = new SpawnableCrateReference()
+            {
+                Barcode = new Barcode("NEP.MonoDirector.Spawnable.StageReel")
+            };
+
+            m_reelSpawnable = new Spawnable()
+            {
+                crateRef = crateRef
+            };
+
+            // TODO: Clean up this very messy code
+            // A lot of this can be refactored into dedicated spawn functions
+            AssetSpawner.Register(m_reelSpawnable);
         }
     }
 }
