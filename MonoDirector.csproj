@@ -144,6 +144,8 @@
 		<Compile Include="src\UI\InfoInterfaceManager.cs" />
 		<Compile Include="src\UI\InformationInterface.cs" />
 		<Compile Include="src\UI\Interaction\UIButton.cs" />
+		<Compile Include="src\UI\Interaction\UIPlug.cs" />
+		<Compile Include="src\UI\Interaction\UISocket.cs" />
 		<Compile Include="src\UI\Menu\ActorDisplayPage.cs" />
 		<Compile Include="src\UI\Menu\ActorEntry.cs" />
 		<Compile Include="src\UI\Menu\ActorSettingsPage.cs" />
@@ -160,6 +162,7 @@
 		<Compile Include="src\UI\PropMarker.cs" />
 		<Compile Include="src\UI\MenuBootstrap.cs" />
 		<Compile Include="src\UI\PropMarkerManager.cs" />
+		<Compile Include="src\Yielding\WaitForAssetSpawn.cs" />
 	</ItemGroup>
 
 	<ItemGroup>
