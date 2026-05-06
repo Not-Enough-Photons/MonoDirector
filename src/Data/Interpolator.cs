@@ -1,155 +1,154 @@
 ﻿using NEP.MonoDirector.Core;
 using UnityEngine;
 
-namespace NEP.MonoDirector.Data
+namespace NEP.MonoDirector.Data;
+
+public static class Interpolator
 {
-    public static class Interpolator
+    public static float GetPlaybackTime()
     {
-        public static float GetPlaybackTime()
+        return Playback.Instance.PlaybackTime;
+    }
+
+    public static float GetFrameDelta(float nextFrameTime, float previousFrameTime)
+    {
+        float gap = nextFrameTime - previousFrameTime;
+        float head = GetPlaybackTime() - previousFrameTime;
+
+        return head / gap;
+    }
+
+    public static Vector3 InterpolatePosition(List<ObjectFrame> frames)
+    {
+        ObjectFrame previousFrame = new ObjectFrame();
+        ObjectFrame nextFrame = new ObjectFrame();
+
+        foreach (var frame in frames)
         {
-            return Playback.Instance.PlaybackTime;
-        }
+            previousFrame = nextFrame;
+            nextFrame = frame;
 
-        public static float GetFrameDelta(float nextFrameTime, float previousFrameTime)
-        {
-            float gap = nextFrameTime - previousFrameTime;
-            float head = GetPlaybackTime() - previousFrameTime;
-
-            return head / gap;
-        }
-
-        public static Vector3 InterpolatePosition(List<ObjectFrame> frames)
-        {
-            ObjectFrame previousFrame = new ObjectFrame();
-            ObjectFrame nextFrame = new ObjectFrame();
-
-            foreach (var frame in frames)
+            if (frame.frameTime > GetPlaybackTime())
             {
-                previousFrame = nextFrame;
-                nextFrame = frame;
-
-                if (frame.frameTime > GetPlaybackTime())
-                {
-                    break;
-                }
+                break;
             }
-
-            float delta = GetFrameDelta(nextFrame.frameTime, previousFrame.frameTime);
-
-            return Vector3.Lerp(previousFrame.position, nextFrame.position, delta);
         }
 
-        public static Quaternion InterpolateRotation(List<ObjectFrame> frames)
-        {
-            ObjectFrame previousFrame = new ObjectFrame();
-            ObjectFrame nextFrame = new ObjectFrame();
+        float delta = GetFrameDelta(nextFrame.frameTime, previousFrame.frameTime);
 
-            foreach (var frame in frames)
+        return Vector3.Lerp(previousFrame.position, nextFrame.position, delta);
+    }
+
+    public static Quaternion InterpolateRotation(List<ObjectFrame> frames)
+    {
+        ObjectFrame previousFrame = new ObjectFrame();
+        ObjectFrame nextFrame = new ObjectFrame();
+
+        foreach (var frame in frames)
+        {
+            previousFrame = nextFrame;
+            nextFrame = frame;
+
+            if (frame.frameTime > GetPlaybackTime())
             {
-                previousFrame = nextFrame;
-                nextFrame = frame;
-
-                if (frame.frameTime > GetPlaybackTime())
-                {
-                    break;
-                }
+                break;
             }
-
-            float delta = GetFrameDelta(nextFrame.frameTime, previousFrame.frameTime);
-
-            return Quaternion.Slerp(previousFrame.rotation, nextFrame.rotation, delta);
         }
 
-        public static Vector3 InterpolatePosition(FrameGroup[] frames, int frameIndex)
-        {
-            FrameGroup previousFrame = new FrameGroup();
-            FrameGroup nextFrame = new FrameGroup();
+        float delta = GetFrameDelta(nextFrame.frameTime, previousFrame.frameTime);
 
-            foreach (var frame in frames)
+        return Quaternion.Slerp(previousFrame.rotation, nextFrame.rotation, delta);
+    }
+
+    public static Vector3 InterpolatePosition(FrameGroup[] frames, int frameIndex)
+    {
+        FrameGroup previousFrame = new FrameGroup();
+        FrameGroup nextFrame = new FrameGroup();
+
+        foreach (var frame in frames)
+        {
+            previousFrame = nextFrame;
+            nextFrame = frame;
+
+            if (frame.FrameTime > GetPlaybackTime())
             {
-                previousFrame = nextFrame;
-                nextFrame = frame;
-
-                if (frame.FrameTime > GetPlaybackTime())
-                {
-                    break;
-                }
+                break;
             }
-
-            float delta = GetFrameDelta(nextFrame.FrameTime, previousFrame.FrameTime);
-
-            return Vector3.Lerp(previousFrame.TransformFrames[frameIndex].position, nextFrame.TransformFrames[frameIndex].position, delta);
         }
 
-        public static Quaternion InterpolateRotation(FrameGroup[] frames, int frameIndex)
-        {
-            FrameGroup previousFrame = new FrameGroup();
-            FrameGroup nextFrame = new FrameGroup();
+        float delta = GetFrameDelta(nextFrame.FrameTime, previousFrame.FrameTime);
 
-            foreach (var frame in frames)
+        return Vector3.Lerp(previousFrame.TransformFrames[frameIndex].position, nextFrame.TransformFrames[frameIndex].position, delta);
+    }
+
+    public static Quaternion InterpolateRotation(FrameGroup[] frames, int frameIndex)
+    {
+        FrameGroup previousFrame = new FrameGroup();
+        FrameGroup nextFrame = new FrameGroup();
+
+        foreach (var frame in frames)
+        {
+            previousFrame = nextFrame;
+            nextFrame = frame;
+
+            if (frame.FrameTime > GetPlaybackTime())
             {
-                previousFrame = nextFrame;
-                nextFrame = frame;
-
-                if (frame.FrameTime > GetPlaybackTime())
-                {
-                    break;
-                }
+                break;
             }
-
-            float delta = GetFrameDelta(nextFrame.FrameTime, previousFrame.FrameTime);
-
-            return Quaternion.Slerp(previousFrame.TransformFrames[frameIndex].rotation, nextFrame.TransformFrames[frameIndex].rotation, delta);
         }
 
-        public static Vector3 InterpolateVelocity(List<ObjectFrame> frames)
-        {
-            ObjectFrame previousFrame = new ObjectFrame();
-            ObjectFrame nextFrame = new ObjectFrame();
+        float delta = GetFrameDelta(nextFrame.FrameTime, previousFrame.FrameTime);
 
-            foreach (var frame in frames)
+        return Quaternion.Slerp(previousFrame.TransformFrames[frameIndex].rotation, nextFrame.TransformFrames[frameIndex].rotation, delta);
+    }
+
+    public static Vector3 InterpolateVelocity(List<ObjectFrame> frames)
+    {
+        ObjectFrame previousFrame = new ObjectFrame();
+        ObjectFrame nextFrame = new ObjectFrame();
+
+        foreach (var frame in frames)
+        {
+            previousFrame = nextFrame;
+            nextFrame = frame;
+
+            if (frame.frameTime > GetPlaybackTime())
             {
-                previousFrame = nextFrame;
-                nextFrame = frame;
-
-                if (frame.frameTime > GetPlaybackTime())
-                {
-                    break;
-                }
+                break;
             }
-
-            float delta = GetFrameDelta(nextFrame.frameTime, previousFrame.frameTime);
-
-            return Vector3.Lerp(previousFrame.rigidbodyVelocity, nextFrame.rigidbodyVelocity, delta);
         }
 
-        public static void InterpolateTransform(Transform transform, ObjectFrame previous, ObjectFrame next)
-        {
-            Vector3 previousPosition;
-            Vector3 nextPosition;
+        float delta = GetFrameDelta(nextFrame.frameTime, previousFrame.frameTime);
 
-            Quaternion previousRotation;
-            Quaternion nextRotation;
+        return Vector3.Lerp(previousFrame.rigidbodyVelocity, nextFrame.rigidbodyVelocity, delta);
+    }
 
-            GetSteppedPosition(previous, next, out previousPosition, out nextPosition);
-            GetSteppedRotation(previous, next, out previousRotation, out nextRotation);
+    public static void InterpolateTransform(Transform transform, ObjectFrame previous, ObjectFrame next)
+    {
+        Vector3 previousPosition;
+        Vector3 nextPosition;
 
-            float delta = GetFrameDelta(next.frameTime, previous.frameTime);
+        Quaternion previousRotation;
+        Quaternion nextRotation;
 
-            transform.position = Vector3.Lerp(previousPosition, nextPosition, delta);
-            transform.rotation = Quaternion.Slerp(previousRotation, nextRotation, delta);
-        }
+        GetSteppedPosition(previous, next, out previousPosition, out nextPosition);
+        GetSteppedRotation(previous, next, out previousRotation, out nextRotation);
 
-        public static void GetSteppedPosition(ObjectFrame previousFrame, ObjectFrame nextFrame, out Vector3 previous, out Vector3 next)
-        {
-            previous = previousFrame.position;
-            next = nextFrame.position;
-        }
+        float delta = GetFrameDelta(next.frameTime, previous.frameTime);
 
-        public static void GetSteppedRotation(ObjectFrame previousFrame, ObjectFrame nextFrame, out Quaternion previous, out Quaternion next)
-        {
-            previous = previousFrame.rotation;
-            next = nextFrame.rotation;
-        }
+        transform.position = Vector3.Lerp(previousPosition, nextPosition, delta);
+        transform.rotation = Quaternion.Slerp(previousRotation, nextRotation, delta);
+    }
+
+    public static void GetSteppedPosition(ObjectFrame previousFrame, ObjectFrame nextFrame, out Vector3 previous, out Vector3 next)
+    {
+        previous = previousFrame.position;
+        next = nextFrame.position;
+    }
+
+    public static void GetSteppedRotation(ObjectFrame previousFrame, ObjectFrame nextFrame, out Quaternion previous, out Quaternion next)
+    {
+        previous = previousFrame.rotation;
+        next = nextFrame.rotation;
     }
 }

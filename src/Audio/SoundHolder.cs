@@ -5,40 +5,39 @@ using UnityEngine;
 using Il2CppSLZ.Marrow.Pool;
 using Il2CppTMPro;
 
-namespace NEP.MonoDirector.Audio
+namespace NEP.MonoDirector.Audio;
+
+[MelonLoader.RegisterTypeInIl2Cpp]
+public class SoundHolder(IntPtr ptr) : MonoBehaviour(ptr)
 {
-    [MelonLoader.RegisterTypeInIl2Cpp]
-    public class SoundHolder(IntPtr ptr) : MonoBehaviour(ptr)
+    public static Dictionary<string, AudioClip> LoadedClips;
+
+    private Poolee poolee;
+
+    private AudioClip sound;
+
+    private TextMeshPro nameText;
+
+    private void Start()
     {
-        public static Dictionary<string, AudioClip> LoadedClips;
+        poolee = GetComponent<Poolee>();
+        nameText = transform.Find("DisplayName").GetComponent<TextMeshPro>();
+        AssignSound(WarehouseLoader.soundTable[poolee.SpawnableCrate.Description]);
+    }
 
-        private Poolee poolee;
+    private void OnDisable()
+    {
+        poolee.Despawn();
+    }
 
-        private AudioClip sound;
+    public void AssignSound(AudioClip sound)
+    {
+        this.sound = sound;
+        nameText.text = sound.name;
+    }
 
-        private TextMeshPro nameText;
-
-        private void Start()
-        {
-            poolee = GetComponent<Poolee>();
-            nameText = transform.Find("DisplayName").GetComponent<TextMeshPro>();
-            AssignSound(WarehouseLoader.soundTable[poolee.SpawnableCrate.Description]);
-        }
-
-        private void OnDisable()
-        {
-            poolee.Despawn();
-        }
-
-        public void AssignSound(AudioClip sound)
-        {
-            this.sound = sound;
-            nameText.text = sound.name;
-        }
-
-        public AudioClip GetSound()
-        {
-            return sound;
-        }
+    public AudioClip GetSound()
+    {
+        return sound;
     }
 }

@@ -8,34 +8,33 @@ using Il2CppSLZ.Bonelab;
 using Il2CppSLZ.Marrow.Pool;
 using Il2CppSLZ.VFX;
 
-namespace NEP.MonoDirector.Actors
+namespace NEP.MonoDirector.Actors;
+
+public static class ActorNPCBuilder
 {
-    public static class ActorNPCBuilder
+    public static void BuildNPCActor(Poolee pooleeObject)
     {
-        public static void BuildNPCActor(Poolee pooleeObject)
+        ActorNPC test = new ActorNPC(pooleeObject.transform);
+        // Director.NPCCast.Add(test);
+    }
+
+    public static void RemoveNPCActor(Poolee pooleeObject)
+    {
+        var gameObject = pooleeObject.gameObject;
+        var vfxBlip = gameObject.GetComponent<Blip>();
+
+        Prop actorProp = gameObject.GetComponent<Prop>();
+        bool isProp = actorProp != null;
+
+        if (isProp && Director.PlayState == State.PlayState.Stopped)
         {
-            ActorNPC test = new ActorNPC(pooleeObject.transform);
-            // Director.NPCCast.Add(test);
-        }
+            MelonLoader.MelonLogger.Msg($"Removing component from {gameObject.name}");
 
-        public static void RemoveNPCActor(Poolee pooleeObject)
-        {
-            var gameObject = pooleeObject.gameObject;
-            var vfxBlip = gameObject.GetComponent<Blip>();
-
-            Prop actorProp = gameObject.GetComponent<Prop>();
-            bool isProp = actorProp != null;
-
-            if (isProp && Director.PlayState == State.PlayState.Stopped)
-            {
-                MelonLoader.MelonLogger.Msg($"Removing component from {gameObject.name}");
-
-                var prop = actorProp;
-                // prop.InteractableRigidbody.isKinematic = false;
-                // Director.RecordingProps.Remove(prop);
-                GameObject.Destroy(prop);
-                vfxBlip?.CallDespawnEffect();
-            }
+            var prop = actorProp;
+            // prop.InteractableRigidbody.isKinematic = false;
+            // Director.RecordingProps.Remove(prop);
+            GameObject.Destroy(prop);
+            vfxBlip?.CallDespawnEffect();
         }
     }
 }

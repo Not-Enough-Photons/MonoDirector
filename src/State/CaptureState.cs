@@ -1,9 +1,8 @@
-﻿namespace NEP.MonoDirector.State
+﻿namespace NEP.MonoDirector.State;
+
+public enum CaptureState
 {
-    public enum CaptureState
-    {
-        CaptureCamera,
-        CaptureActor,
-        None
-    }
+    CaptureCamera,
+    CaptureActor,
+    None
 }

@@ -9,406 +9,405 @@ using UnityEngine;
 
 using MarrowAvatar = Il2CppSLZ.VRMK.Avatar;
 
-namespace NEP.MonoDirector.Core
+namespace NEP.MonoDirector.Core;
+
+public class Recorder
 {
-    public class Recorder
+    public Recorder()
     {
-        public Recorder()
-        {
-            Instance = this;
+        Instance = this;
 
-            Events.OnPreRecord += OnPreRecord;
-            Events.OnStartRecording += OnPostRecord;
-            Events.OnRecordTick += OnRecordTick;
-            Events.OnStopRecording += OnStopRecording;
+        Events.OnPreRecord += OnPreRecord;
+        Events.OnStartRecording += OnPostRecord;
+        Events.OnRecordTick += OnRecordTick;
+        Events.OnStopRecording += OnStopRecording;
+    }
+
+    public static Recorder Instance { get; private set; }
+
+    public float RecordingTime { get => m_recordingTime; }
+    public float TakeTime;
+
+    public int RecordTick { get => m_recordTick; }
+
+    public int Countdown { get; private set; }
+
+    public List<Actor> ActiveActors = new List<Actor>();
+
+    public Actor ActiveActor { get => m_activeActor; }
+    public Actor LastActor { get => m_lastActor; }
+
+    private Actor m_activeActor;
+    private Actor m_lastActor;
+
+    private Coroutine m_recordRoute;
+
+    private float m_fpsTimer = 0f;
+
+    private float m_recordingTime;
+
+    private float m_timeSinceLastTick = 0;
+    private float m_timeSpentInMenu = 0f;
+    private bool m_usedMenu;
+
+    private int m_recordTick;
+
+    public void SetActor(MarrowAvatar avatar)
+    {
+        m_lastActor = m_activeActor;
+        m_activeActor = new Actor(avatar);
+    }
+
+    public void SetUsedMenu(bool usedMenu)
+    {
+        m_usedMenu = usedMenu;
+    }
+
+    public void Tick()
+    {
+        if (Director.PlayState != PlayState.Recording)
+        {
+            return;
         }
 
-        public static Recorder Instance { get; private set; }
-
-        public float RecordingTime { get => m_recordingTime; }
-        public float TakeTime;
-
-        public int RecordTick { get => m_recordTick; }
-
-        public int Countdown { get; private set; }
-
-        public List<Actor> ActiveActors = new List<Actor>();
-
-        public Actor ActiveActor { get => m_activeActor; }
-        public Actor LastActor { get => m_lastActor; }
-
-        private Actor m_activeActor;
-        private Actor m_lastActor;
-
-        private Coroutine m_recordRoute;
-
-        private float m_fpsTimer = 0f;
-
-        private float m_recordingTime;
-
-        private float m_timeSinceLastTick = 0;
-        private float m_timeSpentInMenu = 0f;
-        private bool m_usedMenu;
-
-        private int m_recordTick;
-
-        public void SetActor(MarrowAvatar avatar)
+        try
         {
-            m_lastActor = m_activeActor;
-            m_activeActor = new Actor(avatar);
+            Events.OnRecordTick?.Invoke();
         }
-
-        public void SetUsedMenu(bool usedMenu)
+        catch (Exception e)
         {
-            m_usedMenu = usedMenu;
+            Logging.ErrorDebug(e.ToString());
+            Bootstrap.AnnounceError();
         }
+    }
 
-        public void Tick()
+    public void StartRecordRoutine()
+    {
+        if (m_recordRoute == null)
         {
-            if (Director.PlayState != PlayState.Recording)
+            m_recordRoute = MelonCoroutines.Start(RecordRoutine()) as Coroutine;
+        }
+    }
+
+    public void RecordCamera()
+    {
+        foreach (var castMember in Caster.Cast)
+        {
+            castMember?.Act();
+        }
+    }
+
+    public void RecordActor()
+    {
+        try
+        {
+            if (Settings.World.recordActors)
             {
-                return;
+                m_activeActor.RecordFrame();
             }
 
-            try
+            foreach (var prop in Caster.RecordProps)
             {
-                Events.OnRecordTick?.Invoke();
+                prop.Record(m_recordTick);
             }
-            catch (Exception e)
-            {
-                Logging.ErrorDebug(e.ToString());
-                Bootstrap.AnnounceError();
-            }
-        }
 
-        public void StartRecordRoutine()
-        {
-            if (m_recordRoute == null)
-            {
-                m_recordRoute = MelonCoroutines.Start(RecordRoutine()) as Coroutine;
-            }
-        }
-
-        public void RecordCamera()
-        {
             foreach (var castMember in Caster.Cast)
             {
-                castMember?.Act();
+                Playback.Instance.AnimateActor(castMember);
+            }
+
+            foreach (var prop in Caster.Props)
+            {
+                Playback.Instance.AnimateProp(prop);
             }
         }
-
-        public void RecordActor()
+        catch (Exception e)
         {
-            try
-            {
-                if (Settings.World.recordActors)
-                {
-                    m_activeActor.RecordFrame();
-                }
-
-                foreach (var prop in Caster.RecordProps)
-                {
-                    prop.Record(m_recordTick);
-                }
-
-                foreach (var castMember in Caster.Cast)
-                {
-                    Playback.Instance.AnimateActor(castMember);
-                }
-
-                foreach (var prop in Caster.Props)
-                {
-                    Playback.Instance.AnimateProp(prop);
-                }
-            }
-            catch (Exception e)
-            {
-                Logging.ErrorDebug(e.ToString());
-                Bootstrap.AnnounceError();
-            }
-            
+            Logging.ErrorDebug(e.ToString());
+            Bootstrap.AnnounceError();
         }
+        
+    }
 
-        /// <summary>
-        /// Called when we first hit the record button.
-        /// </summary>
-        public void OnPreRecord()
+    /// <summary>
+    /// Called when we first hit the record button.
+    /// </summary>
+    public void OnPreRecord()
+    {
+        try
         {
-            try
+            if (m_recordTick > 0)
             {
-                if (m_recordTick > 0)
-                {
-                    m_recordTick = 0;
-                }
-
-                Playback.Instance.ResetPlayhead();
-
-                m_fpsTimer = 0f;
-
-                m_recordingTime = 0f;
-
-                m_timeSpentInMenu = 0f;
-                m_usedMenu = false;
-
-                if (Settings.World.recordActors)
-                {
-                    SetActor(Constants.RigManager.avatar);
-                }
-
-                foreach (var castMember in Caster.Cast)
-                {
-                    castMember.OnSceneBegin();
-                }
-
-                foreach (var prop in Caster.Props)
-                {
-                    prop.OnSceneBegin();
-                }
+                m_recordTick = 0;
             }
-            catch (Exception e)
+
+            Playback.Instance.ResetPlayhead();
+
+            m_fpsTimer = 0f;
+
+            m_recordingTime = 0f;
+
+            m_timeSpentInMenu = 0f;
+            m_usedMenu = false;
+
+            if (Settings.World.recordActors)
             {
-                Logging.ErrorDebug(e.ToString());
-                Bootstrap.AnnounceError();
+                SetActor(Constants.RigManager.avatar);
+            }
+
+            foreach (var castMember in Caster.Cast)
+            {
+                castMember.OnSceneBegin();
+            }
+
+            foreach (var prop in Caster.Props)
+            {
+                prop.OnSceneBegin();
             }
         }
-
-        /// <summary>
-        /// Called the moment the recording begins.
-        /// </summary>
-        public void OnPostRecord()
+        catch (Exception e)
         {
-            try
+            Logging.ErrorDebug(e.ToString());
+            Bootstrap.AnnounceError();
+        }
+    }
+
+    /// <summary>
+    /// Called the moment the recording begins.
+    /// </summary>
+    public void OnPostRecord()
+    {
+        try
+        {
+            m_activeActor?.Microphone?.SetCorrectionMode(Audio.ActorSpeech.AudioCorrectionMode.Corrected);
+            m_activeActor?.Microphone?.RecordMicrophone();
+
+            foreach (Trackable castMember in Caster.Cast)
             {
-                m_activeActor?.Microphone?.SetCorrectionMode(Audio.ActorSpeech.AudioCorrectionMode.Corrected);
-                m_activeActor?.Microphone?.RecordMicrophone();
-
-                foreach (Trackable castMember in Caster.Cast)
+                if (castMember != null && castMember is Actor actorPlayer)
                 {
-                    if (castMember != null && castMember is Actor actorPlayer)
-                    {
-                        actorPlayer?.Microphone?.Playback();
+                    actorPlayer?.Microphone?.Playback();
 
-                        if (actorPlayer.Hidden)
-                            actorPlayer.Hide();
-                    }
+                    if (actorPlayer.Hidden)
+                        actorPlayer.Hide();
                 }
             }
-            catch (Exception e)
-            {
-                Logging.ErrorDebug(e.ToString());
-                Bootstrap.AnnounceError();
-            }
-            
+        }
+        catch (Exception e)
+        {
+            Logging.ErrorDebug(e.ToString());
+            Bootstrap.AnnounceError();
+        }
+        
+    }
+
+    /// <summary>
+    /// Called every time a frame is recorded
+    /// </summary>
+    public void OnRecordTick()
+    {
+        if (Director.PlayState == PlayState.Paused)
+        {
+            return;
         }
 
-        /// <summary>
-        /// Called every time a frame is recorded
-        /// </summary>
-        public void OnRecordTick()
+        try
         {
-            if (Director.PlayState == PlayState.Paused)
+            m_recordTick++;
+            m_recordingTime += m_timeSinceLastTick;
+
+            if (m_usedMenu)
             {
-                return;
+                m_timeSpentInMenu += m_timeSinceLastTick;
             }
 
-            try
+            // keep up!
+            if (m_recordingTime > TakeTime)
             {
-                m_recordTick++;
-                m_recordingTime += m_timeSinceLastTick;
+                TakeTime = m_recordingTime;
+            }
 
-                if (m_usedMenu)
+            Playback.Instance.MovePlayhead(m_timeSinceLastTick);
+
+            if (Director.CaptureState == CaptureState.CaptureCamera)
+            {
+                RecordCamera();
+            }
+
+            if (Director.CaptureState == CaptureState.CaptureActor)
+            {
+                RecordActor();
+            }
+
+            foreach (var castMember in Caster.Cast)
+            {
+                if (castMember != null)
                 {
-                    m_timeSpentInMenu += m_timeSinceLastTick;
-                }
-
-                // keep up!
-                if (m_recordingTime > TakeTime)
-                {
-                    TakeTime = m_recordingTime;
-                }
-
-                Playback.Instance.MovePlayhead(m_timeSinceLastTick);
-
-                if (Director.CaptureState == CaptureState.CaptureCamera)
-                {
-                    RecordCamera();
-                }
-
-                if (Director.CaptureState == CaptureState.CaptureActor)
-                {
-                    RecordActor();
-                }
-
-                foreach (var castMember in Caster.Cast)
-                {
-                    if (castMember != null)
-                    {
-                        castMember.Act();
-                    }
+                    castMember.Act();
                 }
             }
-            catch(Exception e)
-            {
-                Logging.ErrorDebug(e.ToString());
-                Bootstrap.AnnounceError();
-            }
-            
         }
-
-        /// <summary>
-        /// Called when the recording stops.
-        /// </summary>
-        public void OnStopRecording()
+        catch(Exception e)
         {
-            try
+            Logging.ErrorDebug(e.ToString());
+            Bootstrap.AnnounceError();
+        }
+        
+    }
+
+    /// <summary>
+    /// Called when the recording stops.
+    /// </summary>
+    public void OnStopRecording()
+    {
+        try
+        {
+            m_recordingTime -= m_timeSpentInMenu - 1f;
+
+            Director.ActiveScene.SetDuration(m_recordingTime);
+
+            m_activeActor?.Microphone?.StopRecording();
+
+            foreach (Trackable castMember in Caster.Cast)
             {
-                m_recordingTime -= m_timeSpentInMenu - 1f;
-
-                Director.ActiveScene.SetDuration(m_recordingTime);
-
-                m_activeActor?.Microphone?.StopRecording();
-
-                foreach (Trackable castMember in Caster.Cast)
+                if (castMember != null && castMember is Actor actorPlayer)
                 {
-                    if (castMember != null && castMember is Actor actorPlayer)
-                    {
-                        actorPlayer?.Microphone?.StopPlayback();
+                    actorPlayer?.Microphone?.StopPlayback();
 
-                        if (actorPlayer.Hidden)
-                            actorPlayer.Show();
-                    }
+                    if (actorPlayer.Hidden)
+                        actorPlayer.Show();
                 }
+            }
 
 #if DEBUG
-                /*
-                Stopwatch sw = new Stopwatch();
-                sw.Start();
-                byte[] actorBytes = ActiveActor.ToBinary();
-                sw.Stop();
+            /*
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            byte[] actorBytes = ActiveActor.ToBinary();
+            sw.Stop();
 
-                Main.Logger.Msg($"[STOPWATCH]: Actor::ToBinary() took {sw.ElapsedMilliseconds}...");
+            Main.Logger.Msg($"[STOPWATCH]: Actor::ToBinary() took {sw.ElapsedMilliseconds}...");
 
-                sw.Restart();
+            sw.Restart();
 
-                using (FileStream file = File.Open("test.mdat", FileMode.Create))
-                {
-                    uint ident = ActiveActor.GetBinaryID();
-                    file.Write(BitConverter.GetBytes(ident), 0, sizeof(uint));
+            using (FileStream file = File.Open("test.mdat", FileMode.Create))
+            {
+                uint ident = ActiveActor.GetBinaryID();
+                file.Write(BitConverter.GetBytes(ident), 0, sizeof(uint));
 
-                    file.Write(actorBytes, 0, actorBytes.Length);
-                };
+                file.Write(actorBytes, 0, actorBytes.Length);
+            };
 
-                sw.Stop();
+            sw.Stop();
 
-                Main.Logger.Msg($"[STOPWATCH]: Writing MDAT took {sw.ElapsedMilliseconds}...");
-                sw.Restart();
+            Main.Logger.Msg($"[STOPWATCH]: Writing MDAT took {sw.ElapsedMilliseconds}...");
+            sw.Restart();
 
-                // Then try to read it back
-                using (FileStream file = File.Open("test.mdat", FileMode.Open))
-                {
-                    // Seek past the first 4 bytes
-                    file.Seek(4, SeekOrigin.Begin);
-                    ActiveActor.FromBinary(file);
-                }
+            // Then try to read it back
+            using (FileStream file = File.Open("test.mdat", FileMode.Open))
+            {
+                // Seek past the first 4 bytes
+                file.Seek(4, SeekOrigin.Begin);
+                ActiveActor.FromBinary(file);
+            }
 
-                sw.Stop();
+            sw.Stop();
 
-                Main.Logger.Msg($"[STOPWATCH]: Actor::FromBinary() took {sw.ElapsedMilliseconds}...");
-                */
+            Main.Logger.Msg($"[STOPWATCH]: Actor::FromBinary() took {sw.ElapsedMilliseconds}...");
+            */
 #endif
 
-                if (Settings.World.recordActors)
-                {
-                    m_activeActor.CloneAvatar();
-
-                    foreach (var recordedProp in Caster.RecordProps)
-                    {
-                        m_activeActor.OwnProp(recordedProp);
-                    }
-
-                    // NOTE: Perhaps add the active actor to the list?
-                    Caster.CastActor(m_activeActor);
-                    Director.ActiveScene.AddActor(m_activeActor);
-                }
-
-                m_lastActor = m_activeActor;
-
-                m_activeActor = null;
-
-                Caster.CastActors(ActiveActors);
-                Director.ActiveScene.AddActors(ActiveActors);
-                Director.ActiveScene.AddProps(Caster.RecordProps.ToList());
-
-                // Caster.AddProps(Director.RecordingProps);
-                // Director.LastRecordedProps = Director.RecordingProps;
-
-                Caster.TransferRecordedProps();
-
-                ActiveActors.Clear();
-
-                Director.ActiveScene.SetDuration(m_recordingTime);
-
-                if (m_recordRoute != null)
-                {
-                    MelonCoroutines.Stop(m_recordRoute);
-                    m_recordRoute = null;
-                }
-            }
-            catch(Exception e)
+            if (Settings.World.recordActors)
             {
-                Logging.ErrorDebug(e.ToString());
-                Bootstrap.AnnounceError();
+                m_activeActor.CloneAvatar();
+
+                foreach (var recordedProp in Caster.RecordProps)
+                {
+                    m_activeActor.OwnProp(recordedProp);
+                }
+
+                // NOTE: Perhaps add the active actor to the list?
+                Caster.CastActor(m_activeActor);
+                Director.ActiveScene.AddActor(m_activeActor);
+            }
+
+            m_lastActor = m_activeActor;
+
+            m_activeActor = null;
+
+            Caster.CastActors(ActiveActors);
+            Director.ActiveScene.AddActors(ActiveActors);
+            Director.ActiveScene.AddProps(Caster.RecordProps.ToList());
+
+            // Caster.AddProps(Director.RecordingProps);
+            // Director.LastRecordedProps = Director.RecordingProps;
+
+            Caster.TransferRecordedProps();
+
+            ActiveActors.Clear();
+
+            Director.ActiveScene.SetDuration(m_recordingTime);
+
+            if (m_recordRoute != null)
+            {
+                MelonCoroutines.Stop(m_recordRoute);
+                m_recordRoute = null;
             }
         }
-
-        public IEnumerator RecordRoutine()
+        catch(Exception e)
         {
-            Events.OnPreRecord?.Invoke();
+            Logging.ErrorDebug(e.ToString());
+            Bootstrap.AnnounceError();
+        }
+    }
 
-            for (Countdown = 0; Countdown < Settings.World.delay; Countdown++)
+    public IEnumerator RecordRoutine()
+    {
+        Events.OnPreRecord?.Invoke();
+
+        for (Countdown = 0; Countdown < Settings.World.delay; Countdown++)
+        {
+            Events.OnTimerCountdown?.Invoke();
+            yield return new WaitForSeconds(1);
+        }
+
+        FeedbackSFX.BeepHigh();
+
+        Events.OnStartRecording?.Invoke();
+        
+        float perTick = 1.0F / Settings.World.fps;
+        
+        while (Director.PlayState == PlayState.Recording || Director.PlayState == PlayState.Paused)
+        {
+            // These are different for a reason!
+            // virtual FPS and real FPS are decoupled here when asked!
+            // Recording 15FPS with normal delta time means 15FPS becomes 5FPS in real frames!
+            
+            // Ignoring slomo means using deltaTime to store our recorded time
+            // Therefore data is scaled with timescale
+            if (Settings.World.ignoreSlomo) 
+                m_timeSinceLastTick += Time.deltaTime;
+            else
+                m_timeSinceLastTick += Time.unscaledDeltaTime;
+            
+            // Temporal scaling increases the resolution when changing timescale
+            if (Settings.World.temporalScaling) 
+                m_fpsTimer += Time.unscaledDeltaTime;
+            else
+                m_fpsTimer += Time.deltaTime;
+
+            if (m_fpsTimer > perTick)
             {
-                Events.OnTimerCountdown?.Invoke();
-                yield return new WaitForSeconds(1);
+                Tick();
+                m_fpsTimer = 0f;
+                m_timeSinceLastTick = 0;
             }
 
-            FeedbackSFX.BeepHigh();
-
-            Events.OnStartRecording?.Invoke();
-            
-            float perTick = 1.0F / Settings.World.fps;
-            
-            while (Director.PlayState == PlayState.Recording || Director.PlayState == PlayState.Paused)
-            {
-                // These are different for a reason!
-                // virtual FPS and real FPS are decoupled here when asked!
-                // Recording 15FPS with normal delta time means 15FPS becomes 5FPS in real frames!
-                
-                // Ignoring slomo means using deltaTime to store our recorded time
-                // Therefore data is scaled with timescale
-                if (Settings.World.ignoreSlomo) 
-                    m_timeSinceLastTick += Time.deltaTime;
-                else
-                    m_timeSinceLastTick += Time.unscaledDeltaTime;
-                
-                // Temporal scaling increases the resolution when changing timescale
-                if (Settings.World.temporalScaling) 
-                    m_fpsTimer += Time.unscaledDeltaTime;
-                else
-                    m_fpsTimer += Time.deltaTime;
-
-                if (m_fpsTimer > perTick)
-                {
-                    Tick();
-                    m_fpsTimer = 0f;
-                    m_timeSinceLastTick = 0;
-                }
-
-                yield return null;
-            }
-
-            Director.Stop();
-            Events.OnStopRecording?.Invoke();
             yield return null;
         }
+
+        Director.Stop();
+        Events.OnStopRecording?.Invoke();
+        yield return null;
     }
 }

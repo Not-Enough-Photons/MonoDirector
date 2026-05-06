@@ -1,93 +1,92 @@
 ﻿using Il2CppSLZ.Marrow.Warehouse;
 using NEP.MonoDirector.Actors;
 
-namespace NEP.MonoDirector.Core
+namespace NEP.MonoDirector.Core;
+
+public sealed class Scene
 {
-    public sealed class Scene
+    public Scene()
     {
-        public Scene()
-        {
-            m_actors = new List<Actor>();
-            m_props = new List<Prop>();
-            m_name = "Scene";
-        }
+        m_actors = new List<Actor>();
+        m_props = new List<Prop>();
+        m_name = "Scene";
+    }
 
-        public Scene(string name)
-        {
-            m_actors = new List<Actor>();
-            m_props = new List<Prop>();
-            m_name = name;
-        }
+    public Scene(string name)
+    {
+        m_actors = new List<Actor>();
+        m_props = new List<Prop>();
+        m_name = name;
+    }
 
-        public IReadOnlyList<Actor> Actors => m_actors.AsReadOnly();
-        public IReadOnlyList<Prop> Props => m_props.AsReadOnly();
-        public Barcode LevelBarcode => m_levelBarcode;
-        public string Name => m_name;
-        public float Duration => m_duration;
-        public int SceneIndex => m_sceneIndex;
+    public IReadOnlyList<Actor> Actors => m_actors.AsReadOnly();
+    public IReadOnlyList<Prop> Props => m_props.AsReadOnly();
+    public Barcode LevelBarcode => m_levelBarcode;
+    public string Name => m_name;
+    public float Duration => m_duration;
+    public int SceneIndex => m_sceneIndex;
 
-        private List<Actor> m_actors;
-        private List<Prop> m_props;
-        private Barcode m_levelBarcode;
-        private string m_name;
-        private float m_duration;
-        private int m_sceneIndex;
+    private List<Actor> m_actors;
+    private List<Prop> m_props;
+    private Barcode m_levelBarcode;
+    private string m_name;
+    private float m_duration;
+    private int m_sceneIndex;
 
-        public static void Swap(ref Scene left, ref Scene right)
-        {
-            Scene temp = left;
-            left = right;
-            right = temp;
-        }
+    public static void Swap(ref Scene left, ref Scene right)
+    {
+        Scene temp = left;
+        left = right;
+        right = temp;
+    }
 
-        public void AddActor(Actor actor)
-        {
-            m_actors.Add(actor);
-        }
+    public void AddActor(Actor actor)
+    {
+        m_actors.Add(actor);
+    }
 
-        public void AddActors(List<Actor> actors)
-        {
-            m_actors.AddRange(actors);
-        }
+    public void AddActors(List<Actor> actors)
+    {
+        m_actors.AddRange(actors);
+    }
 
-        public void RemoveActor(Actor actor)
-        {
-            m_actors.Remove(actor);
-        }
+    public void RemoveActor(Actor actor)
+    {
+        m_actors.Remove(actor);
+    }
 
-        public void RemoveActors(List<Actor> actors)
-        {
+    public void RemoveActors(List<Actor> actors)
+    {
 
-        }
+    }
 
-        public void AddProp(Prop prop)
-        {
-            m_props.Add(prop);
-        }
+    public void AddProp(Prop prop)
+    {
+        m_props.Add(prop);
+    }
 
-        public void AddProps(List<Prop> props)
-        {
-            m_props.AddRange(props);
-        }
+    public void AddProps(List<Prop> props)
+    {
+        m_props.AddRange(props);
+    }
 
-        public void RemoveProp(Prop prop)
-        {
-            m_props.Remove(prop);
-        }
+    public void RemoveProp(Prop prop)
+    {
+        m_props.Remove(prop);
+    }
 
-        public void RemoveProps(List<Prop> props)
-        {
+    public void RemoveProps(List<Prop> props)
+    {
 
-        }
+    }
 
-        public void SetDuration(float duration)
-        {
-            m_duration = duration;
-        }
+    public void SetDuration(float duration)
+    {
+        m_duration = duration;
+    }
 
-        public void SetIndex(int index)
-        {
-            m_sceneIndex = index;
-        }
+    public void SetIndex(int index)
+    {
+        m_sceneIndex = index;
     }
 }

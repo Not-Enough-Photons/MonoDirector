@@ -1,8 +1,7 @@
-﻿namespace NEP.MonoDirector.Data
+﻿namespace NEP.MonoDirector.Data;
+
+public interface IJSONData
 {
-    public interface IJSONData
-    {
-        string ToJSON();
-        void FromJSON(string json);
-    }
+    string ToJSON();
+    void FromJSON(string json);
 }

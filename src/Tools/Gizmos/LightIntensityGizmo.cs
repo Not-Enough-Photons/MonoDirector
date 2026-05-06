@@ -1,67 +1,63 @@
-﻿using Il2CppInterop.Runtime.InteropTypes.Fields;
-using Il2CppSLZ.Marrow;
-using Il2CppTMPro;
+﻿using Il2CppTMPro;
 using MelonLoader;
-
 using UnityEngine;
 
-namespace NEP.MonoDirector.Tools
+namespace NEP.MonoDirector.Tools;
+
+[RegisterTypeInIl2Cpp]
+public class LightIntensityGizmo(IntPtr ptr) : ToolGizmo(ptr)
 {
-    [RegisterTypeInIl2Cpp]
-    public class LightIntensityGizmo(IntPtr ptr) : ToolGizmo(ptr)
+    public float Intensity { get => m_intensity; }
+
+    private float m_intensity = 1f;
+
+    private Vector3 m_lastUp;
+
+    private TextMeshPro m_intensityText;
+
+    private GameObject m_line;
+
+    protected override void Awake()
     {
-        public float Intensity { get => m_intensity; }
+        base.Awake();
 
-        private float m_intensity = 1f;
+        m_intensityText = transform.Find("Text").GetComponent<TextMeshPro>();
+        m_line = transform.Find("Line").gameObject;
+        m_body = transform.GetComponentInParent<Rigidbody>();
+    }
 
-        private Vector3 m_lastUp;
+    private void Update()
+    {
+        // Code from Camobiwon
+        // Thanks for this fucking insane method that worked first try
+        Transform dial = transform.parent;
+        Vector3 up = dial.localRotation * Vector3.forward;
+        Vector3 outVec = dial.localRotation * Vector3.up;
 
-        private TextMeshPro m_intensityText;
+        float angle = Vector3.SignedAngle(m_lastUp, up, outVec);
 
-        private GameObject m_line;
+        m_lastUp = up;
 
-        protected override void Awake()
-        {
-            base.Awake();
+        m_intensity += angle * (1f / 360f);
 
-            m_intensityText = transform.Find("Text").GetComponent<TextMeshPro>();
-            m_line = transform.Find("Line").gameObject;
-            m_body = transform.GetComponentInParent<Rigidbody>();
-        }
+        m_intensity = Mathf.Max(0f, m_intensity);
 
-        private void Update()
-        {
-            // Code from Camobiwon
-            // Thanks for this fucking insane method that worked first try
-            Transform dial = transform.parent;
-            Vector3 up = dial.localRotation * Vector3.forward;
-            Vector3 outVec = dial.localRotation * Vector3.up;
+        m_intensityText.text = m_intensity.ToString("0.00");
+    }
 
-            float angle = Vector3.SignedAngle(m_lastUp, up, outVec);
+    public override void Hide()
+    {
+        base.Hide();
 
-            m_lastUp = up;
+        m_intensityText.gameObject.SetActive(false);
+        m_line.SetActive(false);
+    }
 
-            m_intensity += angle * (1f / 360f);
+    public override void Show()
+    {
+        base.Show();
 
-            m_intensity = Mathf.Max(0f, m_intensity);
-
-            m_intensityText.text = m_intensity.ToString("0.00");
-        }
-
-        public override void Hide()
-        {
-            base.Hide();
-
-            m_intensityText.gameObject.SetActive(false);
-            m_line.SetActive(false);
-        }
-
-        public override void Show()
-        {
-            base.Show();
-
-            m_intensityText.gameObject.SetActive(true);
-            m_line.SetActive(true);
-        }
+        m_intensityText.gameObject.SetActive(true);
+        m_line.SetActive(true);
     }
 }

@@ -1,19 +1,18 @@
 ﻿using NEP.MonoDirector.State;
 using UnityEngine;
 
-namespace NEP.MonoDirector.Cameras
+namespace NEP.MonoDirector.Cameras;
+
+[MelonLoader.RegisterTypeInIl2Cpp]
+public class CameraDamp(IntPtr ptr) : MonoBehaviour(ptr)
 {
-    [MelonLoader.RegisterTypeInIl2Cpp]
-    public class CameraDamp(IntPtr ptr) : MonoBehaviour(ptr)
+    public float delta = 4f;
+
+    private Quaternion m_lastRotation;
+
+    private void LateUpdate()
     {
-        public float delta = 4f;
-
-        private Quaternion m_lastRotation;
-
-        private void LateUpdate()
-        {
-            //lastRotation = transform.rotation;
-            //transform.rotation = Quaternion.Slerp(lastRotation, transform.rotation, delta * Time.deltaTime);
-        }
+        //lastRotation = transform.rotation;
+        //transform.rotation = Quaternion.Slerp(lastRotation, transform.rotation, delta * Time.deltaTime);
     }
 }

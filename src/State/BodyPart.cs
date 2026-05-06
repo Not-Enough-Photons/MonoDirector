@@ -1,11 +1,10 @@
-﻿namespace NEP.MonoDirector.State
+﻿namespace NEP.MonoDirector.State;
+
+public enum BodyPart
 {
-    public enum BodyPart
-    {
-        Head,
-        Chest,
-        Pelvis,
-        LeftHand,
-        RightHand
-    }
+    Head,
+    Chest,
+    Pelvis,
+    LeftHand,
+    RightHand
 }

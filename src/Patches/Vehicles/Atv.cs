@@ -5,6 +5,8 @@ using NEP.MonoDirector.Core;
 
 using Il2CppSLZ.Marrow;
 
+namespace NEP.MonoDirector.Patches;
+
 public static class SeatPatches
 {
     [HarmonyPatch(typeof(Seat))]

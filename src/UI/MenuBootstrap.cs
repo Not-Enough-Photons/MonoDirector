@@ -7,50 +7,49 @@ using NEP.MonoDirector.UI.Menus;
 
 using Page = BoneLib.BoneMenu.Page;
 
-namespace NEP.MonoDirector.UI
+namespace NEP.MonoDirector.UI;
+
+public static class MenuBootstrap
 {
-    public static class MenuBootstrap
+    private static PopUpMenuView m_popUpMenuView;
+    private static PreferencesPanelView m_panelView;
+    private static GameObject m_gridView;
+    private static Button m_button;
+
+    internal static void Initialize(UIRig rig)
     {
-        private static PopUpMenuView m_popUpMenuView;
-        private static PreferencesPanelView m_panelView;
-        private static GameObject m_gridView;
-        private static Button m_button;
+        m_popUpMenuView = rig.popUpMenu;
+        m_panelView = m_popUpMenuView.preferencesPanelView;
+        Transform pageTransform = m_panelView.pages[m_panelView.defaultPage].transform;
+        m_gridView = pageTransform.Find("grid_Options").gameObject;
+        InjectButton();
+    }
 
-        internal static void Initialize(UIRig rig)
+    internal static void InjectButton()
+    {
+        GameObject buttonObject = GameObject.Instantiate(BundleLoader.MenuButtonObject, m_gridView.transform);
+        buttonObject.SetActive(true);
+        buttonObject.transform.SetSiblingIndex(6);
+        m_button = buttonObject.GetComponent<Button>();
+
+        var buttonAction = () =>
         {
-            m_popUpMenuView = rig.popUpMenu;
-            m_panelView = m_popUpMenuView.preferencesPanelView;
-            Transform pageTransform = m_panelView.pages[m_panelView.defaultPage].transform;
-            m_gridView = pageTransform.Find("grid_Options").gameObject;
-            InjectButton();
-        }
+            Menu.Instance.Show();
+            Menu.Instance.Teleport();
+            HideGameMenu();
+        };
+        
+        m_button.onClick.AddListener(buttonAction);
+    }
 
-        internal static void InjectButton()
-        {
-            GameObject buttonObject = GameObject.Instantiate(BundleLoader.MenuButtonObject, m_gridView.transform);
-            buttonObject.SetActive(true);
-            buttonObject.transform.SetSiblingIndex(6);
-            m_button = buttonObject.GetComponent<Button>();
+    public static void OpenPage(Page page)
+    {
+        m_panelView.PAGESELECT(11);
+        BoneLib.BoneMenu.Menu.OpenPage(page);
+    }
 
-            var buttonAction = () =>
-            {
-                Menu.Instance.Show();
-                Menu.Instance.Teleport();
-                HideGameMenu();
-            };
-            
-            m_button.onClick.AddListener(buttonAction);
-        }
-
-        public static void OpenPage(Page page)
-        {
-            m_panelView.PAGESELECT(11);
-            BoneLib.BoneMenu.Menu.OpenPage(page);
-        }
-
-        public static void HideGameMenu()
-        {
-            m_popUpMenuView.Deactivate();
-        }
+    public static void HideGameMenu()
+    {
+        m_popUpMenuView.Deactivate();
     }
 }

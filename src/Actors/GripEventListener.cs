@@ -3,114 +3,113 @@ using UnityEngine;
 
 using Il2CppSLZ.Bonelab;
 
-namespace NEP.MonoDirector.Actors
+namespace NEP.MonoDirector.Actors;
+
+[MelonLoader.RegisterTypeInIl2Cpp]
+public class GripEventListener(IntPtr ptr) : MonoBehaviour(ptr)
 {
-    [MelonLoader.RegisterTypeInIl2Cpp]
-    public class GripEventListener(IntPtr ptr) : MonoBehaviour(ptr)
+    private SimpleGripEvents gripEvents;
+
+    private Prop prop;
+
+    private Action onAttach;
+    private Action onDetach;
+    private Action onIndexDown;
+    private Action onMenuTapDown;
+
+    private void Awake()
     {
-        private SimpleGripEvents gripEvents;
+        gripEvents = GetComponent<SimpleGripEvents>();
 
-        private Prop prop;
+        onAttach = new Action(OnAttach);
+        onDetach = new Action(OnDetach);
+        onIndexDown = new Action(OnIndexDown);
+        onMenuTapDown = new Action(OnMenuTapDown);
 
-        private Action onAttach;
-        private Action onDetach;
-        private Action onIndexDown;
-        private Action onMenuTapDown;
+        gripEvents.OnAttach.AddListener(onAttach);
+        gripEvents.OnDetach.AddListener(onDetach);
+        gripEvents.OnIndexDown.AddListener(onIndexDown);
+        gripEvents.OnMenuTapDown.AddListener(onMenuTapDown);
+    }
 
-        private void Awake()
+    private void Start()
+    {
+        Events.OnStopRecording += new Action(() =>
         {
-            gripEvents = GetComponent<SimpleGripEvents>();
+            gripEvents.OnAttach.RemoveListener(onAttach);
+            gripEvents.OnDetach.RemoveListener(onDetach);
+            gripEvents.OnIndexDown.RemoveListener(onIndexDown);
+            gripEvents.OnMenuTapDown.RemoveListener(onMenuTapDown);
+        });
+    }
 
-            onAttach = new Action(OnAttach);
-            onDetach = new Action(OnDetach);
-            onIndexDown = new Action(OnIndexDown);
-            onMenuTapDown = new Action(OnMenuTapDown);
+    private void OnDestroy()
+    {
 
-            gripEvents.OnAttach.AddListener(onAttach);
-            gripEvents.OnDetach.AddListener(onDetach);
-            gripEvents.OnIndexDown.AddListener(onIndexDown);
-            gripEvents.OnMenuTapDown.AddListener(onMenuTapDown);
+    }
+
+    public void SetProp(Prop prop)
+    {
+        this.prop = prop;
+    }
+
+    private void OnAttach()
+    {
+        if(Director.PlayState != State.PlayState.Recording)
+        {
+            return;
         }
 
-        private void Start()
+        if(prop == null)
         {
-            Events.OnStopRecording += new Action(() =>
-            {
-                gripEvents.OnAttach.RemoveListener(onAttach);
-                gripEvents.OnDetach.RemoveListener(onDetach);
-                gripEvents.OnIndexDown.RemoveListener(onIndexDown);
-                gripEvents.OnMenuTapDown.RemoveListener(onMenuTapDown);
-            });
+            return;
         }
 
-        private void OnDestroy()
-        {
+        prop.RecordAction(new System.Action(() => gripEvents.OnAttach?.Invoke()));
+    }
 
+    private void OnDetach()
+    {
+        if (Director.PlayState != State.PlayState.Recording)
+        {
+            return;
         }
 
-        public void SetProp(Prop prop)
+        if (prop == null)
         {
-            this.prop = prop;
+            return;
         }
 
-        private void OnAttach()
+        prop.RecordAction(new System.Action(() => gripEvents.OnDetach?.Invoke()));
+    }
+
+    private void OnIndexDown()
+    {
+        if (Director.PlayState != State.PlayState.Recording)
         {
-            if(Director.PlayState != State.PlayState.Recording)
-            {
-                return;
-            }
-
-            if(prop == null)
-            {
-                return;
-            }
-
-            prop.RecordAction(new System.Action(() => gripEvents.OnAttach?.Invoke()));
+            return;
         }
 
-        private void OnDetach()
+        if (prop == null)
         {
-            if (Director.PlayState != State.PlayState.Recording)
-            {
-                return;
-            }
-
-            if (prop == null)
-            {
-                return;
-            }
-
-            prop.RecordAction(new System.Action(() => gripEvents.OnDetach?.Invoke()));
+            return;
         }
 
-        private void OnIndexDown()
+        prop.RecordAction(new System.Action(() => gripEvents.OnIndexDown?.Invoke()));
+    }
+
+    private void OnMenuTapDown()
+    {
+        if (Director.PlayState != State.PlayState.Recording)
         {
-            if (Director.PlayState != State.PlayState.Recording)
-            {
-                return;
-            }
-
-            if (prop == null)
-            {
-                return;
-            }
-
-            prop.RecordAction(new System.Action(() => gripEvents.OnIndexDown?.Invoke()));
+            return;
         }
 
-        private void OnMenuTapDown()
+        if (prop == null)
         {
-            if (Director.PlayState != State.PlayState.Recording)
-            {
-                return;
-            }
-
-            if (prop == null)
-            {
-                return;
-            }
-
-            prop.RecordAction(new System.Action(() => gripEvents.OnMenuTapDown?.Invoke()));
+            return;
         }
+
+        prop.RecordAction(new System.Action(() => gripEvents.OnMenuTapDown?.Invoke()));
     }
 }

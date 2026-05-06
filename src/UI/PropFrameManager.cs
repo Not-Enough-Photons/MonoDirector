@@ -6,101 +6,100 @@ using NEP.MonoDirector.Proxy;
 using NEP.MonoDirector.State;
 using UnityEngine;
 
-namespace NEP.MonoDirector.UI
+namespace NEP.MonoDirector.UI;
+
+public static class PropFrameManager
 {
-    public static class PropFrameManager
+    private static GameObject container;
+    private static Dictionary<Prop, GameObject> frames;
+    private static List<GameObject> loadedFrameObjects;
+    private static List<GameObject> activeFrames;
+
+    public static void Initialize()
     {
-        private static GameObject container;
-        private static Dictionary<Prop, GameObject> frames;
-        private static List<GameObject> loadedFrameObjects;
-        private static List<GameObject> activeFrames;
+        frames = new Dictionary<Prop, GameObject>();
+        loadedFrameObjects = new List<GameObject>();
+        activeFrames = new List<GameObject>();
 
-        public static void Initialize()
+        container = new GameObject("[MonoDirector] - Prop Frame Container");
+        container.transform.SetParent(Bootstrap.MainContainerObject.transform);
+
+        for (int i = 0; i < 32; i++)
         {
-            frames = new Dictionary<Prop, GameObject>();
-            loadedFrameObjects = new List<GameObject>();
-            activeFrames = new List<GameObject>();
-
-            container = new GameObject("[MonoDirector] - Prop Frame Container");
-            container.transform.SetParent(Bootstrap.MainContainerObject.transform);
-
-            for (int i = 0; i < 32; i++)
-            {
-                GameObject obj = GameObject.Instantiate(BundleLoader.FrameObject);
-                obj.SetActive(false);
-                obj.transform.SetParent(container.transform);
-                obj.transform.localPosition = Vector3.zero;
-                loadedFrameObjects.Add(obj);
-            }
-
-            Events.OnPlayStateSet += OnPlayStateSet;
+            GameObject obj = GameObject.Instantiate(BundleLoader.FrameObject);
+            obj.SetActive(false);
+            obj.transform.SetParent(container.transform);
+            obj.transform.localPosition = Vector3.zero;
+            loadedFrameObjects.Add(obj);
         }
 
-        public static void CleanUp()
-        {
-            frames.Clear();
-            loadedFrameObjects.Clear();
-            activeFrames.Clear();
-        }
+        Events.OnPlayStateSet += OnPlayStateSet;
+    }
 
-        public static void OnPlayStateSet(PlayState state)
-        {
-            if (state == PlayState.Stopped)
-                ShowFrames();
-            else
-                HideFrames();
-        }
+    public static void CleanUp()
+    {
+        frames.Clear();
+        loadedFrameObjects.Clear();
+        activeFrames.Clear();
+    }
 
-        public static GameObject AddFrameToProp(Prop prop)
-        {
-            if (frames.ContainsKey(prop))
-                return null;
+    public static void OnPlayStateSet(PlayState state)
+    {
+        if (state == PlayState.Stopped)
+            ShowFrames();
+        else
+            HideFrames();
+    }
 
-            GameObject asset = loadedFrameObjects.FirstOrDefault((frame) => !activeFrames.Contains(frame));
+    public static GameObject AddFrameToProp(Prop prop)
+    {
+        if (frames.ContainsKey(prop))
+            return null;
 
-            asset.gameObject.SetActive(true);
+        GameObject asset = loadedFrameObjects.FirstOrDefault((frame) => !activeFrames.Contains(frame));
 
-            asset.transform.SetParent(prop.Entity.transform);
-            asset.transform.localPosition = Vector3.zero;
-            asset.transform.localRotation = Quaternion.identity;
-            asset.transform.localScale = prop.Entity.Bodies[0].Bounds.extents;
+        asset.gameObject.SetActive(true);
 
-            frames.Add(prop, asset);
-            activeFrames.Add(asset);
+        asset.transform.SetParent(prop.Entity.transform);
+        asset.transform.localPosition = Vector3.zero;
+        asset.transform.localRotation = Quaternion.identity;
+        asset.transform.localScale = prop.Entity.Bodies[0].Bounds.extents;
 
-            return asset;
-        }
+        frames.Add(prop, asset);
+        activeFrames.Add(asset);
 
-        public static void RemoveFrameFromProp(Prop prop)
-        {
-            if (!frames.ContainsKey(prop))
-                return;
+        return asset;
+    }
 
-            GameObject frame = frames[prop];
-            frame.gameObject.SetActive(false);
-            frame.transform.parent = container.transform;
-            frame.transform.localScale = Vector3.one;
-            frames.Remove(prop);
-            activeFrames.Remove(frame.gameObject);
-        }
+    public static void RemoveFrameFromProp(Prop prop)
+    {
+        if (!frames.ContainsKey(prop))
+            return;
 
-        public static void ShowFrames()
-        {
-            foreach (var frame in activeFrames)
-                frame.SetActive(true);
-        }
+        GameObject frame = frames[prop];
+        frame.gameObject.SetActive(false);
+        frame.transform.parent = container.transform;
+        frame.transform.localScale = Vector3.one;
+        frames.Remove(prop);
+        activeFrames.Remove(frame.gameObject);
+    }
 
-        public static void HideFrames()
-        {
-            foreach (var frame in activeFrames)
-                frame.SetActive(false);
-        }
+    public static void ShowFrames()
+    {
+        foreach (var frame in activeFrames)
+            frame.SetActive(true);
+    }
 
-        internal static void OnFrameSpawned(GameObject frameObject)
-        {
-            frameObject.SetActive(false);
-            frameObject.transform.SetParent(container.transform);
-            loadedFrameObjects.Add(frameObject);
-        }
+    public static void HideFrames()
+    {
+        foreach (var frame in activeFrames)
+            frame.SetActive(false);
+    }
+
+    internal static void OnFrameSpawned(GameObject frameObject)
+    {
+        frameObject.SetActive(false);
+        frameObject.transform.SetParent(container.transform);
+        loadedFrameObjects.Add(frameObject);
     }
 }

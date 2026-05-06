@@ -1,12 +1,11 @@
-﻿namespace NEP.MonoDirector.State
+﻿namespace NEP.MonoDirector.State;
+
+public enum PlayState
 {
-    public enum PlayState
-    {
-        Preplaying,
-        Playing,
-        Prerecording,
-        Recording,
-        Paused,
-        Stopped
-    }
+    Preplaying,
+    Playing,
+    Prerecording,
+    Recording,
+    Paused,
+    Stopped
 }

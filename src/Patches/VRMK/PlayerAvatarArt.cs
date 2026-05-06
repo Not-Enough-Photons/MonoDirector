@@ -2,35 +2,34 @@
 
 using Il2CppSLZ.Marrow;
 
-namespace NEP.MonoDirector.Patches
+namespace NEP.MonoDirector.Patches;
+
+internal static class PlayerAvatarArtPatches
 {
-    internal static class PlayerAvatarArtPatches
+    [HarmonyLib.HarmonyPatch(typeof(PlayerAvatarArt), nameof(PlayerAvatarArt.UpdateAvatarHead))]
+    internal static class UpdateAvatarHead
     {
-        [HarmonyLib.HarmonyPatch(typeof(PlayerAvatarArt), nameof(PlayerAvatarArt.UpdateAvatarHead))]
-        internal static class UpdateAvatarHead
+        internal static Vector3 preTransformHead;
+        internal static Vector3 postTransformHead;
+        
+        internal static Vector3 calculatedHeadOffset;
+        
+        internal static void Prefix(PlayerAvatarArt __instance)
         {
-            internal static Vector3 preTransformHead;
-            internal static Vector3 postTransformHead;
-            
-            internal static Vector3 calculatedHeadOffset;
-            
-            internal static void Prefix(PlayerAvatarArt __instance)
-            {
-                RigManager manager = __instance._openCtrlRig.manager;
+            RigManager manager = __instance._openCtrlRig.manager;
 
-                Transform head = manager.avatar.animator.GetBoneTransform(HumanBodyBones.Head);
-                preTransformHead = head.position;
-            }
+            Transform head = manager.avatar.animator.GetBoneTransform(HumanBodyBones.Head);
+            preTransformHead = head.position;
+        }
 
-            internal static void Postfix(PlayerAvatarArt __instance)
-            {
-                RigManager manager = __instance._openCtrlRig.manager;
+        internal static void Postfix(PlayerAvatarArt __instance)
+        {
+            RigManager manager = __instance._openCtrlRig.manager;
 
-                Transform head = manager.avatar.animator.GetBoneTransform(HumanBodyBones.Head);
-                postTransformHead = head.position;
+            Transform head = manager.avatar.animator.GetBoneTransform(HumanBodyBones.Head);
+            postTransformHead = head.position;
 
-                calculatedHeadOffset = preTransformHead - postTransformHead;
-            }
+            calculatedHeadOffset = preTransformHead - postTransformHead;
         }
     }
 }

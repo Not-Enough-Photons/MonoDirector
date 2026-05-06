@@ -4,44 +4,43 @@ using UnityEngine.Rendering.Universal;
 
 using Il2CppMK.Glow.URP;
 
-namespace NEP.MonoDirector.Cameras
+namespace NEP.MonoDirector.Cameras;
+
+[MelonLoader.RegisterTypeInIl2Cpp]
+public class CameraVolume(IntPtr ptr) : MonoBehaviour(ptr)
 {
-    [MelonLoader.RegisterTypeInIl2Cpp]
-    public class CameraVolume(IntPtr ptr) : MonoBehaviour(ptr)
+    public Volume RenderingVolume { get; private set; }
+
+    public LensDistortion LensDistortion { get; private set; }
+    public ChromaticAberration ChromaticAberration { get; private set; }
+    public MKGlow MkGlow { get; private set; }
+    public Vignette Vignette { get; private set; }
+    public Bloom Bloom { get; private set; }
+
+    private void Start()
     {
-        public Volume RenderingVolume { get; private set; }
+        RenderingVolume = GetComponent<Volume>();
 
-        public LensDistortion LensDistortion { get; private set; }
-        public ChromaticAberration ChromaticAberration { get; private set; }
-        public MKGlow MkGlow { get; private set; }
-        public Vignette Vignette { get; private set; }
-        public Bloom Bloom { get; private set; }
+        LensDistortion = RenderingVolume.profile.components[0].Cast<LensDistortion>();
+        ChromaticAberration = RenderingVolume.profile.components[1].Cast<ChromaticAberration>();
+        MkGlow = RenderingVolume.profile.components[4].Cast<MKGlow>();
+    }
 
-        private void Start()
+    public void EnableAll(bool enabled)
+    {
+        foreach(VolumeComponent component in RenderingVolume.profile.components)
         {
-            RenderingVolume = GetComponent<Volume>();
+            component.SetAllOverridesTo(enabled);
+        }
+    }
 
-            LensDistortion = RenderingVolume.profile.components[0].Cast<LensDistortion>();
-            ChromaticAberration = RenderingVolume.profile.components[1].Cast<ChromaticAberration>();
-            MkGlow = RenderingVolume.profile.components[4].Cast<MKGlow>();
+    public void SetValue(FloatParameter parameter, float value)
+    {
+        if(parameter == null)
+        {
+            return;
         }
 
-        public void EnableAll(bool enabled)
-        {
-            foreach(VolumeComponent component in RenderingVolume.profile.components)
-            {
-                component.SetAllOverridesTo(enabled);
-            }
-        }
-
-        public void SetValue(FloatParameter parameter, float value)
-        {
-            if(parameter == null)
-            {
-                return;
-            }
-
-            parameter.value = value;
-        }
+        parameter.value = value;
     }
 }

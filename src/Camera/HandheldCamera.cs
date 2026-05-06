@@ -4,166 +4,165 @@ using UnityEngine;
 
 using Il2CppSLZ.Marrow;
 
-namespace NEP.MonoDirector.Cameras
+namespace NEP.MonoDirector.Cameras;
+
+[MelonLoader.RegisterTypeInIl2Cpp]
+public class HandheldCamera(IntPtr ptr) : MonoBehaviour(ptr)
 {
-    [MelonLoader.RegisterTypeInIl2Cpp]
-    public class HandheldCamera(IntPtr ptr) : MonoBehaviour(ptr)
+    private CylinderGrip m_leftHandle;
+    private CylinderGrip m_rightHandle;
+
+    private Transform m_leftHandleTransform;
+    private Transform m_rightHandleTransform;
+
+    private Transform m_cameraPoint;
+
+    private Camera m_camera;
+    private Camera m_screenCamera;
+
+    private GameObject m_frontScreen;
+    private GameObject m_displayScreen;
+
+    private Rigidbody m_rigidbody;
+
+    private Quaternion m_lastFrameRotation;
+    private Quaternion m_desiredRotation;
+
+    private RenderTexture m_displayTexture  => m_screenCamera.targetTexture;
+
+    private void Awake()
     {
-        private CylinderGrip m_leftHandle;
-        private CylinderGrip m_rightHandle;
+        m_leftHandleTransform = transform.Find("Grips/Left Handle");
+        m_rightHandleTransform = transform.Find("Grips/Right Handle");
 
-        private Transform m_leftHandleTransform;
-        private Transform m_rightHandleTransform;
+        m_camera = transform.Find("Camera").GetComponent<Camera>();
+        m_screenCamera = m_camera.transform.GetChild(0).GetComponent<Camera>();
+        m_frontScreen = transform.Find("ExternalScreen").gameObject;
+        m_displayScreen = transform.Find("Screen").gameObject;
+        m_cameraPoint = transform.Find("CamPoint");
 
-        private Transform m_cameraPoint;
+        m_leftHandle = m_leftHandleTransform.GetComponent<CylinderGrip>();
+        m_rightHandle = m_rightHandleTransform.GetComponent<CylinderGrip>();
 
-        private Camera m_camera;
-        private Camera m_screenCamera;
+        m_rigidbody = GetComponent<Rigidbody>();
 
-        private GameObject m_frontScreen;
-        private GameObject m_displayScreen;
+        m_camera.backgroundColor = Color.black;
+        m_screenCamera.backgroundColor = Color.black;
+        m_camera.clearFlags = CameraClearFlags.SolidColor;
+        m_screenCamera.clearFlags = CameraClearFlags.SolidColor;
+    }
 
-        private Rigidbody m_rigidbody;
+    private void OnEnable()
+    {
+        OnCameraModeChanged(CameraMode.Handheld);
 
-        private Quaternion m_lastFrameRotation;
-        private Quaternion m_desiredRotation;
+        m_leftHandle.attachedUpdateDelegate += new System.Action<Hand>(LeftHandUpdate);
+        m_rightHandle.attachedUpdateDelegate += new System.Action<Hand>(RightHandUpdate);
+        m_leftHandle.detachedHandDelegate += new System.Action<Hand>(LeftHandDetached);
+        m_leftHandle.detachedHandDelegate += new System.Action<Hand>(RightHandDetached);
 
-        private RenderTexture m_displayTexture  => m_screenCamera.targetTexture;
+        // Hacky
+        // Lets us interpolate camera rotation properly
+        m_camera.transform.SetParent(null);
 
-        private void Awake()
+        // m_lastCameraRotation = camera.transform.rotation;
+    }
+
+    private void OnDisable()
+    {
+        OnCameraModeChanged(CameraMode.Head);
+
+        m_leftHandle.attachedUpdateDelegate -= new System.Action<Hand>(LeftHandUpdate);
+        m_rightHandle.attachedUpdateDelegate -= new System.Action<Hand>(RightHandUpdate);
+        m_leftHandle.detachedHandDelegate -= new System.Action<Hand>(LeftHandDetached);
+        m_leftHandle.detachedHandDelegate -= new System.Action<Hand>(RightHandDetached);
+
+        m_camera.transform.SetParent(transform);
+        m_camera.transform.localPosition = m_cameraPoint.localPosition;
+        m_camera.transform.localRotation = m_cameraPoint.localRotation;
+    }
+
+    private void Update()
+    {
+        m_desiredRotation = m_cameraPoint.rotation;
+    }
+
+    private void LateUpdate()
+    {
+        m_camera.transform.position = m_cameraPoint.position;
+        m_camera.transform.rotation = Quaternion.Slerp(m_lastFrameRotation, m_desiredRotation, 4f * Time.deltaTime);
+        m_lastFrameRotation = m_camera.transform.rotation;
+    }
+
+    private void OnCameraModeChanged(CameraMode mode)
+    {
+        if(mode == CameraMode.Handheld)
         {
-            m_leftHandleTransform = transform.Find("Grips/Left Handle");
-            m_rightHandleTransform = transform.Find("Grips/Right Handle");
+            m_displayScreen.active = true;
+            m_frontScreen.active = true;
 
-            m_camera = transform.Find("Camera").GetComponent<Camera>();
-            m_screenCamera = m_camera.transform.GetChild(0).GetComponent<Camera>();
-            m_frontScreen = transform.Find("ExternalScreen").gameObject;
-            m_displayScreen = transform.Find("Screen").gameObject;
-            m_cameraPoint = transform.Find("CamPoint");
-
-            m_leftHandle = m_leftHandleTransform.GetComponent<CylinderGrip>();
-            m_rightHandle = m_rightHandleTransform.GetComponent<CylinderGrip>();
-
-            m_rigidbody = GetComponent<Rigidbody>();
-
-            m_camera.backgroundColor = Color.black;
-            m_screenCamera.backgroundColor = Color.black;
-            m_camera.clearFlags = CameraClearFlags.SolidColor;
-            m_screenCamera.clearFlags = CameraClearFlags.SolidColor;
+            // camera.targetTexture = displayTexture;
+            m_camera.gameObject.SetActive(true);
+            // CameraRigManager.Instance.FollowCamera.SetFollowTarget(sensorCamera.transform);
+            // CameraRigManager.Instance.CameraDisplay.FollowCamera.SetFollowTarget(sensorCamera.transform);
         }
-
-        private void OnEnable()
+        else
         {
-            OnCameraModeChanged(CameraMode.Handheld);
+            m_displayScreen.active = false;
+            m_frontScreen.active = false;
 
-            m_leftHandle.attachedUpdateDelegate += new System.Action<Hand>(LeftHandUpdate);
-            m_rightHandle.attachedUpdateDelegate += new System.Action<Hand>(RightHandUpdate);
-            m_leftHandle.detachedHandDelegate += new System.Action<Hand>(LeftHandDetached);
-            m_leftHandle.detachedHandDelegate += new System.Action<Hand>(RightHandDetached);
+            m_camera.gameObject.SetActive(false);
 
-            // Hacky
-            // Lets us interpolate camera rotation properly
-            m_camera.transform.SetParent(null);
-
-            // m_lastCameraRotation = camera.transform.rotation;
+            // CameraRigManager.Instance.ClonedCamera.gameObject.SetActive(false);
+            // CameraRigManager.Instance.FollowCamera.SetDefaultTarget();
         }
+    }
 
-        private void OnDisable()
+    private void LeftHandUpdate(Hand hand)
+    {
+        m_rigidbody.isKinematic = false;
+
+        if (hand.GetIndexTriggerAxis() > 0.25f)
         {
-            OnCameraModeChanged(CameraMode.Head);
+            float rate = 4f;
 
-            m_leftHandle.attachedUpdateDelegate -= new System.Action<Hand>(LeftHandUpdate);
-            m_rightHandle.attachedUpdateDelegate -= new System.Action<Hand>(RightHandUpdate);
-            m_leftHandle.detachedHandDelegate -= new System.Action<Hand>(LeftHandDetached);
-            m_leftHandle.detachedHandDelegate -= new System.Action<Hand>(RightHandDetached);
+            m_camera.fieldOfView += -(hand.GetIndexTriggerAxis() * rate / 10f);
+            m_screenCamera.fieldOfView += -(hand.GetIndexTriggerAxis() * rate / 10f);
 
-            m_camera.transform.SetParent(transform);
-            m_camera.transform.localPosition = m_cameraPoint.localPosition;
-            m_camera.transform.localRotation = m_cameraPoint.localRotation;
+            // CameraRigManager.Instance.CameraDisplay.FOVController.SetFOV(-(hand.GetIndexTriggerAxis() * rate / 10f));
+            // CameraRigManager.Instance.FOVController.SetFOV(-(hand.GetIndexTriggerAxis() * rate / 10f));
         }
+    }
+     
+    private void RightHandUpdate(Hand hand)
+    {
+        m_rigidbody.isKinematic = false;
 
-        private void Update()
+        if (hand.GetIndexTriggerAxis() > 0.25f)
         {
-            m_desiredRotation = m_cameraPoint.rotation;
+            float rate = 4f;
+
+            m_camera.fieldOfView += (hand.GetIndexTriggerAxis() * rate / 10f);
+            m_screenCamera.fieldOfView += (hand.GetIndexTriggerAxis() * rate / 10f);
+
+            // CameraRigManager.Instance.CameraDisplay.FOVController.SetFOV(hand.GetIndexTriggerAxis() * rate / 10f);
+            // CameraRigManager.Instance.FOVController.SetFOV(hand.GetIndexTriggerAxis() * rate / 10f);
         }
+    }
 
-        private void LateUpdate()
+    private void LeftHandDetached(Hand hand)
+    {
+        if (Settings.Camera.handheldKinematicOnRelease)
         {
-            m_camera.transform.position = m_cameraPoint.position;
-            m_camera.transform.rotation = Quaternion.Slerp(m_lastFrameRotation, m_desiredRotation, 4f * Time.deltaTime);
-            m_lastFrameRotation = m_camera.transform.rotation;
+            m_rigidbody.isKinematic = true;
         }
+    }
 
-        private void OnCameraModeChanged(CameraMode mode)
+    private void RightHandDetached(Hand hand)
+    {
+        if (Settings.Camera.handheldKinematicOnRelease)
         {
-            if(mode == CameraMode.Handheld)
-            {
-                m_displayScreen.active = true;
-                m_frontScreen.active = true;
-
-                // camera.targetTexture = displayTexture;
-                m_camera.gameObject.SetActive(true);
-                // CameraRigManager.Instance.FollowCamera.SetFollowTarget(sensorCamera.transform);
-                // CameraRigManager.Instance.CameraDisplay.FollowCamera.SetFollowTarget(sensorCamera.transform);
-            }
-            else
-            {
-                m_displayScreen.active = false;
-                m_frontScreen.active = false;
-
-                m_camera.gameObject.SetActive(false);
-
-                // CameraRigManager.Instance.ClonedCamera.gameObject.SetActive(false);
-                // CameraRigManager.Instance.FollowCamera.SetDefaultTarget();
-            }
-        }
-
-        private void LeftHandUpdate(Hand hand)
-        {
-            m_rigidbody.isKinematic = false;
-
-            if (hand.GetIndexTriggerAxis() > 0.25f)
-            {
-                float rate = 4f;
-
-                m_camera.fieldOfView += -(hand.GetIndexTriggerAxis() * rate / 10f);
-                m_screenCamera.fieldOfView += -(hand.GetIndexTriggerAxis() * rate / 10f);
-
-                // CameraRigManager.Instance.CameraDisplay.FOVController.SetFOV(-(hand.GetIndexTriggerAxis() * rate / 10f));
-                // CameraRigManager.Instance.FOVController.SetFOV(-(hand.GetIndexTriggerAxis() * rate / 10f));
-            }
-        }
-         
-        private void RightHandUpdate(Hand hand)
-        {
-            m_rigidbody.isKinematic = false;
-
-            if (hand.GetIndexTriggerAxis() > 0.25f)
-            {
-                float rate = 4f;
-
-                m_camera.fieldOfView += (hand.GetIndexTriggerAxis() * rate / 10f);
-                m_screenCamera.fieldOfView += (hand.GetIndexTriggerAxis() * rate / 10f);
-
-                // CameraRigManager.Instance.CameraDisplay.FOVController.SetFOV(hand.GetIndexTriggerAxis() * rate / 10f);
-                // CameraRigManager.Instance.FOVController.SetFOV(hand.GetIndexTriggerAxis() * rate / 10f);
-            }
-        }
-
-        private void LeftHandDetached(Hand hand)
-        {
-            if (Settings.Camera.handheldKinematicOnRelease)
-            {
-                m_rigidbody.isKinematic = true;
-            }
-        }
-
-        private void RightHandDetached(Hand hand)
-        {
-            if (Settings.Camera.handheldKinematicOnRelease)
-            {
-                m_rigidbody.isKinematic = true;
-            }
+            m_rigidbody.isKinematic = true;
         }
     }
 }

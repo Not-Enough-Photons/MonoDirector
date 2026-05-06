@@ -3,106 +3,105 @@ using NEP.MonoDirector.Core;
 
 using UnityEngine;
 
-namespace NEP.MonoDirector.Actors
+namespace NEP.MonoDirector.Actors;
+
+public class Trackable
 {
-    public class Trackable
+    public Trackable()
     {
-        public Trackable()
+        objectFrames = new List<ObjectFrame>();
+        actionFrames = new List<ActionFrame>();
+    }
+
+    public string ActorName { get => actorName; }
+    public int ActorId { get => actorId; }
+
+    protected string actorName;
+    protected int actorId;
+
+    protected Transform transform;
+    protected List<ObjectFrame> objectFrames;
+    protected List<ActionFrame> actionFrames;
+
+    protected int stateTick;
+    protected int recordedTicks;
+
+    private ObjectFrame previousFrame;
+    private ObjectFrame nextFrame;
+
+    public virtual void OnSceneBegin()
+    {
+        foreach (ActionFrame actionFrame in actionFrames)
         {
-            objectFrames = new List<ObjectFrame>();
-            actionFrames = new List<ActionFrame>();
+            actionFrame.Reset();
         }
+    }
 
-        public string ActorName { get => actorName; }
-        public int ActorId { get => actorId; }
+    /// <summary>
+    /// Updates the actor's pose on this recorded frame.
+    /// </summary>
+    public virtual void Act()
+    {
+        previousFrame = new ObjectFrame();
+        nextFrame = new ObjectFrame();
 
-        protected string actorName;
-        protected int actorId;
-
-        protected Transform transform;
-        protected List<ObjectFrame> objectFrames;
-        protected List<ActionFrame> actionFrames;
-
-        protected int stateTick;
-        protected int recordedTicks;
-
-        private ObjectFrame previousFrame;
-        private ObjectFrame nextFrame;
-
-        public virtual void OnSceneBegin()
+        foreach (var frame in objectFrames)
         {
-            foreach (ActionFrame actionFrame in actionFrames)
+            previousFrame = nextFrame;
+            nextFrame = frame;
+
+            if (frame.frameTime > Playback.Instance.PlaybackTime)
             {
-                actionFrame.Reset();
+                break;
             }
         }
 
-        /// <summary>
-        /// Updates the actor's pose on this recorded frame.
-        /// </summary>
-        public virtual void Act()
+        float gap = nextFrame.frameTime - previousFrame.frameTime;
+        float head = Playback.Instance.PlaybackTime - previousFrame.frameTime;
+
+        float delta = head / gap;
+
+        transform.position = Vector3.Lerp(previousFrame.position, nextFrame.position, delta);
+        transform.rotation = Quaternion.Slerp(previousFrame.rotation, nextFrame.rotation, delta);
+
+        foreach (ActionFrame actionFrame in actionFrames)
         {
-            previousFrame = new ObjectFrame();
-            nextFrame = new ObjectFrame();
-
-            foreach (var frame in objectFrames)
+            if (Playback.Instance.PlaybackTime < actionFrame.timestamp)
             {
-                previousFrame = nextFrame;
-                nextFrame = frame;
-
-                if (frame.frameTime > Playback.Instance.PlaybackTime)
-                {
-                    break;
-                }
+                continue;
             }
-
-            float gap = nextFrame.frameTime - previousFrame.frameTime;
-            float head = Playback.Instance.PlaybackTime - previousFrame.frameTime;
-
-            float delta = head / gap;
-
-            transform.position = Vector3.Lerp(previousFrame.position, nextFrame.position, delta);
-            transform.rotation = Quaternion.Slerp(previousFrame.rotation, nextFrame.rotation, delta);
-
-            foreach (ActionFrame actionFrame in actionFrames)
+            else
             {
-                if (Playback.Instance.PlaybackTime < actionFrame.timestamp)
-                {
-                    continue;
-                }
-                else
-                {
-                    actionFrame.Run();
-                }
+                actionFrame.Run();
             }
         }
+    }
 
-        public virtual void RecordFrame()
+    public virtual void RecordFrame()
+    {
+        ObjectFrame objectFrame = new ObjectFrame()
         {
-            ObjectFrame objectFrame = new ObjectFrame()
-            {
-                transform = transform
-            };
+            transform = transform
+        };
 
-            objectFrames.Add(objectFrame);
-        }
+        objectFrames.Add(objectFrame);
+    }
 
-        public virtual void RecordAction(Action action)
+    public virtual void RecordAction(Action action)
+    {
+        if (Director.PlayState == State.PlayState.Recording)
         {
-            if (Director.PlayState == State.PlayState.Recording)
-            {
-                actionFrames.Add(new ActionFrame(action, Recorder.Instance.RecordingTime));
-            }
+            actionFrames.Add(new ActionFrame(action, Recorder.Instance.RecordingTime));
         }
+    }
 
-        public void SetTransform(Transform transform)
-        {
-            this.transform = transform;
-        }
+    public void SetTransform(Transform transform)
+    {
+        this.transform = transform;
+    }
 
-        public virtual void Delete()
-        {
-            
-        }
+    public virtual void Delete()
+    {
+        
     }
 }

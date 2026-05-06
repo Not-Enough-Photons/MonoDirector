@@ -7,116 +7,115 @@ using NEP.MonoDirector.UI;
 using UnityEngine;
 using static Il2CppSLZ.Marrow.PuppetMasta.Muscle;
 
-namespace NEP.MonoDirector.Actors
+namespace NEP.MonoDirector.Actors;
+
+public static class PropBuilder
 {
-    public static class PropBuilder
+    public static void BuildProp(MarrowEntity entity)
     {
-        public static void BuildProp(MarrowEntity entity)
+        if (!entity)
+            return;
+
+        if (entity.Bodies.Count == 0)
+            return;
+
+        if (entity.GetComponent<Prop>())
+            return;
+
+        if (Prop.EligibleWithType<Gun>(entity))
         {
-            if (!entity)
-                return;
-
-            if (entity.Bodies.Count == 0)
-                return;
-
-            if (entity.GetComponent<Prop>())
-                return;
-
-            if (Prop.EligibleWithType<Gun>(entity))
-            {
 #if DEBUG
-                Logging.Msg($"Adding gun component to {entity.name}");
+            Logging.Msg($"Adding gun component to {entity.name}");
 #endif
-                GunProp prop = entity.gameObject.AddComponent<GunProp>();
+            GunProp prop = entity.gameObject.AddComponent<GunProp>();
 
-                prop.SetEntity(entity);
-                prop.SetGun(entity.GetComponent<Gun>());
+            prop.SetEntity(entity);
+            prop.SetGun(entity.GetComponent<Gun>());
 
-                // Check for a loaded magazine
-                if (prop.Gun.HasMagazine())
-                {
-                    Magazine magazine = prop.Gun.ammoSocket._magazinePlug.magazine;
-                    BuildProp(magazine.interactableHost.marrowEntity);
-                }
-
-                Caster.AddRecordProp(prop);
-                PropFrameManager.AddFrameToProp(prop);
-                return;
+            // Check for a loaded magazine
+            if (prop.Gun.HasMagazine())
+            {
+                Magazine magazine = prop.Gun.ammoSocket._magazinePlug.magazine;
+                BuildProp(magazine.interactableHost.marrowEntity);
             }
 
-            if (Prop.EligibleWithType<ObjectDestructible>(entity))
-            {
-#if DEBUG
-                Logging.Msg($"Adding destructable component to {entity.name}");
-#endif
-                BreakableProp prop = entity.gameObject.AddComponent<BreakableProp>();
-                prop.SetEntity(entity);
-                prop.SetBreakableObject(entity.GetComponent<ObjectDestructible>());
-
-                Caster.AddRecordProp(prop);
-                PropFrameManager.AddFrameToProp(prop);
-                return;
-            }
-
-            if (Prop.EligibleWithType<Magazine>(entity))
-            {
-#if DEBUG
-                Logging.Msg($"Adding magazine component to {entity.name}");
-#endif
-                Prop prop = entity.gameObject.AddComponent<Prop>();
-                prop.SetEntity(entity);
-
-                Caster.AddRecordProp(prop);
-                PropFrameManager.AddFrameToProp(prop);
-                return;
-            }
-
-            if (Prop.EligibleWithType<Atv>(entity))
-            {
-#if DEBUG
-                Logging.Msg($"Adding vehicle component to {entity.name}");
-#endif
-                Prop prop = entity.gameObject.AddComponent<Prop>();
-                prop.SetEntity(entity);
-                //prop.SetVehicle(entity.GetComponent<Atv>());
-
-                Caster.AddRecordProp(prop);
-                PropFrameManager.AddFrameToProp(prop);
-                return;
-            }
-
-            if (Prop.IsActorProp(entity))
-            {
-#if DEBUG
-                Logging.Msg($"Adding prop component to {entity.name}");
-#endif
-                Prop prop = entity.gameObject.AddComponent<Prop>();
-                prop.SetEntity(entity);
-
-                Caster.AddRecordProp(prop);
-                PropFrameManager.AddFrameToProp(prop);
-            }
+            Caster.AddRecordProp(prop);
+            PropFrameManager.AddFrameToProp(prop);
+            return;
         }
-        
-        public static void RemoveProp(MarrowEntity entity)
+
+        if (Prop.EligibleWithType<ObjectDestructible>(entity))
         {
-            Prop actorProp = entity.GetComponent<Prop>();
-
-            if (Director.PlayState == State.PlayState.Stopped)
-            {
 #if DEBUG
-                MelonLoader.MelonLogger.Msg($"Removing component from {entity.name}");
+            Logging.Msg($"Adding destructable component to {entity.name}");
 #endif
-                if (actorProp is TrackedVehicle vehicle)
-                {
-                    vehicle.RemoveVehicle();
-                }
+            BreakableProp prop = entity.gameObject.AddComponent<BreakableProp>();
+            prop.SetEntity(entity);
+            prop.SetBreakableObject(entity.GetComponent<ObjectDestructible>());
 
-                Caster.RemoveProp(actorProp);
-                PropFrameManager.RemoveFrameFromProp(actorProp);
-                Director.ActiveScene.RemoveProp(actorProp);
-                GameObject.Destroy(actorProp);
-            }
-        } 
+            Caster.AddRecordProp(prop);
+            PropFrameManager.AddFrameToProp(prop);
+            return;
+        }
+
+        if (Prop.EligibleWithType<Magazine>(entity))
+        {
+#if DEBUG
+            Logging.Msg($"Adding magazine component to {entity.name}");
+#endif
+            Prop prop = entity.gameObject.AddComponent<Prop>();
+            prop.SetEntity(entity);
+
+            Caster.AddRecordProp(prop);
+            PropFrameManager.AddFrameToProp(prop);
+            return;
+        }
+
+        if (Prop.EligibleWithType<Atv>(entity))
+        {
+#if DEBUG
+            Logging.Msg($"Adding vehicle component to {entity.name}");
+#endif
+            Prop prop = entity.gameObject.AddComponent<Prop>();
+            prop.SetEntity(entity);
+            //prop.SetVehicle(entity.GetComponent<Atv>());
+
+            Caster.AddRecordProp(prop);
+            PropFrameManager.AddFrameToProp(prop);
+            return;
+        }
+
+        if (Prop.IsActorProp(entity))
+        {
+#if DEBUG
+            Logging.Msg($"Adding prop component to {entity.name}");
+#endif
+            Prop prop = entity.gameObject.AddComponent<Prop>();
+            prop.SetEntity(entity);
+
+            Caster.AddRecordProp(prop);
+            PropFrameManager.AddFrameToProp(prop);
+        }
     }
+    
+    public static void RemoveProp(MarrowEntity entity)
+    {
+        Prop actorProp = entity.GetComponent<Prop>();
+
+        if (Director.PlayState == State.PlayState.Stopped)
+        {
+#if DEBUG
+            MelonLoader.MelonLogger.Msg($"Removing component from {entity.name}");
+#endif
+            if (actorProp is TrackedVehicle vehicle)
+            {
+                vehicle.RemoveVehicle();
+            }
+
+            Caster.RemoveProp(actorProp);
+            PropFrameManager.RemoveFrameFromProp(actorProp);
+            Director.ActiveScene.RemoveProp(actorProp);
+            GameObject.Destroy(actorProp);
+        }
+    } 
 }

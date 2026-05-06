@@ -76,7 +76,6 @@
 		<Compile Include="src\Tools\Gizmos\LightRadiusGizmo.cs" />
 		<Compile Include="src\Tools\Gizmos\ParticleTriggerGizmo.cs" />
 		<Compile Include="src\Tools\Gizmos\SoundVolumeGizmo.cs" />
-		<Compile Include="src\Tools\Gizmos\ToolGizmo.cs" />
 		<Compile Include="src\Tools\Gizmos\VFXVolumeSizeGizmo.cs" />
 		<Compile Include="src\Tools\SoundSource.cs" />
 		<Compile Include="src\Audio\Spectrum.cs" />
@@ -163,6 +162,7 @@
 		<Compile Include="src\UI\MenuBootstrap.cs" />
 		<Compile Include="src\UI\PropMarkerManager.cs" />
 		<Compile Include="src\Yielding\WaitForAssetSpawn.cs" />
+		<Compile Include="src\Tools\Gizmos\ToolGizmo.cs" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -254,6 +254,10 @@
 	  <Reference Include="UnityEngine.UIModule">
 	    <HintPath>$(BONELAB_DIR)\MelonLoader\Il2CppAssemblies\UnityEngine.UIModule.dll</HintPath>
 	  </Reference>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Tools\" />
 	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">

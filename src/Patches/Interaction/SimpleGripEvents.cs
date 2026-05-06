@@ -4,34 +4,33 @@ using UnityEngine;
 using Il2CppSLZ.Bonelab;
 using Il2CppSLZ.Marrow;
 
-namespace NEP.MonoDirector.Patches
+namespace NEP.MonoDirector.Patches;
+
+internal static class SimpleGripEventsPatches
 {
-    internal static class SimpleGripEventsPatches
+    [HarmonyLib.HarmonyPatch(typeof(SimpleGripEvents), nameof(SimpleGripEvents.OnAttachedDelegate))]
+    internal static class OnAttachedDelegate
     {
-        [HarmonyLib.HarmonyPatch(typeof(SimpleGripEvents), nameof(SimpleGripEvents.OnAttachedDelegate))]
-        internal static class OnAttachedDelegate
+        internal static void Postfix(SimpleGripEvents __instance, Hand hand)
         {
-            internal static void Postfix(SimpleGripEvents __instance, Hand hand)
-            {
-               if(__instance.GetComponent<GripEventListener>() == null)
-               {
-                    var listener = __instance.gameObject.AddComponent<GripEventListener>();
-                    listener.SetProp(__instance.Grips[0].Host.Rb.GetComponent<Prop>());
-               }
-            }
+           if(__instance.GetComponent<GripEventListener>() == null)
+           {
+                var listener = __instance.gameObject.AddComponent<GripEventListener>();
+                listener.SetProp(__instance.Grips[0].Host.Rb.GetComponent<Prop>());
+           }
         }
+    }
 
-        [HarmonyLib.HarmonyPatch(typeof(SimpleGripEvents), nameof(SimpleGripEvents.OnDetachedDelegate))]
-        internal static class OnDetachedDelegate
+    [HarmonyLib.HarmonyPatch(typeof(SimpleGripEvents), nameof(SimpleGripEvents.OnDetachedDelegate))]
+    internal static class OnDetachedDelegate
+    {
+        internal static void Postfix(SimpleGripEvents __instance, Hand hand)
         {
-            internal static void Postfix(SimpleGripEvents __instance, Hand hand)
-            {
-                GripEventListener listener = __instance.GetComponent<GripEventListener>();
+            GripEventListener listener = __instance.GetComponent<GripEventListener>();
 
-                if (listener != null)
-                {
-                    GameObject.Destroy(listener);
-                }
+            if (listener != null)
+            {
+                GameObject.Destroy(listener);
             }
         }
     }

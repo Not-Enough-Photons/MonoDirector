@@ -7,19 +7,18 @@ using MarrowAvatar = Il2CppSLZ.VRMK.Avatar;
 using Il2CppSLZ.Bonelab;
 using NEP.MonoDirector.Cameras;
 
-namespace NEP.MonoDirector.Patches
+namespace NEP.MonoDirector.Patches;
+
+internal static class PreferencesPanelViewPatches
 {
-    internal static class PreferencesPanelViewPatches
+    [HarmonyLib.HarmonyPatch(typeof(PreferencesPanelView), nameof(PreferencesPanelView.OnEnable))]
+    internal static class OnEnable
     {
-        [HarmonyLib.HarmonyPatch(typeof(PreferencesPanelView), nameof(PreferencesPanelView.OnEnable))]
-        internal static class OnEnable
+        internal static void Postfix(RigScreenOptions __instance)
         {
-            internal static void Postfix(RigScreenOptions __instance)
+            if (Director.PlayState == State.PlayState.Recording)
             {
-                if (Director.PlayState == State.PlayState.Recording)
-                {
-                    Director.Recorder.SetUsedMenu(true);
-                }
+                Director.Recorder.SetUsedMenu(true);
             }
         }
     }

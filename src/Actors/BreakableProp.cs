@@ -4,41 +4,40 @@ using NEP.MonoDirector.Data;
 
 using Il2CppSLZ.Marrow;
 
-namespace NEP.MonoDirector.Actors
+namespace NEP.MonoDirector.Actors;
+
+[MelonLoader.RegisterTypeInIl2Cpp]
+public class BreakableProp(IntPtr ptr) : Prop(ptr)
 {
-    [MelonLoader.RegisterTypeInIl2Cpp]
-    public class BreakableProp(IntPtr ptr) : Prop(ptr)
+    public ObjectDestructible breakableProp;
+
+    protected override void Awake()
     {
-        public ObjectDestructible breakableProp;
+        base.Awake();
 
-        protected override void Awake()
+        m_bodyFrames = new List<ObjectFrame>();
+        m_actionFrames = new List<ActionFrame>();
+    }
+
+    public override void OnSceneBegin()
+    {
+        base.OnSceneBegin();
+
+        foreach(ActionFrame actionFrame in m_actionFrames)
         {
-            base.Awake();
-
-            m_bodyFrames = new List<ObjectFrame>();
-            m_actionFrames = new List<ActionFrame>();
+            actionFrame.Reset();
         }
+    }
 
-        public override void OnSceneBegin()
-        {
-            base.OnSceneBegin();
+    public void SetBreakableObject(ObjectDestructible destructable)
+    {
+        this.breakableProp = destructable;
+    }
 
-            foreach(ActionFrame actionFrame in m_actionFrames)
-            {
-                actionFrame.Reset();
-            }
-        }
-
-        public void SetBreakableObject(ObjectDestructible destructable)
-        {
-            this.breakableProp = destructable;
-        }
-
-        public void DestructionEvent()
-        {
-            breakableProp._isDead = false;
-            breakableProp.TakeDamage(Vector3.zero, 100f, true);
-            gameObject.SetActive(false);
-        }
+    public void DestructionEvent()
+    {
+        breakableProp._isDead = false;
+        breakableProp.TakeDamage(Vector3.zero, 100f, true);
+        gameObject.SetActive(false);
     }
 }

@@ -3,73 +3,72 @@ using System.Collections.Generic;
 using UnityEngine;
 using static MelonLoader.MelonLogger;
 
-namespace NEP.MonoDirector.Audio
+namespace NEP.MonoDirector.Audio;
+
+[MelonLoader.RegisterTypeInIl2Cpp]
+public class AudioManager(IntPtr ptr) : MonoBehaviour(ptr)
 {
-    [MelonLoader.RegisterTypeInIl2Cpp]
-    public class AudioManager(IntPtr ptr) : MonoBehaviour(ptr)
+    public static AudioManager Instance { get; private set; }
+
+    private List<GameObject> _pooledObjects;
+
+    private void Awake()
     {
-        public static AudioManager Instance { get; private set; }
+        Instance = this;
 
-        private List<GameObject> _pooledObjects;
+        _pooledObjects = new List<GameObject>();
 
-        private void Awake()
+        GameObject list = new GameObject("Pooled Audio");
+        list.transform.parent = transform;
+
+        for(int i = 0; i < 256; i++)
         {
-            Instance = this;
+            GameObject pooledAudio = new GameObject("Poolee Audio");
+            pooledAudio.transform.parent = list.transform;
 
-            _pooledObjects = new List<GameObject>();
+            pooledAudio.AddComponent<PooledAudio>();
+            pooledAudio.SetActive(false);
+            _pooledObjects.Add(pooledAudio);
+        }
+    }
 
-            GameObject list = new GameObject("Pooled Audio");
-            list.transform.parent = transform;
+    public void Play(AudioClip clip)
+    {
+        GameObject inactiveSource = GetFirstInactive();
+        AudioSource source = inactiveSource.GetComponent<AudioSource>();
 
-            for(int i = 0; i < 256; i++)
+        if(source != null)
+        {
+            source.clip = clip;
+            source.spatialBlend = 1f;
+            inactiveSource.SetActive(true);
+        }
+    }
+
+    public void PlayAtPosition(AudioClip clip, Vector3 position)
+    {
+        GameObject inactiveSource = GetFirstInactive();
+        AudioSource source = inactiveSource.GetComponent<AudioSource>();
+
+        if (source != null)
+        {
+            source.clip = clip;
+            source.spatialBlend = 1f;
+            source.transform.position = position;
+            inactiveSource.SetActive(true);
+        }
+    }
+
+    private GameObject GetFirstInactive()
+    {
+        for(int i = 0; i < _pooledObjects.Count; i++)
+        {
+            if (!_pooledObjects[i].gameObject.activeInHierarchy)
             {
-                GameObject pooledAudio = new GameObject("Poolee Audio");
-                pooledAudio.transform.parent = list.transform;
-
-                pooledAudio.AddComponent<PooledAudio>();
-                pooledAudio.SetActive(false);
-                _pooledObjects.Add(pooledAudio);
+                return _pooledObjects[i];
             }
         }
 
-        public void Play(AudioClip clip)
-        {
-            GameObject inactiveSource = GetFirstInactive();
-            AudioSource source = inactiveSource.GetComponent<AudioSource>();
-
-            if(source != null)
-            {
-                source.clip = clip;
-                source.spatialBlend = 1f;
-                inactiveSource.SetActive(true);
-            }
-        }
-
-        public void PlayAtPosition(AudioClip clip, Vector3 position)
-        {
-            GameObject inactiveSource = GetFirstInactive();
-            AudioSource source = inactiveSource.GetComponent<AudioSource>();
-
-            if (source != null)
-            {
-                source.clip = clip;
-                source.spatialBlend = 1f;
-                source.transform.position = position;
-                inactiveSource.SetActive(true);
-            }
-        }
-
-        private GameObject GetFirstInactive()
-        {
-            for(int i = 0; i < _pooledObjects.Count; i++)
-            {
-                if (!_pooledObjects[i].gameObject.activeInHierarchy)
-                {
-                    return _pooledObjects[i];
-                }
-            }
-
-            return null;
-        }
+        return null;
     }
 }

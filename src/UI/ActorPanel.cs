@@ -8,132 +8,131 @@ using NEP.MonoDirector.Actors;
 using NEP.MonoDirector.State;
 using NEP.MonoDirector.UI.Interaction;
 
-namespace NEP.MonoDirector.UI
+namespace NEP.MonoDirector.UI;
+
+[RegisterTypeInIl2Cpp]
+public class ActorPanel(IntPtr ptr) : MonoBehaviour(ptr)
 {
-    [RegisterTypeInIl2Cpp]
-    public class ActorPanel(IntPtr ptr) : MonoBehaviour(ptr)
+    private Transform m_root;
+
+    private TextMeshPro m_actorNameText;
+    private UIButton m_recastButton;
+    private UIButton m_deleteButton;
+    private UIButton m_hideButton;
+    private UIButton m_closeButton;
+
+    private Action m_onRecastClicked;
+    private Action m_onDeleteClicked;
+    private Action m_onHideClicked;
+    private Action m_onCloseClicked;
+
+    private Vector3 m_targetPosition;
+    private bool m_hidden;
+
+    private GameObject m_hiddenCheckmark;
+
+    private void Awake()
     {
-        private Transform m_root;
+        m_root = transform.GetChild(0);
 
-        private TextMeshPro m_actorNameText;
-        private UIButton m_recastButton;
-        private UIButton m_deleteButton;
-        private UIButton m_hideButton;
-        private UIButton m_closeButton;
+        m_actorNameText = m_root.Find("Data/Title").GetComponent<TextMeshPro>();
+        m_recastButton = m_root.Find("Data/Options/OptionsGroup/RecastButton").GetComponent<UIButton>();
+        m_deleteButton = m_root.Find("Data/Options/OptionsGroup/DeleteButton").GetComponent<UIButton>();
+        m_hideButton = m_root.Find("Data/Options/OptionsGroup/HideControl").GetComponent<UIButton>();
+        m_closeButton = m_root.Find("Data/Exit").GetComponent<UIButton>();
+        m_hiddenCheckmark = m_hideButton.transform.Find("Toggle/Checkmark").gameObject;
+        
+        m_onRecastClicked = OnRecastClicked;
+        m_onDeleteClicked = OnDeleteClicked;
+        m_onHideClicked = OnHideClicked;
+        m_onCloseClicked = OnCloseClicked;
+        
+        m_root.gameObject.SetActive(false);
+    }
 
-        private Action m_onRecastClicked;
-        private Action m_onDeleteClicked;
-        private Action m_onHideClicked;
-        private Action m_onCloseClicked;
+    private void OnEnable()
+    {
+        Caster.OnActorSelected += OnActorSelected;
+        Caster.OnActorDeselected += OnActorDeselected;
+        Events.OnPlayStateSet += OnPlayStateSet;
 
-        private Vector3 m_targetPosition;
-        private bool m_hidden;
+        m_recastButton.OnClicked += m_onRecastClicked;
+        m_deleteButton.OnClicked += m_onDeleteClicked;
+        m_hideButton.OnClicked += m_onHideClicked;
+        m_closeButton.OnClicked += m_onCloseClicked;
+        
+        Vector3 rotation = Quaternion.LookRotation(Constants.RigManager.physicsRig.m_head.position - transform.position).eulerAngles;
+        transform.rotation = Quaternion.Euler(0f, rotation.y, 0f);
+    }
 
-        private GameObject m_hiddenCheckmark;
+    private void OnDisable()
+    {
+        Caster.OnActorSelected -= OnActorSelected;
+        Caster.OnActorDeselected -= OnActorDeselected;
+        Events.OnPlayStateSet -= OnPlayStateSet;
 
-        private void Awake()
-        {
-            m_root = transform.GetChild(0);
+        m_recastButton.OnClicked -= m_onRecastClicked;
+        m_deleteButton.OnClicked -= m_onDeleteClicked;
+        m_hideButton.OnClicked -= m_onHideClicked;
+        m_closeButton.OnClicked -= m_onCloseClicked;
+    }
 
-            m_actorNameText = m_root.Find("Data/Title").GetComponent<TextMeshPro>();
-            m_recastButton = m_root.Find("Data/Options/OptionsGroup/RecastButton").GetComponent<UIButton>();
-            m_deleteButton = m_root.Find("Data/Options/OptionsGroup/DeleteButton").GetComponent<UIButton>();
-            m_hideButton = m_root.Find("Data/Options/OptionsGroup/HideControl").GetComponent<UIButton>();
-            m_closeButton = m_root.Find("Data/Exit").GetComponent<UIButton>();
-            m_hiddenCheckmark = m_hideButton.transform.Find("Toggle/Checkmark").gameObject;
-            
-            m_onRecastClicked = OnRecastClicked;
-            m_onDeleteClicked = OnDeleteClicked;
-            m_onHideClicked = OnHideClicked;
-            m_onCloseClicked = OnCloseClicked;
-            
-            m_root.gameObject.SetActive(false);
-        }
+    private void Update()
+    {
+        transform.position = Vector3.Lerp(transform.position, m_targetPosition, 8f * Time.deltaTime);
+    }
 
-        private void OnEnable()
-        {
-            Caster.OnActorSelected += OnActorSelected;
-            Caster.OnActorDeselected += OnActorDeselected;
-            Events.OnPlayStateSet += OnPlayStateSet;
+    private void OnActorSelected(Actor actor)
+    {
+        m_root.gameObject.SetActive(true);
 
-            m_recastButton.OnClicked += m_onRecastClicked;
-            m_deleteButton.OnClicked += m_onDeleteClicked;
-            m_hideButton.OnClicked += m_onHideClicked;
-            m_closeButton.OnClicked += m_onCloseClicked;
-            
-            Vector3 rotation = Quaternion.LookRotation(Constants.RigManager.physicsRig.m_head.position - transform.position).eulerAngles;
-            transform.rotation = Quaternion.Euler(0f, rotation.y, 0f);
-        }
+        m_targetPosition = actor.ActorBody.Chest.transform.position + Vector3.right;
 
-        private void OnDisable()
-        {
-            Caster.OnActorSelected -= OnActorSelected;
-            Caster.OnActorDeselected -= OnActorDeselected;
-            Events.OnPlayStateSet -= OnPlayStateSet;
+        m_actorNameText.text = $"Actor Settings - {actor.ActorName}";
+    }
 
-            m_recastButton.OnClicked -= m_onRecastClicked;
-            m_deleteButton.OnClicked -= m_onDeleteClicked;
-            m_hideButton.OnClicked -= m_onHideClicked;
-            m_closeButton.OnClicked -= m_onCloseClicked;
-        }
+    private void OnActorDeselected(Actor actor)
+    {
+        m_root.gameObject.SetActive(false);
+    }
 
-        private void Update()
-        {
-            transform.position = Vector3.Lerp(transform.position, m_targetPosition, 8f * Time.deltaTime);
-        }
+    private void OnRecastClicked()
+    {
+        Caster.RecastActor(Caster.SelectedActor);
+        m_root.gameObject.SetActive(false);
+    }
 
-        private void OnActorSelected(Actor actor)
-        {
-            m_root.gameObject.SetActive(true);
+    private void OnDeleteClicked()
+    {
+        Caster.UncastActor(Caster.SelectedActor);
+        // TODO: Move this into Caster or something
+        Director.ActiveScene.RemoveActor(Caster.SelectedActor);
+        m_root.gameObject.SetActive(false);
+    }
 
-            m_targetPosition = actor.ActorBody.Chest.transform.position + Vector3.right;
+    private void OnHideClicked()
+    {
+        m_hidden = !m_hidden;
+        Caster.SelectedActor.SetHidden(m_hidden);
+        m_hiddenCheckmark.SetActive(m_hidden);
+    }
 
-            m_actorNameText.text = $"Actor Settings - {actor.ActorName}";
-        }
+    private void OnCloseClicked()
+    {
+        m_root.gameObject.SetActive(false);
+    }
 
-        private void OnActorDeselected(Actor actor)
-        {
-            m_root.gameObject.SetActive(false);
-        }
+    private void OnPlayStateSet(PlayState state)
+    {
+        if (Caster.SelectedActor == null)
+            return;
 
-        private void OnRecastClicked()
-        {
-            Caster.RecastActor(Caster.SelectedActor);
-            m_root.gameObject.SetActive(false);
-        }
-
-        private void OnDeleteClicked()
-        {
-            Caster.UncastActor(Caster.SelectedActor);
-            // TODO: Move this into Caster or something
-            Director.ActiveScene.RemoveActor(Caster.SelectedActor);
-            m_root.gameObject.SetActive(false);
-        }
-
-        private void OnHideClicked()
-        {
-            m_hidden = !m_hidden;
-            Caster.SelectedActor.SetHidden(m_hidden);
-            m_hiddenCheckmark.SetActive(m_hidden);
-        }
-
-        private void OnCloseClicked()
+        if (state != PlayState.Stopped)
         {
             m_root.gameObject.SetActive(false);
+            return;
         }
 
-        private void OnPlayStateSet(PlayState state)
-        {
-            if (Caster.SelectedActor == null)
-                return;
-
-            if (state != PlayState.Stopped)
-            {
-                m_root.gameObject.SetActive(false);
-                return;
-            }
-
-            m_root.gameObject.SetActive(true);
-        }
+        m_root.gameObject.SetActive(true);
     }
 }

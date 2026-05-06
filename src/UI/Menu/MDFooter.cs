@@ -5,55 +5,54 @@ using Il2CppTMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace NEP.MonoDirector.UI.Menus
+namespace NEP.MonoDirector.UI.Menus;
+
+[MelonLoader.RegisterTypeInIl2Cpp]
+public class MDFooter(IntPtr ptr) : MonoBehaviour(ptr)
 {
-    [MelonLoader.RegisterTypeInIl2Cpp]
-    public class MDFooter(IntPtr ptr) : MonoBehaviour(ptr)
+    private Button previousPageButton;
+    private Button nextPageButton;
+    private Button goBackButton;
+    private TextMeshProUGUI pageText;
+
+    private ActorsPage actorsPage;
+
+    private void Awake()
     {
-        private Button previousPageButton;
-        private Button nextPageButton;
-        private Button goBackButton;
-        private TextMeshProUGUI pageText;
+        previousPageButton = transform.Find("PreviousPage").GetComponent<Button>();
+        nextPageButton = transform.Find("NextPage").GetComponent<Button>();
+        goBackButton = transform.Find("GoBack").GetComponent<Button>();
+        pageText = transform.Find("PageText").GetComponent<TextMeshProUGUI>();
+    }
 
-        private ActorsPage actorsPage;
+    public void LinkToActorView(ActorsPage actorsPage)
+    {
+        this.actorsPage = actorsPage;
 
-        private void Awake()
-        {
-            previousPageButton = transform.Find("PreviousPage").GetComponent<Button>();
-            nextPageButton = transform.Find("NextPage").GetComponent<Button>();
-            goBackButton = transform.Find("GoBack").GetComponent<Button>();
-            pageText = transform.Find("PageText").GetComponent<TextMeshProUGUI>();
-        }
+        previousPageButton.onClick.AddListener(new System.Action(() => OnPreviousPageClicked()));
+        nextPageButton.onClick.AddListener(new System.Action(() => OnNextPageClicked()));
+        goBackButton.onClick.AddListener(new System.Action(() => OnGoBackClicked()));
+    }
 
-        public void LinkToActorView(ActorsPage actorsPage)
-        {
-            this.actorsPage = actorsPage;
+    public void UnlinkToActorView()
+    {
 
-            previousPageButton.onClick.AddListener(new System.Action(() => OnPreviousPageClicked()));
-            nextPageButton.onClick.AddListener(new System.Action(() => OnNextPageClicked()));
-            goBackButton.onClick.AddListener(new System.Action(() => OnGoBackClicked()));
-        }
+    }
 
-        public void UnlinkToActorView()
-        {
+    private void OnPreviousPageClicked()
+    {
+        actorsPage.PreviousPage();
+        pageText.text = $"Page {actorsPage.PageIndex}/{actorsPage.PageCount}";
+    }
 
-        }
+    private void OnNextPageClicked()
+    {
+        actorsPage.NextPage();
+        pageText.text = $"Page {actorsPage.PageIndex}/{actorsPage.PageCount}";
+    }
 
-        private void OnPreviousPageClicked()
-        {
-            actorsPage.PreviousPage();
-            pageText.text = $"Page {actorsPage.PageIndex}/{actorsPage.PageCount}";
-        }
-
-        private void OnNextPageClicked()
-        {
-            actorsPage.NextPage();
-            pageText.text = $"Page {actorsPage.PageIndex}/{actorsPage.PageCount}";
-        }
-
-        private void OnGoBackClicked()
-        {
-            actorsPage.GoBack();
-        }
+    private void OnGoBackClicked()
+    {
+        actorsPage.GoBack();
     }
 }

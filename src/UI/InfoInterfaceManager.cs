@@ -1,13 +1,12 @@
 ﻿using MelonLoader;
 using NEP.MonoDirector.Data;
 
-namespace NEP.MonoDirector.UI
+namespace NEP.MonoDirector.UI;
+
+public static class InfoInterfaceManager
 {
-    public static class InfoInterfaceManager
+    public static void Initialize()
     {
-        public static void Initialize()
-        {
-            MelonCoroutines.Start(WarehouseLoader.SpawnFromBarcode(WarehouseLoader.infoInterfaceBarcode, true));
-        }
+        MelonCoroutines.Start(WarehouseLoader.SpawnFromBarcode(WarehouseLoader.infoInterfaceBarcode, true));
     }
 }

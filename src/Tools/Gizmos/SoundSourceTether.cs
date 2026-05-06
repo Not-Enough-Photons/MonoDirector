@@ -1,160 +1,159 @@
-﻿using Il2CppSLZ.Marrow;
-using Il2CppSLZ.Marrow.Interaction;
-using MelonLoader;
-using NEP.MonoDirector.Actors;
+﻿using NEP.MonoDirector.Actors;
 using NEP.MonoDirector.Audio;
 using NEP.MonoDirector.Proxy;
+
+using Il2CppSLZ.Marrow;
+using Il2CppSLZ.Marrow.Interaction;
 using UnityEngine;
 
-namespace NEP.MonoDirector.Tools
+namespace NEP.MonoDirector.Tools;
+
+[MelonLoader.RegisterTypeInIl2Cpp]
+public class SoundSourceTether(IntPtr ptr) : ToolGizmo(ptr)
 {
-    [MelonLoader.RegisterTypeInIl2Cpp]
-    public class SoundSourceTether(IntPtr ptr) : ToolGizmo(ptr)
+    private SoundSource m_source;
+
+    private Rigidbody m_originalConnectedBody;
+    private Vector3 m_originalConnectedAnchor;
+
+    private Actor m_hoveredActor;
+    private Actor m_attachedActor;
+
+    private AudioSource m_tetherInSound;
+    private AudioSource m_tetherOutSound;
+    
+    protected override void Awake()
     {
-        private SoundSource m_source;
+        base.Awake();
+        m_source = transform.parent.GetComponent<SoundSource>();
 
-        private Rigidbody m_originalConnectedBody;
-        private Vector3 m_originalConnectedAnchor;
+        m_originalConnectedBody = m_joint.connectedBody;
+        m_originalConnectedAnchor = m_joint.connectedAnchor;
 
-        private Actor m_hoveredActor;
-        private Actor m_attachedActor;
+        m_tetherInSound = transform.Find("TetherIn").GetComponent<AudioSource>();
+        m_tetherOutSound = transform.Find("TetherOut").GetComponent<AudioSource>();
 
-        private AudioSource m_tetherInSound;
-        private AudioSource m_tetherOutSound;
-        
-        protected override void Awake()
+        m_joint.autoConfigureConnectedAnchor = false;
+    }
+
+    protected override void OnEnable()
+    {
+        base.OnEnable();
+        m_joint.connectedBody = m_originalConnectedBody;
+        m_joint.connectedAnchor = m_originalConnectedAnchor;
+    }
+
+    protected override void OnDisable()
+    {
+        base.OnDisable();
+
+        if (m_attachedActor != null)
         {
-            base.Awake();
-            m_source = transform.parent.GetComponent<SoundSource>();
-
-            m_originalConnectedBody = m_joint.connectedBody;
-            m_originalConnectedAnchor = m_joint.connectedAnchor;
-
-            m_tetherInSound = transform.Find("TetherIn").GetComponent<AudioSource>();
-            m_tetherOutSound = transform.Find("TetherOut").GetComponent<AudioSource>();
-
-            m_joint.autoConfigureConnectedAnchor = false;
+            m_attachedActor.Microphone?.AssignSound(null);
         }
 
-        protected override void OnEnable()
+        m_source.Unmute();
+    }
+
+    protected override void OnHandAttached(Hand hand)
+    {
+        if (m_attachedActor != null)
         {
-            base.OnEnable();
-            m_joint.connectedBody = m_originalConnectedBody;
-            m_joint.connectedAnchor = m_originalConnectedAnchor;
+            UnTether();
         }
 
-        protected override void OnDisable()
+        m_joint.xMotion = ConfigurableJointMotion.Free;
+        m_joint.yMotion = ConfigurableJointMotion.Free;
+        m_joint.zMotion = ConfigurableJointMotion.Free;
+    }
+
+    protected override void OnHandDetached(Hand hand)
+    {
+        if (m_hoveredActor != null)
         {
-            base.OnDisable();
-
-            if (m_attachedActor != null)
-            {
-                m_attachedActor.Microphone?.AssignSound(null);
-            }
-
-            m_source.Unmute();
+            Tether();
         }
 
-        protected override void OnHandAttached(Hand hand)
+        if (m_attachedActor != null)
         {
-            if (m_attachedActor != null)
-            {
-                UnTether();
-            }
-
             m_joint.xMotion = ConfigurableJointMotion.Free;
             m_joint.yMotion = ConfigurableJointMotion.Free;
             m_joint.zMotion = ConfigurableJointMotion.Free;
+            return;
         }
 
-        protected override void OnHandDetached(Hand hand)
+        m_joint.xMotion = ConfigurableJointMotion.Limited;
+        m_joint.yMotion = ConfigurableJointMotion.Limited;
+        m_joint.zMotion = ConfigurableJointMotion.Limited;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        MarrowBody body = other.GetComponent<MarrowBody>();
+
+        if (body != null)
         {
-            if (m_hoveredActor != null)
+            ActorProxy proxy = body.Entity.GetComponent<ActorProxy>();
+
+            if (proxy != null)
             {
-                Tether();
-            }
-
-            if (m_attachedActor != null)
-            {
-                m_joint.xMotion = ConfigurableJointMotion.Free;
-                m_joint.yMotion = ConfigurableJointMotion.Free;
-                m_joint.zMotion = ConfigurableJointMotion.Free;
-                return;
-            }
-
-            m_joint.xMotion = ConfigurableJointMotion.Limited;
-            m_joint.yMotion = ConfigurableJointMotion.Limited;
-            m_joint.zMotion = ConfigurableJointMotion.Limited;
-        }
-
-        private void OnTriggerEnter(Collider other)
-        {
-            MarrowBody body = other.GetComponent<MarrowBody>();
-
-            if (body != null)
-            {
-                ActorProxy proxy = body.Entity.GetComponent<ActorProxy>();
-
-                if (proxy != null)
-                {
-                    OnTetherTriggerEnter(proxy.Actor);
-                }
+                OnTetherTriggerEnter(proxy.Actor);
             }
         }
+    }
 
-        private void OnTriggerExit(Collider other)
+    private void OnTriggerExit(Collider other)
+    {
+        MarrowBody body = other.GetComponent<MarrowBody>();
+
+        if (body != null)
         {
-            MarrowBody body = other.GetComponent<MarrowBody>();
+            ActorProxy proxy = body.Entity.GetComponent<ActorProxy>();
 
-            if (body != null)
+            if (proxy != null)
             {
-                ActorProxy proxy = body.Entity.GetComponent<ActorProxy>();
-
-                if (proxy != null)
-                {
-                    OnTetherTriggerExit(proxy.Actor);
-                }
+                OnTetherTriggerExit(proxy.Actor);
             }
         }
+    }
 
-        private void OnTetherTriggerEnter(Actor actor)
-        {
-            m_hoveredActor = actor;
-        }
+    private void OnTetherTriggerEnter(Actor actor)
+    {
+        m_hoveredActor = actor;
+    }
 
-        private void OnTetherTriggerExit(Actor actor)
-        {
-            m_hoveredActor = null;
-        }
+    private void OnTetherTriggerExit(Actor actor)
+    {
+        m_hoveredActor = null;
+    }
 
-        private void Tether()
-        {
-            m_hoveredActor.Microphone.AssignSound(m_source.Clip);
-            m_hoveredActor.Microphone.SetCorrectionMode(ActorSpeech.AudioCorrectionMode.NonCorrected);
-            m_attachedActor = m_hoveredActor;
+    private void Tether()
+    {
+        m_hoveredActor.Microphone.AssignSound(m_source.Clip);
+        m_hoveredActor.Microphone.SetCorrectionMode(ActorSpeech.AudioCorrectionMode.NonCorrected);
+        m_attachedActor = m_hoveredActor;
 
-            m_joint.connectedBody = m_hoveredActor.ActorBody.Head.GetComponent<Rigidbody>();
-            m_joint.connectedAnchor = Vector3.zero;
+        m_joint.connectedBody = m_hoveredActor.ActorBody.Head.GetComponent<Rigidbody>();
+        m_joint.connectedAnchor = Vector3.zero;
 
-            // FeedbackSFX.LinkAudio();
-            m_hoveredActor = null;
+        // FeedbackSFX.LinkAudio();
+        m_hoveredActor = null;
 
-            m_source.Mute();
+        m_source.Mute();
 
-            m_tetherInSound.Play();
-        }
+        m_tetherInSound.Play();
+    }
 
-        private void UnTether()
-        {
-            m_joint.connectedBody = m_originalConnectedBody;
-            m_joint.connectedAnchor = m_originalConnectedAnchor;
-            
-            m_attachedActor.Microphone.AssignSound(null);
-            m_attachedActor = null;
+    private void UnTether()
+    {
+        m_joint.connectedBody = m_originalConnectedBody;
+        m_joint.connectedAnchor = m_originalConnectedAnchor;
+        
+        m_attachedActor.Microphone.AssignSound(null);
+        m_attachedActor = null;
 
-            m_source.Unmute();
+        m_source.Unmute();
 
-            m_tetherOutSound.Play();
-        }
+        m_tetherOutSound.Play();
     }
 }

@@ -5,118 +5,117 @@ using NEP.MonoDirector.State;
 
 using UnityEngine;
 
-namespace NEP.MonoDirector.UI
+namespace NEP.MonoDirector.UI;
+
+[Obsolete("The generic MarkerManager class should be used!")]
+public static class PropMarkerManager
 {
-    [Obsolete("The generic MarkerManager class should be used!")]
-    public static class PropMarkerManager
+    private static GameObject container;
+    private static Dictionary<Prop, PropMarker> markers = new Dictionary<Prop, PropMarker>();
+    private static List<PropMarker> loadedMarkerObjects = new List<PropMarker>();
+
+    public static void Initialize()
     {
-        private static GameObject container;
-        private static Dictionary<Prop, PropMarker> markers = new Dictionary<Prop, PropMarker>();
-        private static List<PropMarker> loadedMarkerObjects = new List<PropMarker>();
+        markers = new Dictionary<Prop, PropMarker>();
+        loadedMarkerObjects = new List<PropMarker>();
 
-        public static void Initialize()
+        container = new GameObject("[MonoDirector] - Prop Marker Container");
+        container.transform.SetParent(Bootstrap.MainContainerObject.transform);
+
+        for (int i = 0; i < 32; i++)
         {
-            markers = new Dictionary<Prop, PropMarker>();
-            loadedMarkerObjects = new List<PropMarker>();
+            GameObject obj = GameObject.Instantiate(BundleLoader.PropMarkerObject);
+            obj.transform.SetParent(container.transform);
+            obj.transform.localPosition = Vector3.zero;
 
-            container = new GameObject("[MonoDirector] - Prop Marker Container");
-            container.transform.SetParent(Bootstrap.MainContainerObject.transform);
+            PropMarker marker = new PropMarker();
+            marker.SetMarker(obj);
+            marker.SetProp(null);
+            marker.Hide();
 
-            for (int i = 0; i < 32; i++)
-            {
-                GameObject obj = GameObject.Instantiate(BundleLoader.PropMarkerObject);
-                obj.transform.SetParent(container.transform);
-                obj.transform.localPosition = Vector3.zero;
-
-                PropMarker marker = new PropMarker();
-                marker.SetMarker(obj);
-                marker.SetProp(null);
-                marker.Hide();
-
-                loadedMarkerObjects.Add(marker);
-            }
-
-            Caster.OnPropAdded += AddMarkerToProp;
-            Caster.OnPropRemoved += RemoveMarkerFromProp;
-
-            Events.OnPlayStateSet += ShowMarkers;
+            loadedMarkerObjects.Add(marker);
         }
 
-        public static void CleanUp()
+        Caster.OnPropAdded += AddMarkerToProp;
+        Caster.OnPropRemoved += RemoveMarkerFromProp;
+
+        Events.OnPlayStateSet += ShowMarkers;
+    }
+
+    public static void CleanUp()
+    {
+        Caster.OnPropAdded -= AddMarkerToProp;
+        Caster.OnPropRemoved -= RemoveMarkerFromProp;
+
+        Events.OnPlayStateSet -= ShowMarkers;
+
+        markers.Clear();
+        loadedMarkerObjects.Clear();
+    }
+
+    public static void Update()
+    {
+        foreach (var marker in loadedMarkerObjects)
         {
-            Caster.OnPropAdded -= AddMarkerToProp;
-            Caster.OnPropRemoved -= RemoveMarkerFromProp;
+            marker.Update();
+        }
+    }
 
-            Events.OnPlayStateSet -= ShowMarkers;
-
-            markers.Clear();
-            loadedMarkerObjects.Clear();
+    public static void AddMarkerToProp(Prop prop)
+    {
+        if (markers.ContainsKey(prop))
+        {
+            return;
         }
 
-        public static void Update()
+        PropMarker marker = loadedMarkerObjects.FirstOrDefault((marker) => !marker.Active);
+
+        // HACK: Don't show prop markers during recording, if the prop was added during recording!
+        if (Director.PlayState != PlayState.Recording)
+        {
+            marker.Show();
+        }
+        else
+        {
+            marker.Hide();
+        }
+
+        marker.SetOffset(Vector3.up * 0.125f);
+        marker.SetProp(prop);
+        markers.Add(prop, marker);
+    }
+
+    public static void RemoveMarkerFromProp(Prop prop)
+    {
+        if (!markers.ContainsKey(prop))
+        {
+            return;
+        }
+
+        PropMarker marker = markers[prop];
+        marker.SetOffset(Vector3.zero);
+        marker.SetProp(null);
+        marker.Hide();
+        markers.Remove(prop);
+    }
+
+    private static void ShowMarkers(PlayState playState)
+    {
+        if(playState == PlayState.Preplaying || playState == PlayState.Prerecording)
         {
             foreach (var marker in loadedMarkerObjects)
             {
-                marker.Update();
-            }
-        }
-
-        public static void AddMarkerToProp(Prop prop)
-        {
-            if (markers.ContainsKey(prop))
-            {
-                return;
-            }
-
-            PropMarker marker = loadedMarkerObjects.FirstOrDefault((marker) => !marker.Active);
-
-            // HACK: Don't show prop markers during recording, if the prop was added during recording!
-            if (Director.PlayState != PlayState.Recording)
-            {
-                marker.Show();
-            }
-            else
-            {
                 marker.Hide();
             }
-
-            marker.SetOffset(Vector3.up * 0.125f);
-            marker.SetProp(prop);
-            markers.Add(prop, marker);
         }
 
-        public static void RemoveMarkerFromProp(Prop prop)
+        if(playState == PlayState.Stopped)
         {
-            if (!markers.ContainsKey(prop))
+            foreach (var marker in loadedMarkerObjects)
             {
-                return;
-            }
-
-            PropMarker marker = markers[prop];
-            marker.SetOffset(Vector3.zero);
-            marker.SetProp(null);
-            marker.Hide();
-            markers.Remove(prop);
-        }
-
-        private static void ShowMarkers(PlayState playState)
-        {
-            if(playState == PlayState.Preplaying || playState == PlayState.Prerecording)
-            {
-                foreach (var marker in loadedMarkerObjects)
+                if (marker.HasProp)
                 {
-                    marker.Hide();
-                }
-            }
-
-            if(playState == PlayState.Stopped)
-            {
-                foreach (var marker in loadedMarkerObjects)
-                {
-                    if (marker.HasProp)
-                    {
-                        marker.Show();
-                    }
+                    marker.Show();
                 }
             }
         }

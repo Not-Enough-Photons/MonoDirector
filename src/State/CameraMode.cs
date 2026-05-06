@@ -1,10 +1,9 @@
-﻿namespace NEP.MonoDirector.State
+﻿namespace NEP.MonoDirector.State;
+
+public enum CameraMode
 {
-    public enum CameraMode
-    {
-        None,
-        Free,
-        Handheld,
-        Head
-    }
+    None,
+    Free,
+    Handheld,
+    Head
 }

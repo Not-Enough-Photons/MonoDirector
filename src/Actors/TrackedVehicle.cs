@@ -3,54 +3,53 @@ using NEP.MonoDirector.Data;
 
 using Il2CppSLZ.Marrow;
 
-namespace NEP.MonoDirector.Actors
+namespace NEP.MonoDirector.Actors;
+
+[MelonLoader.RegisterTypeInIl2Cpp]
+public class TrackedVehicle(IntPtr ptr) : Prop(ptr)
 {
-    [MelonLoader.RegisterTypeInIl2Cpp]
-    public class TrackedVehicle(IntPtr ptr) : Prop(ptr)
+    public Atv Vehicle { get => m_vehicle; }
+
+    protected Atv m_vehicle;
+
+    public void SetVehicle(Atv vehicle)
     {
-        public Atv Vehicle { get => m_vehicle; }
+        this.m_vehicle = vehicle;
+    }
 
-        protected Atv m_vehicle;
+    public void RemoveVehicle()
+    {
+        m_vehicle = null;
 
-        public void SetVehicle(Atv vehicle)
+        SetPhysicsActive(true);
+    }
+
+    public override void OnSceneBegin()
+    {
+        if (PropFrames == null)
+            return;
+
+        if (PropFrames.Count == 0)
+            return;
+
+        SetPhysicsActive(false);
+    }
+
+    public override void Act()
+    {
+        gameObject.SetActive(true);
+    }
+
+    public override void Record(int frame)
+    {
+        ObjectFrame objectFrame = new ObjectFrame()
         {
-            this.m_vehicle = vehicle;
-        }
+            transform = transform,
+            position = transform.position,
+            rotation = transform.rotation,
+            frameTime = Recorder.Instance.RecordingTime
+        };
 
-        public void RemoveVehicle()
-        {
-            m_vehicle = null;
-
-            SetPhysicsActive(true);
-        }
-
-        public override void OnSceneBegin()
-        {
-            if (PropFrames == null)
-                return;
-
-            if (PropFrames.Count == 0)
-                return;
-
-            SetPhysicsActive(false);
-        }
-
-        public override void Act()
-        {
-            gameObject.SetActive(true);
-        }
-
-        public override void Record(int frame)
-        {
-            ObjectFrame objectFrame = new ObjectFrame()
-            {
-                transform = transform,
-                position = transform.position,
-                rotation = transform.rotation,
-                frameTime = Recorder.Instance.RecordingTime
-            };
-
-            m_bodyFrames.Add(objectFrame);
-        }
+        m_bodyFrames.Add(objectFrame);
     }
 }

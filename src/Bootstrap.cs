@@ -16,226 +16,225 @@ using BoneLib.Notifications;
 using System.Linq.Expressions;
 using NEP.MonoDirector.Compatibility;
 
-namespace NEP.MonoDirector.Core
+namespace NEP.MonoDirector.Core;
+
+public static class Bootstrap
 {
-    public static class Bootstrap
+    internal static GameObject MainContainerObject { get; private set; }
+
+    internal static bool AudioImportInstalled { get => m_audioImportInstalled; }
+
+    private static bool m_audioImportInstalled = false;
+
+    internal static void Initialize()
     {
-        internal static GameObject MainContainerObject { get; private set; }
+        ModCompatibility.Scan();
+        Logging.Initialize();
+        BundleLoader.Initialize();
 
-        internal static bool AudioImportInstalled { get => m_audioImportInstalled; }
+        MelonCoroutines.Start(AssetDownloader.Start());
 
-        private static bool m_audioImportInstalled = false;
+        Directory.CreateDirectory(Constants.dirBase);
+        Directory.CreateDirectory(Constants.dirMod);
+        Directory.CreateDirectory(Constants.dirSFX);
+        Directory.CreateDirectory(Constants.dirImg);
 
-        internal static void Initialize()
-        {
-            ModCompatibility.Scan();
-            Logging.Initialize();
-            BundleLoader.Initialize();
+        Hooking.OnLevelLoaded += (info) => OnLevelLoaded();
+        Hooking.OnWarehouseReady += OnWarehouseReady;
 
-            MelonCoroutines.Start(AssetDownloader.Start());
+        MDBoneMenu.Initialize();
 
-            Directory.CreateDirectory(Constants.dirBase);
-            Directory.CreateDirectory(Constants.dirMod);
-            Directory.CreateDirectory(Constants.dirSFX);
-            Directory.CreateDirectory(Constants.dirImg);
+        CheckAudioImport();
 
-            Hooking.OnLevelLoaded += (info) => OnLevelLoaded();
-            Hooking.OnWarehouseReady += OnWarehouseReady;
-
-            MDBoneMenu.Initialize();
-
-            CheckAudioImport();
-
-            FeedbackSFX.Initialize();
+        FeedbackSFX.Initialize();
 #if DEBUG
-            TestDebugSerialize();
+        TestDebugSerialize();
 #endif
+    }
+
+    internal static void Update()
+    {
+        MarkerManager.Update();
+        //PropMarkerManager.Update();
+    }
+
+    internal static void Shutdown()
+    {
+        FeedbackSFX.Shutdown();
+    }
+
+    internal static void OnWarehouseReady()
+    {
+        AssetWarehouse.Instance.OnPalletAdded += new Action<Barcode>(OnPalletAdded);
+
+        if (!m_audioImportInstalled)
+        {
+            Logging.Warn("AudioImportLib is not installed!");
+            return;
         }
 
-        internal static void Update()
+        if (AssetDownloader.CheckInstall())
         {
-            MarkerManager.Update();
-            //PropMarkerManager.Update();
-        }
-
-        internal static void Shutdown()
-        {
-            FeedbackSFX.Shutdown();
-        }
-
-        internal static void OnWarehouseReady()
-        {
-            AssetWarehouse.Instance.OnPalletAdded += new Action<Barcode>(OnPalletAdded);
-
-            if (!m_audioImportInstalled)
-            {
-                Logging.Warn("AudioImportLib is not installed!");
-                return;
-            }
-
-            if (AssetDownloader.CheckInstall())
-            {
-                WarehouseLoader.LoadSounds();
-                WarehouseLoader.GenerateSpawnablesFromSounds();
-            }
-        }
-
-        internal static void OnPalletAdded(Barcode barcode)
-        {
-            if (barcode.ID != "NEP.MonoDirector")
-            {
-                return;
-            }
-
-            if (!m_audioImportInstalled)
-            {
-                Notification notification = new()
-                {
-                    Title = "Missing AudioImportLib",
-                    Message = "You do not have AudioImportLib installed! Custom sounds will not work.",
-                    Type = NotificationType.Warning,
-                    PopupLength = 5f
-                };
-
-                Notifier.Send(notification);
-
-                return;
-            }
-
             WarehouseLoader.LoadSounds();
             WarehouseLoader.GenerateSpawnablesFromSounds();
         }
+    }
 
-        internal static void OnLevelLoaded()
+    internal static void OnPalletAdded(Barcode barcode)
+    {
+        if (barcode.ID != "NEP.MonoDirector")
         {
-            if (!m_audioImportInstalled)
-            {
-                Notification notification = new()
-                {
-                    Title = "Missing AudioImportLib",
-                    Message = "You do not have AudioImportLib installed! Custom sounds will not work.",
-                    Type = NotificationType.Warning,
-                    PopupLength = 5f
-                };
-
-                Notifier.Send(notification);
-            }
-
-            if (!AssetDownloader.CheckInstall())
-            {
-                Notification notification = new()
-                {
-                    Title = "Missing Content Pallet",
-                    Message = "You do not have the MonoDirector content pallet installed! Subscribe to it on mod.io, then install it in game!",
-                    Type = NotificationType.Warning,
-                    PopupLength = 5f
-                };
-
-                Notifier.Send(notification);
-            }
-            else if(AssetDownloader.NeedsNewVersion())
-            {
-                Notification notification = new()
-                {
-                    Title = "Content Update Available",
-                    Message = "A new update for the MonoDirector pallet is available! Download it from Void G114!",
-                    Type = NotificationType.Warning,
-                    PopupLength = 5f
-                };
-
-                Notifier.Send(notification);
-            }
-
-            MainContainerObject = new GameObject("[MonoDirector]");
-
-            Events.FlushActions();
-
-            FeedbackSFX.Initialize();
-
-            Director.Shutdown();
-            Director.Initialize();
-
-            CreateUI();
+            return;
         }
 
-        internal static void CreateUI()
+        if (!m_audioImportInstalled)
         {
-            MarkerManager.Initialize();
-            //PropMarkerManager.Initialize();
-            InfoInterfaceManager.Initialize();
-            ActorFrameManager.Initialize();
-            PropFrameManager.Initialize();
-            MelonCoroutines.Start(WarehouseLoader.SpawnFromBarcode(WarehouseLoader.actorPanelBarcode, true));
-            //MelonCoroutines.Start(WarehouseLoader.SpawnFromBarcode(WarehouseLoader.mainMenuBarcode));
-            MelonCoroutines.Start(WarehouseLoader.SpawnFromBarcode(WarehouseLoader.sceneShelfBarcode));
-            MelonCoroutines.Start(WarehouseLoader.SpawnFromBarcode(WarehouseLoader.mainMenuBarcode));
-        }
-
-        private static void CheckAudioImport()
-        {
-            if (MelonBase.FindMelon("AudioImportLib", "trev & zCubed") != null)
+            Notification notification = new()
             {
-                m_audioImportInstalled = true;
-            }
+                Title = "Missing AudioImportLib",
+                Message = "You do not have AudioImportLib installed! Custom sounds will not work.",
+                Type = NotificationType.Warning,
+                PopupLength = 5f
+            };
+
+            Notifier.Send(notification);
+
+            return;
         }
 
-        internal static void AnnounceError()
+        WarehouseLoader.LoadSounds();
+        WarehouseLoader.GenerateSpawnablesFromSounds();
+    }
+
+    internal static void OnLevelLoaded()
+    {
+        if (!m_audioImportInstalled)
         {
-            var mixer = BoneLib.Audio.InHead;
-            BoneLib.Audio.Play2DOneShot(BundleLoader.ErrorClip, mixer, 0.1f);
+            Notification notification = new()
+            {
+                Title = "Missing AudioImportLib",
+                Message = "You do not have AudioImportLib installed! Custom sounds will not work.",
+                Type = NotificationType.Warning,
+                PopupLength = 5f
+            };
+
+            Notifier.Send(notification);
         }
 
-        internal static void TestDebugSerialize()
+        if (!AssetDownloader.CheckInstall())
         {
-            Logging.Warn("MONODIRECTOR DEBUG BUILD!");
-
-            // Testing
-            Logging.Warn("Writing test frame data, better hope this doesn't violently crash!!!");
-            Data.ObjectFrame frame = new Data.ObjectFrame();
-            frame.frameTime = 3.141592654F;
-            frame.position = new Vector3(1, -1, 2);
-            frame.rotation = new Quaternion(0.5F, 0.75F, 0.9F, 1.0F).normalized;
-
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-            byte[] frameBytes = frame.ToBinary();
-            sw.Stop();
-
-            Logging.Msg($"[STOPWATCH]: ToBinary() took {sw.ElapsedMilliseconds}...");
-
-            sw.Restart();
-
-            using (FileStream file = File.Open("test.mdbf", FileMode.Create))
+            Notification notification = new()
             {
-                uint ident = frame.GetBinaryID();
-                file.Write(BitConverter.GetBytes(ident), 0, sizeof(uint));
+                Title = "Missing Content Pallet",
+                Message = "You do not have the MonoDirector content pallet installed! Subscribe to it on mod.io, then install it in game!",
+                Type = NotificationType.Warning,
+                PopupLength = 5f
+            };
 
-                file.Write(frameBytes, 0, frameBytes.Length);
-            }
-            ;
-
-            sw.Stop();
-
-            Logging.Msg($"[STOPWATCH]: Writing MDBF took {sw.ElapsedMilliseconds}...");
-
-            sw.Restart();
-
-            // Then try to read it back
-            using (FileStream file = File.Open("test.mdbf", FileMode.Open))
-            {
-                // Seek past the first 4 bytes
-                file.Seek(4, SeekOrigin.Begin);
-                frame.FromBinary(file);
-            }
-
-            sw.Stop();
-
-            Logging.Msg($"[STOPWATCH]: FromBinary() took {sw.ElapsedMilliseconds}...");
-
-            Logging.Msg("READING...");
-            Logging.Msg($"\tFrT = {frame.frameTime}");
-            Logging.Msg($"\tPos = {frame.position}");
-            Logging.Msg($"\tRot = {frame.rotation}");
+            Notifier.Send(notification);
         }
+        else if(AssetDownloader.NeedsNewVersion())
+        {
+            Notification notification = new()
+            {
+                Title = "Content Update Available",
+                Message = "A new update for the MonoDirector pallet is available! Download it from Void G114!",
+                Type = NotificationType.Warning,
+                PopupLength = 5f
+            };
+
+            Notifier.Send(notification);
+        }
+
+        MainContainerObject = new GameObject("[MonoDirector]");
+
+        Events.FlushActions();
+
+        FeedbackSFX.Initialize();
+
+        Director.Shutdown();
+        Director.Initialize();
+
+        CreateUI();
+    }
+
+    internal static void CreateUI()
+    {
+        MarkerManager.Initialize();
+        //PropMarkerManager.Initialize();
+        InfoInterfaceManager.Initialize();
+        ActorFrameManager.Initialize();
+        PropFrameManager.Initialize();
+        MelonCoroutines.Start(WarehouseLoader.SpawnFromBarcode(WarehouseLoader.actorPanelBarcode, true));
+        //MelonCoroutines.Start(WarehouseLoader.SpawnFromBarcode(WarehouseLoader.mainMenuBarcode));
+        MelonCoroutines.Start(WarehouseLoader.SpawnFromBarcode(WarehouseLoader.sceneShelfBarcode));
+        MelonCoroutines.Start(WarehouseLoader.SpawnFromBarcode(WarehouseLoader.mainMenuBarcode));
+    }
+
+    private static void CheckAudioImport()
+    {
+        if (MelonBase.FindMelon("AudioImportLib", "trev & zCubed") != null)
+        {
+            m_audioImportInstalled = true;
+        }
+    }
+
+    internal static void AnnounceError()
+    {
+        var mixer = BoneLib.Audio.InHead;
+        BoneLib.Audio.Play2DOneShot(BundleLoader.ErrorClip, mixer, 0.1f);
+    }
+
+    internal static void TestDebugSerialize()
+    {
+        Logging.Warn("MONODIRECTOR DEBUG BUILD!");
+
+        // Testing
+        Logging.Warn("Writing test frame data, better hope this doesn't violently crash!!!");
+        Data.ObjectFrame frame = new Data.ObjectFrame();
+        frame.frameTime = 3.141592654F;
+        frame.position = new Vector3(1, -1, 2);
+        frame.rotation = new Quaternion(0.5F, 0.75F, 0.9F, 1.0F).normalized;
+
+        Stopwatch sw = new Stopwatch();
+        sw.Start();
+        byte[] frameBytes = frame.ToBinary();
+        sw.Stop();
+
+        Logging.Msg($"[STOPWATCH]: ToBinary() took {sw.ElapsedMilliseconds}...");
+
+        sw.Restart();
+
+        using (FileStream file = File.Open("test.mdbf", FileMode.Create))
+        {
+            uint ident = frame.GetBinaryID();
+            file.Write(BitConverter.GetBytes(ident), 0, sizeof(uint));
+
+            file.Write(frameBytes, 0, frameBytes.Length);
+        }
+        ;
+
+        sw.Stop();
+
+        Logging.Msg($"[STOPWATCH]: Writing MDBF took {sw.ElapsedMilliseconds}...");
+
+        sw.Restart();
+
+        // Then try to read it back
+        using (FileStream file = File.Open("test.mdbf", FileMode.Open))
+        {
+            // Seek past the first 4 bytes
+            file.Seek(4, SeekOrigin.Begin);
+            frame.FromBinary(file);
+        }
+
+        sw.Stop();
+
+        Logging.Msg($"[STOPWATCH]: FromBinary() took {sw.ElapsedMilliseconds}...");
+
+        Logging.Msg("READING...");
+        Logging.Msg($"\tFrT = {frame.frameTime}");
+        Logging.Msg($"\tPos = {frame.position}");
+        Logging.Msg($"\tRot = {frame.rotation}");
     }
 }
