@@ -4,6 +4,7 @@ using Il2CppTrees;
 using Il2CppSLZ.Marrow;
 using NEP.MonoDirector.Core;
 using Il2CppSLZ.Marrow.Interaction;
+using NEP.MonoDirector.Audio;
 using NEP.MonoDirector.Proxy;
 
 namespace NEP.MonoDirector.Tools;
@@ -75,6 +76,7 @@ public class ActorPen(IntPtr ptr) : ToolEntity(ptr)
         if (!actor)
             return;
         
+        FeedbackSFX.LinkAudio();
         actor.OnSelected();
         m_selectedActors.Add(actor);
     }

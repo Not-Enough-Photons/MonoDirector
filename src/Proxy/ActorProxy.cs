@@ -64,7 +64,6 @@ public class ActorProxy(IntPtr ptr) : TrackableProxy(ptr)
 
     public void OnSelected()
     {
-        FeedbackSFX.LinkAudio();
         m_triggerHull.gameObject.SetActive(true);
         Director.SelectActor(m_actor);
         m_frame.Show();
