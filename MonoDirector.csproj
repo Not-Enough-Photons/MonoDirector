@@ -138,6 +138,7 @@
 		<Compile Include="src\Tools\VFXHolder.cs" />
 		<Compile Include="src\Tools\VFXVolume.cs" />
 		<Compile Include="src\Tools\Wind.cs" />
+		<Compile Include="src\UI\ActorFrame.cs" />
 		<Compile Include="src\UI\ActorFrameManager.cs" />
 		<Compile Include="src\UI\ActorPanel.cs" />
 		<Compile Include="src\UI\InfoInterfaceManager.cs" />

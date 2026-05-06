@@ -12,27 +12,28 @@ namespace NEP.MonoDirector.UI;
 
 public static class ActorFrameManager
 {
-    private static GameObject container;
-    private static Dictionary<ActorProxy, GameObject> frames;
-    private static List<GameObject> loadedFrameObjects;
-    private static List<GameObject> activeFrames;
+    private static GameObject m_container;
+    private static Dictionary<ActorProxy, ActorFrame> m_frames;
+    private static List<ActorFrame> m_loadedFrames;
+    private static List<ActorFrame> m_activeFrames;
 
     public static void Initialize()
     {
-        frames = new Dictionary<ActorProxy, GameObject>();
-        loadedFrameObjects = new List<GameObject>();
-        activeFrames = new List<GameObject>();
+        m_frames = new Dictionary<ActorProxy, ActorFrame>();
+        m_loadedFrames = new List<ActorFrame>();
+        m_activeFrames = new List<ActorFrame>();
 
-        container = new GameObject("[MonoDirector] - Actor Frame Container");
-        container.transform.SetParent(Bootstrap.MainContainerObject.transform);
+        m_container = new GameObject("[MonoDirector] - Actor Frame Container");
+        m_container.transform.SetParent(Bootstrap.MainContainerObject.transform);
 
         for (int i = 0; i < 32; i++)
         {
-            GameObject obj = GameObject.Instantiate(BundleLoader.FrameObject);
+            GameObject obj = GameObject.Instantiate(BundleLoader.FrameObject, m_container.transform);
             obj.SetActive(false);
-            obj.transform.SetParent(container.transform);
             obj.transform.localPosition = Vector3.zero;
-            loadedFrameObjects.Add(obj);
+            ActorFrame frame = new ActorFrame(obj);
+            frame.Hide();
+            m_loadedFrames.Add(frame);
         }
 
         Events.OnPlayStateSet += ShowFrames;
@@ -42,66 +43,70 @@ public static class ActorFrameManager
     {
         Events.OnPlayStateSet -= ShowFrames;
 
-        frames.Clear();
-        loadedFrameObjects.Clear();
-        activeFrames.Clear();
+        m_frames.Clear();
+        m_loadedFrames.Clear();
+        m_activeFrames.Clear();
+    }
+    
+    public static void Update()
+    {
+        if (m_loadedFrames == null)
+            return;
+        
+        foreach (var marker in m_loadedFrames)
+        {
+            if (marker.Active)
+                marker.Update();
+        }
     }
 
-    public static GameObject AddFrameToActor(ActorProxy proxy)
+    public static ActorFrame AddFrameToActor(ActorProxy proxy)
     {
-        if (frames.ContainsKey(proxy))
-        {
+        if (m_frames.ContainsKey(proxy))
             return null;
-        }
 
-        GameObject asset = loadedFrameObjects.FirstOrDefault((frame) => !activeFrames.Contains(frame));
+        ActorFrame frame = m_loadedFrames.FirstOrDefault((frame) => !frame.Active);
 
-        asset.gameObject.SetActive(true);
-
-        asset.transform.SetParent(proxy.Collider.transform);
-        asset.transform.localPosition = Vector3.zero;
-        asset.transform.localScale = proxy.Collider.size;
-
-        frames.Add(proxy, asset);
-        activeFrames.Add(asset);
-
-        return asset;
+        if (frame == null)
+            return null;
+        
+        frame.Parent(proxy);
+        frame.SetTarget(proxy.Collider.transform);
+        frame.Show();
+        
+        m_frames.Add(proxy, frame);
+        m_activeFrames.Add(frame);
+        return frame;
     }
 
     public static void RemoveFrameFromActor(ActorProxy proxy)
     {
-        if (!frames.ContainsKey(proxy))
-        {
+        if (!m_frames.TryGetValue(proxy, out ActorFrame frame))
             return;
-        }
 
-        GameObject frame = frames[proxy];
-        frame.gameObject.SetActive(false);
-        frame.transform.parent = container.transform;
-        frame.transform.localScale = Vector3.one;
-        frames.Remove(proxy);
-        activeFrames.Remove(frame.gameObject);
-    }
-
-    internal static void OnFrameSpawned(GameObject frameObject)
-    {
-        frameObject.SetActive(false);
-        frameObject.transform.SetParent(container.transform);
-        loadedFrameObjects.Add(frameObject);
+        frame = m_frames[proxy];
+        frame.SetOffset(Vector3.zero);
+        frame.SetTarget(null);
+        frame.Hide();
+        m_frames.Remove(proxy);
+        m_activeFrames.Remove(frame);
     }
 
     private static void ShowFrames(PlayState playState)
     {
+        if (Caster.SelectedActors.Count == 0)
+            return;
+        
         if (playState == PlayState.Preplaying || playState == PlayState.Prerecording)
         {
-            foreach (var frame in activeFrames)
-                frame.gameObject.SetActive(false);
+            foreach (var frame in m_activeFrames)
+                frame.Hide();
         }
 
         if (playState == PlayState.Stopped)
         {
-            foreach (var frame in activeFrames)
-                frame.gameObject.SetActive(true);
+            foreach (var frame in m_activeFrames)
+                frame.Show();
         }
     }
 }
