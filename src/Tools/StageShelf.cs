@@ -12,6 +12,8 @@ using NEP.MonoDirector.UI.Interaction;
 using UnityEngine;
 using NEP.MonoDirector.Yielding;
 
+using Random = UnityEngine.Random;
+
 namespace NEP.MonoDirector.Tools
 {
     [RegisterTypeInIl2Cpp]
@@ -114,7 +116,7 @@ namespace NEP.MonoDirector.Tools
             if (m_activeStageSocket.Reel)
                 m_activeStageSocket.Reel.Show();
             
-            m_newStageSocket.Reel.Show();
+            m_newStageSocket.Show();
             
             gameObject.SetActive(true);
         }
@@ -127,7 +129,7 @@ namespace NEP.MonoDirector.Tools
             if (m_activeStageSocket.Reel)
                 m_activeStageSocket.Reel.Hide();
             
-            m_newStageSocket.Reel.Hide();
+            m_newStageSocket.Hide();
             
             gameObject.SetActive(false);
         }
@@ -166,32 +168,16 @@ namespace NEP.MonoDirector.Tools
 
             if (index <= 0)
                 index = 0;
-
-            Stage previousStage = null;
-
-            if (Director.ActiveFilm.Stages.Count == 0)
-            {
-                previousStage = new Stage();
-                Director.SetStage(previousStage);
-
-                // Create a new reel and attach it to the very first socket.
-                StageReel newReel = m_newStageSocket.Reel;
-                m_newStageSocket.Disconnect();
-                newReel.SetStage(previousStage);
-                newReel.Connect(m_sockets[0]);
-            }
-            else
-            {
-                previousStage = Director.ActiveFilm.Stages[index];
-                Director.RemoveStage(m_deleteStageSocket.Reel.Stage);
-            }
             
+            Stage previousStage = Director.ActiveFilm.Stages[index];
+            Director.RemoveStage(m_deleteStageSocket.Reel.Stage);
             Director.SetStage(previousStage);
 
             m_deleteStageSocket.Reel.Despawn();
             m_deleteStageSocket.Reel.SetStage(null);
-            m_deleteStageSocket.Reel.Connect(m_newStageSocket);
-
+            // m_deleteStageSocket.Reel.Connect(m_newStageSocket);
+            m_deleteStageSocket.Socket.Unbind();
+            
             UpdateSocketLayout();
 
             m_deleteSfx.Play();
@@ -211,6 +197,7 @@ namespace NEP.MonoDirector.Tools
                     WaitForAssetSpawn<StageReel>(m_reelSpawnable, Vector3.zero, Quaternion.identity)
                     .Then(reel =>
                     {
+                        reel.SetColor(Color.HSVToRGB(Random.value, 1.0f, 1.0f));
                         reel.Connect(m_newStageSocket);
                         m_newStageSocket.SetReel(reel);
                     });
@@ -218,21 +205,21 @@ namespace NEP.MonoDirector.Tools
 
         private IEnumerator SpawnReels()
         {
-            for (int i = 0; i < m_sockets.Length; i++)
+            for (int i = 0; i < Director.ActiveFilm.Stages.Count; i++)
             {
-                yield return new
-                    WaitForAssetSpawn<StageReel>(m_reelSpawnable, Vector3.zero, Quaternion.identity)
+                Stage stage = Director.ActiveFilm.Stages[i];
+                StageShelfSocket socket = m_sockets[i];
+                
+                yield return new 
+                    WaitForAssetSpawn<StageReel>(m_reelSpawnable, Vector3.zero, Quaternion.identity) 
                     .Then(reel =>
                     {
                         reel.Hide();
-                        m_sockets[i].SetReel(reel);
+                        socket.SetReel(reel);
+                        reel.SetStage(stage);
+                        reel.Connect(socket);
+                        reel.SetColor(Color.HSVToRGB(Random.value, 1.0f, 1.0f));
                     });
-            }
-
-            for (int i = 0; i < Director.ActiveFilm.Stages.Count; i++)
-            {
-                m_sockets[i].Reel.SetStage(Director.ActiveFilm.Stages[i]);
-                m_sockets[i].Reel.Connect(m_sockets[i]);
             }
 
             yield return new

@@ -24,6 +24,7 @@ namespace NEP.MonoDirector.Tools
         private StageShelfSocket m_hoveredSocket;
         private Grip m_grip;
         private Poolee m_poolee;
+        private MeshRenderer m_reelMesh;
 
         private AudioSource m_connect1;
         private AudioSource m_connect2;
@@ -49,6 +50,8 @@ namespace NEP.MonoDirector.Tools
             m_connect2 = transform.Find("SFX/Connect 2").GetComponent<AudioSource>();
             m_disconnect1 = transform.Find("SFX/Disconnect 1").GetComponent<AudioSource>();
             m_disconnect2 = transform.Find("SFX/Disconnect 2").GetComponent<AudioSource>();
+
+            m_reelMesh = transform.Find("Art/Strip").GetComponent<MeshRenderer>();
             
             m_onHandAttached = OnHandAttached;
             m_onHandReleased = OnHandReleased;
@@ -122,12 +125,6 @@ namespace NEP.MonoDirector.Tools
 
         public void Connect(StageShelfSocket socket)
         {
-            if (m_lastConnectedSocket)
-            {
-                m_lastConnectedSocket.SetReel(null);
-                m_lastConnectedSocket.Socket.Unbind();
-            }
-
             m_attachedSocket = socket;
             m_lastConnectedSocket = m_attachedSocket;
             m_attachedSocket.SetReel(this);
@@ -151,6 +148,11 @@ namespace NEP.MonoDirector.Tools
 
             m_disconnect1.Play();
             m_disconnect2.Play();
+        }
+
+        public void SetColor(Color color)
+        {
+            m_reelMesh.material.color = color;
         }
 
         private void OnHandAttached(Hand hand)
