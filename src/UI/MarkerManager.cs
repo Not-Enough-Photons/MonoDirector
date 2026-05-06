@@ -104,6 +104,7 @@ public static class MarkerManager
             marker.Hide();
 
         marker.Parent(proxy);
+        proxy.SetMarker(marker);
         m_markers.Add(proxy.gameObject, marker);
     }
 
@@ -116,6 +117,7 @@ public static class MarkerManager
         marker.SetOffset(Vector3.zero);
         marker.SetTarget(null);
         marker.Hide();
+        proxy.SetMarker(null);
         m_markers.Remove(proxy.gameObject);
     }
 

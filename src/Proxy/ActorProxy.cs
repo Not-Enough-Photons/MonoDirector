@@ -16,6 +16,7 @@ public class ActorProxy(IntPtr ptr) : TrackableProxy(ptr)
     private Actor m_actor;
     private BoxCollider m_triggerHull;
     private GameObject m_frame;
+    private Marker m_marker;
 
     private void Awake()
     {
@@ -51,6 +52,11 @@ public class ActorProxy(IntPtr ptr) : TrackableProxy(ptr)
         }
     }
 
+    public void SetMarker(Marker marker)
+    {
+        m_marker = marker;
+    }
+
     public void OnSelected()
     {
         FeedbackSFX.LinkAudio();
@@ -63,4 +69,6 @@ public class ActorProxy(IntPtr ptr) : TrackableProxy(ptr)
         m_triggerHull.gameObject.SetActive(false);
         Director.DeselectActor(m_actor);
     }
+
+    public void OnHidden() => m_marker.OnActorUpdated(m_actor);
 }

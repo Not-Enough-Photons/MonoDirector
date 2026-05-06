@@ -144,6 +144,16 @@ public class Marker
         m_gameObject.SetActive(false);
     }
 
+    public void OnActorUpdated(Actor actor)
+    {
+        if (actor.Hidden)
+            m_actorType = ActorType.Hidden;
+        else
+            m_actorType = ActorType.Shown;
+
+        UpdateIcon();
+    }
+
     private void UpdateIcon()
     {
         if (m_markerType == MarkerType.None) 

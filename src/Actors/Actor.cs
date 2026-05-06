@@ -329,6 +329,7 @@ public class Actor : Trackable, IBinaryData
     public void SetHidden(bool hidden)
     {
         m_hidden = hidden;
+        m_proxy.OnHidden();
     }
 
     public void Show()
