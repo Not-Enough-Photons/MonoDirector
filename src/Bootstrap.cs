@@ -167,7 +167,7 @@ namespace NEP.MonoDirector.Core
             PropFrameManager.Initialize();
             MelonCoroutines.Start(WarehouseLoader.SpawnFromBarcode(WarehouseLoader.actorPanelBarcode, true));
             //MelonCoroutines.Start(WarehouseLoader.SpawnFromBarcode(WarehouseLoader.mainMenuBarcode));
-            MelonCoroutines.Start(WarehouseLoader.SpawnFromBarcode(WarehouseLoader.stageShelfBarcode));
+            MelonCoroutines.Start(WarehouseLoader.SpawnFromBarcode(WarehouseLoader.sceneShelfBarcode));
             MelonCoroutines.Start(WarehouseLoader.SpawnFromBarcode(WarehouseLoader.mainMenuBarcode));
         }
 

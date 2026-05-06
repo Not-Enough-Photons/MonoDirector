@@ -3,16 +3,16 @@ using NEP.MonoDirector.Actors;
 
 namespace NEP.MonoDirector.Core
 {
-    public sealed class Stage
+    public sealed class Scene
     {
-        public Stage()
+        public Scene()
         {
             m_actors = new List<Actor>();
             m_props = new List<Prop>();
-            m_name = "Stage";
+            m_name = "Scene";
         }
 
-        public Stage(string name)
+        public Scene(string name)
         {
             m_actors = new List<Actor>();
             m_props = new List<Prop>();
@@ -24,18 +24,18 @@ namespace NEP.MonoDirector.Core
         public Barcode LevelBarcode => m_levelBarcode;
         public string Name => m_name;
         public float Duration => m_duration;
-        public int StageIndex => m_stageIndex;
+        public int SceneIndex => m_sceneIndex;
 
         private List<Actor> m_actors;
         private List<Prop> m_props;
         private Barcode m_levelBarcode;
         private string m_name;
         private float m_duration;
-        private int m_stageIndex;
+        private int m_sceneIndex;
 
-        public static void Swap(ref Stage left, ref Stage right)
+        public static void Swap(ref Scene left, ref Scene right)
         {
-            Stage temp = left;
+            Scene temp = left;
             left = right;
             right = temp;
         }
@@ -87,7 +87,7 @@ namespace NEP.MonoDirector.Core
 
         public void SetIndex(int index)
         {
-            m_stageIndex = index;
+            m_sceneIndex = index;
         }
     }
 }

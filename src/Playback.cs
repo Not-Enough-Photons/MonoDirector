@@ -40,7 +40,7 @@ namespace NEP.MonoDirector.Core
         private Coroutine m_playRoutine;
 
         private Film m_film;
-        private Stage m_stage;
+        private Scene m_scene;
 
         //
         // Playback modification methods
@@ -87,7 +87,7 @@ namespace NEP.MonoDirector.Core
             try
             {
                 m_film = Director.ActiveFilm;
-                m_stage = m_film.Stages[0];
+                m_scene = m_film.Scenes[0];
 
                 if (m_playRoutine == null)
                     m_playRoutine = MelonCoroutines.Start(PlayRoutine()) as Coroutine;
@@ -217,8 +217,8 @@ namespace NEP.MonoDirector.Core
             if (m_playbackTime <= 0f)
                 m_playbackTime = 0f;
 
-            if (m_playbackTime >= m_stage.Duration)
-                m_playbackTime = m_stage.Duration;
+            if (m_playbackTime >= m_scene.Duration)
+                m_playbackTime = m_scene.Duration;
 
             AnimateAll();
 
@@ -276,7 +276,7 @@ namespace NEP.MonoDirector.Core
         {
             bool begun = false;
 
-            for (int i = 0; i < m_film.Stages.Count; i++)
+            for (int i = 0; i < m_film.Scenes.Count; i++)
             {
                 Events.OnPrePlayback?.Invoke();
 
@@ -285,8 +285,8 @@ namespace NEP.MonoDirector.Core
                     break;
                 }
 
-                m_stage = m_film.Stages[i];
-                Director.SetStage(m_stage);
+                m_scene = m_film.Scenes[i];
+                Director.SetScene(m_scene);
 
                 if (!begun)
                 {
@@ -309,7 +309,7 @@ namespace NEP.MonoDirector.Core
                     while (Director.PlayState == PlayState.Paused)
                         yield return null;
 
-                    if (PlaybackTime >= m_stage.Duration)
+                    if (PlaybackTime >= m_scene.Duration)
                         break;
 
                     Tick();

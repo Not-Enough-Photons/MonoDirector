@@ -106,7 +106,7 @@ namespace NEP.MonoDirector.UI
         {
             Caster.UncastActor(Caster.SelectedActor);
             // TODO: Move this into Caster or something
-            Director.ActiveStage.RemoveActor(Caster.SelectedActor);
+            Director.ActiveScene.RemoveActor(Caster.SelectedActor);
             m_root.gameObject.SetActive(false);
         }
 

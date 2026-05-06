@@ -67,8 +67,8 @@ namespace NEP.MonoDirector.UI
                 Color.white,
                 () =>
                 {
-                    StageShelf.Instance.gameObject.SetActive(false);
-                    StageShelf.Instance.gameObject.SetActive(true);
+                    SceneShelf.Instance.gameObject.SetActive(false);
+                    SceneShelf.Instance.gameObject.SetActive(true);
                 });
         }
 

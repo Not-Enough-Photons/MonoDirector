@@ -8,20 +8,20 @@ using NEP.MonoDirector.UI.Interaction;
 namespace NEP.MonoDirector.Tools
 {
     [RegisterTypeInIl2Cpp]
-    public class StageShelfSocket(IntPtr ptr) : MonoBehaviour(ptr)
+    public class SceneShelfSlot(IntPtr ptr) : MonoBehaviour(ptr)
     {
         public UISocket Socket => m_socket;
         public Rigidbody Body { get => m_body; }
-        public StageReel Reel { get => m_reel; }
+        public SceneReel Reel { get => m_reel; }
         public int Index => transform.GetSiblingIndex();
         public bool IsSpawner { get => m_isSpawner; }
         public bool IsDisconnected { get => m_isDisconnected; }
 
-        public event Action<StageReel> OnConnected;
-        public event Action<StageReel> OnDisconnected;
+        public event Action<SceneReel> OnConnected;
+        public event Action<SceneReel> OnDisconnected;
 
-        private StageReel m_reel;
-        private StageReel m_hoveredReel;
+        private SceneReel m_reel;
+        private SceneReel m_hoveredReel;
         
         private Rigidbody m_body;
         private bool m_isSpawner;
@@ -54,7 +54,7 @@ namespace NEP.MonoDirector.Tools
                 m_socket = GetComponent<UISocket>();
         }
 
-        public void SetReel(StageReel reel)
+        public void SetReel(SceneReel reel)
         {
             if (reel == null)
             {
@@ -81,7 +81,7 @@ namespace NEP.MonoDirector.Tools
 
         public void Show()
         {
-            if (m_reel && m_reel.Stage != null)
+            if (m_reel && m_reel.Scene != null)
                 m_reel.Show();
             
             gameObject.SetActive(true);

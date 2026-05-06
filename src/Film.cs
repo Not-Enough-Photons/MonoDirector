@@ -4,37 +4,37 @@
     {
         public Film()
         {
-            m_stages = new List<Stage>();
+            m_scenes = new List<Scene>();
         }
 
-        public Film(List<Stage> stages)
+        public Film(List<Scene> scenes)
         {
-            m_stages = stages;
+            m_scenes = scenes;
         }
 
-        public IReadOnlyList<Stage> Stages => m_stages.AsReadOnly();
+        public IReadOnlyList<Scene> Scenes => m_scenes.AsReadOnly();
         public string Name => m_name;
         public float Runtime => m_runtime;
-        public bool Empty => Stages.Count == 0;
+        public bool Empty => Scenes.Count == 0;
 
-        private List<Stage> m_stages;
+        private List<Scene> m_scenes;
         private string m_name;
         private float m_runtime;
 
-        public void AddStage(Stage stage)
+        public void AddScene(Scene scene)
         {
-            stage.SetIndex(m_stages.Count);
-            m_stages.Add(stage);
-            m_runtime += stage.Duration;
+            scene.SetIndex(m_scenes.Count);
+            m_scenes.Add(scene);
+            m_runtime += scene.Duration;
         }
 
-        public void RemoveStage(Stage stage)
+        public void RemoveScene(Scene scene)
         {
-            m_stages.Remove(stage);
-            m_runtime -= stage.Duration;
+            m_scenes.Remove(scene);
+            m_runtime -= scene.Duration;
 
-            for (int i = 0; i < m_stages.Count; i++)
-                m_stages[i].SetIndex(i);
+            for (int i = 0; i < m_scenes.Count; i++)
+                m_scenes[i].SetIndex(i);
         }
     }
 }

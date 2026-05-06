@@ -10,18 +10,18 @@ using NEP.MonoDirector.UI.Interaction;
 namespace NEP.MonoDirector.Tools
 {
     [RegisterTypeInIl2Cpp]
-    public class StageReel(IntPtr ptr) : MonoBehaviour(ptr)
+    public class SceneReel(IntPtr ptr) : MonoBehaviour(ptr)
     {
-        public Stage Stage => m_stage;
+        public Scene Scene => m_scene;
         public UIPlug Plug => m_plug;
-        public StageShelfSocket AttachedSocket => m_attachedSocket;
+        public SceneShelfSlot AttachedSlot => m_attachedSlot;
 
-        private Stage m_stage;
+        private Scene m_scene;
         private Rigidbody m_rigidbody;
         private TextMeshPro m_title;
-        private StageShelfSocket m_attachedSocket;
-        private StageShelfSocket m_lastConnectedSocket;
-        private StageShelfSocket m_hoveredSocket;
+        private SceneShelfSlot m_attachedSlot;
+        private SceneShelfSlot m_lastSlot;
+        private SceneShelfSlot m_hoveredSlot;
         private Grip m_grip;
         private Poolee m_poolee;
         private MeshRenderer m_reelMesh;
@@ -84,23 +84,23 @@ namespace NEP.MonoDirector.Tools
         
         private void OnTriggerEnter(Collider collider)
         {
-            StageShelfSocket socket = collider.GetComponent<StageShelfSocket>();
+            SceneShelfSlot socket = collider.GetComponent<SceneShelfSlot>();
 
             if (socket == null)
                 return;
 
-            m_hoveredSocket = socket;
+            m_hoveredSlot = socket;
         }
 
         private void OnTriggerExit(Collider collider)
         {
-            StageShelfSocket socket = collider.GetComponent<StageShelfSocket>();
+            SceneShelfSlot socket = collider.GetComponent<SceneShelfSlot>();
 
             if (socket == null)
                 return;
 
-            if (m_hoveredSocket == socket)
-                m_hoveredSocket = null;
+            if (m_hoveredSlot == socket)
+                m_hoveredSlot = null;
         }
 
         public void Despawn()
@@ -113,22 +113,22 @@ namespace NEP.MonoDirector.Tools
             m_hackDespawnFlag = true;
         }
 
-        public void SetStage(Stage stage)
+        public void SetScene(Scene scene)
         {
-            m_stage = stage;
+            m_scene = scene;
 
-            if (m_stage == null)
+            if (m_scene == null)
                 m_title.text = "None";
             else
-                m_title.text = m_stage.Name;
+                m_title.text = m_scene.Name;
         }
 
-        public void Connect(StageShelfSocket socket)
+        public void Connect(SceneShelfSlot slot)
         {
-            m_attachedSocket = socket;
-            m_lastConnectedSocket = m_attachedSocket;
-            m_attachedSocket.SetReel(this);
-            m_plug.Connect(socket.Socket);
+            m_attachedSlot = slot;
+            m_lastSlot = m_attachedSlot;
+            m_attachedSlot.SetReel(this);
+            m_plug.Connect(slot.Socket);
 
             m_connect1.Play();
             m_connect2.Play();
@@ -136,14 +136,14 @@ namespace NEP.MonoDirector.Tools
 
         public void Disconnect()
         {
-            if (!m_attachedSocket || !m_attachedSocket.Socket)
+            if (!m_attachedSlot || !m_attachedSlot.Socket)
                 return;
 
-            if (m_attachedSocket.IsDisconnected)
+            if (m_attachedSlot.IsDisconnected)
                 return;
 
-            m_attachedSocket.SetReel(null);
-            m_attachedSocket = null;
+            m_attachedSlot.SetReel(null);
+            m_attachedSlot = null;
             m_plug.Disconnect();
 
             m_disconnect1.Play();
@@ -168,27 +168,27 @@ namespace NEP.MonoDirector.Tools
             if (m_grip.attachedHands.Count > 1)
                 return;
 
-            // Already hovering over an empty socket?
-            if (m_hoveredSocket && m_hoveredSocket.Socket.Empty)
+            // Already hovering over an empty slot?
+            if (m_hoveredSlot && m_hoveredSlot.Socket.Empty)
             {
-                // If there's no stage already, make one.
-                if (m_stage == null)
+                // If there's no scene already, make one.
+                if (m_scene == null)
                 {
-                    m_stage = new Stage("Stage");
-                    SetStage(m_stage);
-                    Director.SetStage(m_stage);
-                    Director.AddStage(m_stage);
+                    m_scene = new Scene("Scene");
+                    SetScene(m_scene);
+                    Director.SetScene(m_scene);
+                    Director.AddScene(m_scene);
                 }
 
-                Connect(m_hoveredSocket);
+                Connect(m_hoveredSlot);
             }
-            // If we let go of the reel, it should go back to the previously connected socket.
-            else if (m_lastConnectedSocket)
+            // If we let go of the reel, it should go back to the previously connected slot.
+            else if (m_lastSlot)
             {
-                if (m_stage == null)
+                if (m_scene == null)
                     Despawn();
 
-                Connect(m_lastConnectedSocket);
+                Connect(m_lastSlot);
             }
         }
         

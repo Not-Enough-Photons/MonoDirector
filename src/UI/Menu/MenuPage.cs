@@ -14,7 +14,7 @@ namespace NEP.MonoDirector.UI.Menus
 
         private UIButton m_playbackButton;
         private UIButton m_actorsButton;
-        private UIButton m_stagesButton;
+        private UIButton m_scenesButton;
         private UIButton m_settingsButton;
         private UIButton m_exitButton;
 
@@ -27,7 +27,7 @@ namespace NEP.MonoDirector.UI.Menus
             
             m_playbackButton = transform.Find("Option_Playback").GetComponent<UIButton>();
             m_actorsButton = transform.Find("Option_Actors").GetComponent<UIButton>();
-            m_stagesButton = transform.Find("Option_Stages").GetComponent<UIButton>();
+            m_scenesButton = transform.Find("Option_Scenes").GetComponent<UIButton>();
             m_settingsButton = transform.Find("Option_Settings").GetComponent<UIButton>();
             m_exitButton = transform.Find("Option_Exit").GetComponent<UIButton>();
         }
@@ -36,7 +36,7 @@ namespace NEP.MonoDirector.UI.Menus
         {
             m_playbackButton.OnClicked += OnPlaybackButtonClicked;
             m_actorsButton.OnClicked += OnActorsButtonClicked;
-            m_stagesButton.OnClicked += OnStagesButtonClicked;
+            m_scenesButton.OnClicked += OnScenesButtonClicked;
             m_settingsButton.OnClicked += OnSettingsButtonClicked;
             m_exitButton.OnClicked += OnExitButtonClicked;
             
@@ -46,7 +46,7 @@ namespace NEP.MonoDirector.UI.Menus
         {
             m_playbackButton.OnClicked -= OnPlaybackButtonClicked;
             m_actorsButton.OnClicked -= OnActorsButtonClicked;
-            m_stagesButton.OnClicked -= OnStagesButtonClicked;
+            m_scenesButton.OnClicked -= OnScenesButtonClicked;
             m_settingsButton.OnClicked -= OnSettingsButtonClicked;
             m_exitButton.OnClicked -= OnExitButtonClicked;
         }
@@ -60,10 +60,10 @@ namespace NEP.MonoDirector.UI.Menus
         {
         }
         
-        private void OnStagesButtonClicked()
+        private void OnScenesButtonClicked()
         {
-            StageShelf.Instance.Hide();
-            StageShelf.Instance.Show();
+            SceneShelf.Instance.Hide();
+            SceneShelf.Instance.Show();
             m_menu.Hide();
             MenuBootstrap.HideGameMenu();
         }

@@ -12,7 +12,7 @@ namespace NEP.MonoDirector.Core
         public static Recorder Recorder { get => m_recorder; }
 
         public static Film ActiveFilm { get => m_activeFilm; }
-        public static Stage ActiveStage { get => m_activeStage; }
+        public static Scene ActiveScene { get => m_activeScene; }
 
         public static Actor SelectedActor { get => m_selectedActor; }
 
@@ -25,9 +25,9 @@ namespace NEP.MonoDirector.Core
 
         public static int WorldTick { get => m_worldTick; }
 
-        public static event Action<Stage> OnStageAdded;
-        public static event Action<Stage> OnStageRemoved;
-        public static event Action<Stage> OnStageSet;
+        public static event Action<Scene> OnSceneAdded;
+        public static event Action<Scene> OnSceneRemoved;
+        public static event Action<Scene> OnSceneSet;
 
         public static event Action<Actor> OnActorSelected;
         public static event Action<Actor> OnActorDeselected;
@@ -38,7 +38,7 @@ namespace NEP.MonoDirector.Core
         private static Recorder m_recorder;
 
         private static Film m_activeFilm;
-        private static Stage m_activeStage;
+        private static Scene m_activeScene;
 
         private static PlayState m_playState = PlayState.Stopped;
         private static PlayState m_lastPlayState;
@@ -63,8 +63,8 @@ namespace NEP.MonoDirector.Core
             Events.OnStartRecording += () => SetPlayState(PlayState.Recording);
 
             m_activeFilm = new Film();
-            m_activeStage = new Stage();
-            m_activeFilm.AddStage(m_activeStage);
+            m_activeScene = new Scene();
+            m_activeFilm.AddScene(m_activeScene);
         }
 
         internal static void Shutdown()
@@ -144,41 +144,41 @@ namespace NEP.MonoDirector.Core
             m_camera = camera;
         }
 
-        public static void AddStage(Stage stage)
+        public static void AddScene(Scene scene)
         {
-            m_activeFilm.AddStage(stage);
-            OnStageAdded?.Invoke(stage);
+            m_activeFilm.AddScene(scene);
+            OnSceneAdded?.Invoke(scene);
         }
 
-        public static void RemoveStage(Stage stage)
+        public static void RemoveScene(Scene scene)
         {
             // Removing the same stage
-            if (m_activeStage.StageIndex == stage.StageIndex && m_activeFilm.Stages.Count > 1)
+            if (m_activeScene.SceneIndex == scene.SceneIndex && m_activeFilm.Scenes.Count > 1)
             {
-                if (m_activeStage.StageIndex > 0)
-                    m_activeStage = m_activeFilm.Stages[m_activeStage.StageIndex - 1];
-                else if (m_activeStage.StageIndex == 0)
-                    m_activeStage = m_activeFilm.Stages[m_activeStage.StageIndex + 1];
+                if (m_activeScene.SceneIndex > 0)
+                    m_activeScene = m_activeFilm.Scenes[m_activeScene.SceneIndex - 1];
+                else if (m_activeScene.SceneIndex == 0)
+                    m_activeScene = m_activeFilm.Scenes[m_activeScene.SceneIndex + 1];
 
-                SetStage(m_activeStage);
+                SetScene(m_activeScene);
             }
 
-            m_activeFilm.RemoveStage(stage);
+            m_activeFilm.RemoveScene(scene);
 
-            // If the film is empty, add a new stage and set it.
+            // If the film is empty, add a new scene and set it.
             if (m_activeFilm.Empty)
             {
-                Stage newStage = new Stage();
-                AddStage(newStage);
-                SetStage(newStage);
+                Scene newScene = new Scene();
+                AddScene(newScene);
+                SetScene(newScene);
             }
 
-            OnStageRemoved?.Invoke(stage);
+            OnSceneRemoved?.Invoke(scene);
         }
 
-        public static void SetStage(Stage stage)
+        public static void SetScene(Scene scene)
         {
-            if (stage == null)
+            if (scene == null)
             {
                 Logging.WarnDebug("Director.SetStage was called with a null stage!");
                 return;
@@ -199,10 +199,10 @@ namespace NEP.MonoDirector.Core
             Caster.ClearProps();
             Caster.ClearRecordProps();
 
-            m_activeStage = stage;
+            m_activeScene = scene;
 
-            Caster.CastActors(stage.Actors.ToList());
-            Caster.AddProps(stage.Props.ToList());
+            Caster.CastActors(scene.Actors.ToList());
+            Caster.AddProps(scene.Props.ToList());
 
             foreach (var actor in Caster.Cast)
             {
@@ -217,7 +217,7 @@ namespace NEP.MonoDirector.Core
                 prop.OnSceneBegin();
             }
 
-            OnStageSet?.Invoke(stage);
+            OnSceneSet?.Invoke(scene);
         }
 
         public static void SelectActor(Actor actor) => Caster.SelectActor(actor);

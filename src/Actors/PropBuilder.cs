@@ -114,7 +114,7 @@ namespace NEP.MonoDirector.Actors
 
                 Caster.RemoveProp(actorProp);
                 PropFrameManager.RemoveFrameFromProp(actorProp);
-                Director.ActiveStage.RemoveProp(actorProp);
+                Director.ActiveScene.RemoveProp(actorProp);
                 GameObject.Destroy(actorProp);
             }
         } 

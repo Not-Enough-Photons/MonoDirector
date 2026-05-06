@@ -264,7 +264,7 @@ namespace NEP.MonoDirector.Core
             {
                 m_recordingTime -= m_timeSpentInMenu - 1f;
 
-                Director.ActiveStage.SetDuration(m_recordingTime);
+                Director.ActiveScene.SetDuration(m_recordingTime);
 
                 m_activeActor?.Microphone?.StopRecording();
 
@@ -328,7 +328,7 @@ namespace NEP.MonoDirector.Core
 
                     // NOTE: Perhaps add the active actor to the list?
                     Caster.CastActor(m_activeActor);
-                    Director.ActiveStage.AddActor(m_activeActor);
+                    Director.ActiveScene.AddActor(m_activeActor);
                 }
 
                 m_lastActor = m_activeActor;
@@ -336,8 +336,8 @@ namespace NEP.MonoDirector.Core
                 m_activeActor = null;
 
                 Caster.CastActors(ActiveActors);
-                Director.ActiveStage.AddActors(ActiveActors);
-                Director.ActiveStage.AddProps(Caster.RecordProps.ToList());
+                Director.ActiveScene.AddActors(ActiveActors);
+                Director.ActiveScene.AddProps(Caster.RecordProps.ToList());
 
                 // Caster.AddProps(Director.RecordingProps);
                 // Director.LastRecordedProps = Director.RecordingProps;
@@ -346,7 +346,7 @@ namespace NEP.MonoDirector.Core
 
                 ActiveActors.Clear();
 
-                Director.ActiveStage.SetDuration(m_recordingTime);
+                Director.ActiveScene.SetDuration(m_recordingTime);
 
                 if (m_recordRoute != null)
                 {
