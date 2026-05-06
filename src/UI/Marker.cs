@@ -1,7 +1,9 @@
 ﻿using Il2CppSLZ.Marrow;
 using NEP.MonoDirector.Actors;
+using NEP.MonoDirector.Cameras;
 using NEP.MonoDirector.Data;
 using NEP.MonoDirector.Proxy;
+using NEP.MonoDirector.Tools;
 using UnityEngine;
 
 namespace NEP.MonoDirector.UI;
@@ -29,7 +31,9 @@ public class Marker
         Generic,
         Gun,
         Magazine,
-        Vehicle
+        Vehicle,
+        Tool,
+        Camera
     }
 
     public enum ActorType
@@ -84,6 +88,10 @@ public class Marker
             m_propType = PropType.Magazine;
         else if (Prop.EligibleWithType<Atv>(prop.Entity))
             m_propType = PropType.Vehicle;
+        else if (Prop.EligibleWithType<PointToolEntity>(prop.Entity))
+            m_propType = PropType.Tool;
+        else if (Prop.EligibleWithType<HandheldCamera>(prop.Entity))
+            m_propType = PropType.Camera;
         else
             m_propType = PropType.Generic;
 
@@ -166,9 +174,6 @@ public class Marker
                 case PropType.None:
                     m_iconTexture = null;
                     break;
-                case PropType.Generic:
-                    m_iconTexture = BundleLoader.IconProp;
-                    break;
                 case PropType.Gun:
                     m_iconTexture = BundleLoader.IconGun;
                     break;
@@ -177,6 +182,12 @@ public class Marker
                     break;
                 case PropType.Vehicle:
                     m_iconTexture = BundleLoader.IconVehicle;
+                    break;
+                case PropType.Tool: 
+                case PropType.Camera:
+                case PropType.Generic:
+                default:
+                    m_iconTexture = BundleLoader.IconProp;
                     break;
             }
         }
