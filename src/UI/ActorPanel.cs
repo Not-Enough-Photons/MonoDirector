@@ -31,6 +31,8 @@ public class ActorPanel(IntPtr ptr) : MonoBehaviour(ptr)
 
     private GameObject m_hiddenCheckmark;
 
+    private float m_lookAtDistance = 1000f;
+
     private void Awake()
     {
         m_root = transform.GetChild(0);
@@ -46,8 +48,8 @@ public class ActorPanel(IntPtr ptr) : MonoBehaviour(ptr)
         m_onDeleteClicked = OnDeleteClicked;
         m_onHideClicked = OnHideClicked;
         m_onCloseClicked = OnCloseClicked;
-        
-        m_root.gameObject.SetActive(false);
+
+        Hide();
     }
 
     private void OnEnable()
@@ -60,9 +62,6 @@ public class ActorPanel(IntPtr ptr) : MonoBehaviour(ptr)
         m_deleteButton.OnClicked += m_onDeleteClicked;
         m_hideButton.OnClicked += m_onHideClicked;
         m_closeButton.OnClicked += m_onCloseClicked;
-        
-        Vector3 rotation = Quaternion.LookRotation(Constants.RigManager.physicsRig.m_head.position - transform.position).eulerAngles;
-        transform.rotation = Quaternion.Euler(0f, rotation.y, 0f);
     }
 
     private void OnDisable()
@@ -77,43 +76,90 @@ public class ActorPanel(IntPtr ptr) : MonoBehaviour(ptr)
         m_closeButton.OnClicked -= m_onCloseClicked;
     }
 
+    private void FacePlayer()
+    {
+        Transform playerChest = BoneLib.Player.PhysicsRig.m_chest;
+        Vector3 lookRotation = Quaternion.LookRotation(playerChest.position - transform.position).eulerAngles;
+        Quaternion yRotation = Quaternion.Euler(0f, lookRotation.y + 180f, 0f);
+        transform.rotation = yRotation;
+    }
+
     private void Update()
     {
         transform.position = Vector3.Lerp(transform.position, m_targetPosition, 8f * Time.deltaTime);
+        FacePlayer();
     }
 
     private void OnActorSelected(Actor actor)
     {
-        m_root.gameObject.SetActive(true);
-
-        m_targetPosition = actor.ActorBody.Chest.transform.position + Vector3.right;
-
-        m_actorNameText.text = $"Actor Settings - {actor.ActorName}";
+        int actorCount = Caster.SelectedActors.Count;
+        Show();
+        
+        if (actorCount == 1)
+        {
+            m_targetPosition = actor.ActorBody.Chest.transform.position + Vector3.right;
+            SetTitle($"Actor Settings - {actor.ActorName}");
+            m_recastButton.gameObject.SetActive(true);
+        }
+        else if (actorCount > 1)
+        {
+            SetTitle($"Selected ({actorCount}) Actors");
+            m_recastButton.gameObject.SetActive(false);
+        }
     }
 
     private void OnActorDeselected(Actor actor)
     {
-        m_root.gameObject.SetActive(false);
+        int actorCount = Caster.SelectedActors.Count;
+        
+        if (actorCount == 1)
+        {
+            m_targetPosition = actor.ActorBody.Chest.transform.position + Vector3.right;
+            SetTitle($"Actor Settings - {actor.ActorName}");
+            m_recastButton.gameObject.SetActive(true);
+        }
+        else if (actorCount > 1)
+        {
+            SetTitle($"Selected ({actorCount}) Actors");
+            m_recastButton.gameObject.SetActive(false);
+        }
+        else if (actorCount == 0) // No actors to show, so hide it
+            Hide();
+        
     }
 
     private void OnRecastClicked()
     {
-        Caster.RecastActor(Caster.SelectedActor);
-        m_root.gameObject.SetActive(false);
+        if (Caster.SelectedActors.Count != 1)
+            return;
+        
+        // Only do it for one actor,
+        // it would complicate things if that wasn't true
+        Director.Recast(Caster.SelectedActors[0]);
+        Hide();
     }
 
     private void OnDeleteClicked()
     {
-        Caster.UncastActor(Caster.SelectedActor);
-        // TODO: Move this into Caster or something
-        Director.ActiveScene.RemoveActor(Caster.SelectedActor);
-        m_root.gameObject.SetActive(false);
+        var selectedActors = Caster.SelectedActors.ToList();
+        
+        foreach (var actor in selectedActors)
+        {
+            Director.RemoveActor(actor);
+            // TODO: Move this into Caster or something
+            Director.ActiveScene.RemoveActor(actor);
+        }
+
+        Hide();
     }
 
     private void OnHideClicked()
     {
         m_hidden = !m_hidden;
-        Caster.SelectedActor.SetHidden(m_hidden);
+        
+        foreach (var actor in Caster.SelectedActors)
+            actor.SetHidden(m_hidden);
+        
         m_hiddenCheckmark.SetActive(m_hidden);
     }
 
@@ -124,15 +170,24 @@ public class ActorPanel(IntPtr ptr) : MonoBehaviour(ptr)
 
     private void OnPlayStateSet(PlayState state)
     {
-        if (Caster.SelectedActor == null)
+        if (Caster.SelectedActors.Count == 0)
             return;
-
+        
         if (state != PlayState.Stopped)
         {
-            m_root.gameObject.SetActive(false);
+            Hide();
             return;
         }
 
-        m_root.gameObject.SetActive(true);
+        Show();
     }
+
+    private void SetTitle(string title)
+    {
+        m_actorNameText.text = title;
+    }
+
+    private void Show() => m_root.gameObject.SetActive(true);
+    
+    private void Hide() => m_root.gameObject.SetActive(false);
 }

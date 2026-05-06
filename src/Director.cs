@@ -54,8 +54,6 @@ public static class Director
         m_recorder = new Recorder();
         Caster.Initialize();
 
-        Caster.OnActorRecasted += (_) => Record();
-
         Events.OnPrePlayback += () => SetPlayState(PlayState.Preplaying);
         Events.OnPreRecord += () => SetPlayState(PlayState.Prerecording);
 
@@ -69,8 +67,6 @@ public static class Director
 
     internal static void Shutdown()
     {
-        Caster.OnActorRecasted -= (_) => Record();
-
         Events.OnPrePlayback -= () => SetPlayState(PlayState.Preplaying);
         Events.OnPreRecord -= () => SetPlayState(PlayState.Prerecording);
 

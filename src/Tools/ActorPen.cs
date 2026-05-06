@@ -13,7 +13,8 @@ public class ActorPen(IntPtr ptr) : ToolEntity(ptr)
 {
     private Transform m_rayPoint;
     private GameObject m_laserPointer;
-    private ActorProxy m_selectedProxy;
+    
+    private static List<ActorProxy> m_selectedActors;
 
     protected override void Awake()
     {
@@ -21,6 +22,9 @@ public class ActorPen(IntPtr ptr) : ToolEntity(ptr)
 
         m_rayPoint = transform.Find("RayPoint");
         m_laserPointer = m_rayPoint.GetChild(0).gameObject;
+
+        if (m_selectedActors == null)
+            m_selectedActors = new List<ActorProxy>();
     }
 
     protected override void OnHandAttached(Hand hand)
@@ -44,28 +48,43 @@ public class ActorPen(IntPtr ptr) : ToolEntity(ptr)
 
             MarrowBody body = hit.collider.attachedRigidbody.GetComponent<MarrowBody>();
             MarrowEntity entity = body.Entity;
-            ActorProxy proxy = entity.GetComponent<ActorProxy>();
+            ActorProxy actor = entity.GetComponent<ActorProxy>();
 
-            if (proxy == null)
+            if (actor == null)
                 return;
-
-            if (m_selectedProxy != null)
+            
+            if (actor.Selected)
             {
-                m_selectedProxy.OnDeselected();
-                m_selectedProxy = null;
+                DeselectActor(actor);
                 return;
             }
-
-            m_selectedProxy = proxy;
-            m_selectedProxy.OnSelected();
+            
+            SelectActor(actor);
         }
         else
         {
-            if (m_selectedProxy != null)
-            {
-                m_selectedProxy.OnDeselected();
-                m_selectedProxy = null;
-            }
+            var selectedActors = m_selectedActors.ToList();
+            
+            foreach (var actor in selectedActors)
+                DeselectActor(actor);
         }
+    }
+
+    private void SelectActor(ActorProxy actor)
+    {
+        if (!actor)
+            return;
+        
+        actor.OnSelected();
+        m_selectedActors.Add(actor);
+    }
+
+    private void DeselectActor(ActorProxy actor)
+    {
+        if (!actor)
+            return;
+        
+        actor.OnDeselected();
+        m_selectedActors.Remove(actor);
     }
 }

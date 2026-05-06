@@ -16,13 +16,13 @@ public static class Caster
     public static event Action<Prop> OnPropAdded;
     public static event Action<Prop> OnPropRemoved;
 
-    public static Actor SelectedActor => m_selectedActor;
+    public static IReadOnlyList<Actor> SelectedActors => m_selectedActors.AsReadOnly();
 
     public static IReadOnlyList<Actor> Cast => m_cast.AsReadOnly();
     public static IReadOnlyList<Prop> Props => m_props.AsReadOnly();
     public static IReadOnlyList<Prop> RecordProps => m_recordProps.AsReadOnly();
 
-    private static Actor m_selectedActor;
+    private static List<Actor> m_selectedActors;
 
     private static List<Actor> m_cast;
     private static List<Prop> m_props;
@@ -33,6 +33,7 @@ public static class Caster
         m_cast = new List<Actor>();
         m_props = new List<Prop>();
         m_recordProps = new List<Prop>();
+        m_selectedActors = new List<Actor>();
     }
 
     public static void CastActor(Actor actor)
@@ -52,7 +53,9 @@ public static class Caster
     public static void UncastActor(Actor actor)
     {
         actor.Delete();
+        m_selectedActors.Remove(actor);
         m_cast.Remove(actor);
+        Director.ActiveScene.RemoveActor(actor);
         OnActorRemoved?.Invoke(actor);
     }
 
@@ -80,13 +83,13 @@ public static class Caster
 
     public static void SelectActor(Actor actor)
     {
-        m_selectedActor = actor;
+        m_selectedActors.Add(actor);
         OnActorSelected?.Invoke(actor);
     }
 
     public static void DeselectActor(Actor actor)
     {
-        m_selectedActor = null;
+        m_selectedActors.Remove(actor);
         OnActorDeselected?.Invoke(actor);
     }
 
@@ -134,10 +137,10 @@ public static class Caster
     {
         m_cast.Clear();
 
-        if (m_selectedActor != null)
-        {
-            DeselectActor(m_selectedActor);
-        }
+        var selectedActors = m_selectedActors.ToList();
+        
+        foreach (var actor in selectedActors)
+            DeselectActor(actor);
     }
 
     public static void ClearProps()
