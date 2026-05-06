@@ -55,6 +55,7 @@ public static class Bootstrap
     internal static void Update()
     {
         MarkerManager.Update();
+        ActorFrameManager.Update();
         //PropMarkerManager.Update();
     }
 
