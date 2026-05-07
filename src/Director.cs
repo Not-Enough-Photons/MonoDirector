@@ -159,8 +159,13 @@ public static class Director
             SetScene(m_activeScene);
         }
 
-        m_activeFilm.RemoveScene(scene);
+        var actors = m_activeScene.Actors.ToList();
 
+        foreach (var actor in actors)
+            RemoveActor(actor);
+        
+        m_activeFilm.RemoveScene(scene);
+        
         // If the film is empty, add a new scene and set it.
         if (m_activeFilm.Empty)
         {
