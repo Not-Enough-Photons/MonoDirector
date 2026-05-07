@@ -5,6 +5,7 @@ using UnityEngine;
 
 using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.Interaction;
+using NEP.MonoDirector.State;
 
 namespace NEP.MonoDirector.Actors;
 
@@ -35,16 +36,39 @@ public class Prop(IntPtr ptr) : MonoBehaviour(ptr)
     protected List<ObjectFrame> m_bodyFrames;
     protected List<ActionFrame> m_actionFrames;
 
+    protected List<InteractableHost> m_interactableHosts;
+
     protected bool m_isRecording;
 
     private FrameGroup m_previousFrame;
     private FrameGroup m_nextFrame;
+
+    private Action<InteractableHost, Hand> m_onHandAttached;
+    private Action<InteractableHost, Hand> m_onHandDetached;
+
+    private bool m_isOwned;
 
     protected virtual void Awake()
     {
         m_propFrames = new List<FrameGroup>();
         m_bodyFrames = new List<ObjectFrame>();
         m_actionFrames = new List<ActionFrame>();
+        m_interactableHosts = new List<InteractableHost>();
+
+        m_onHandAttached = OnHandAttached;
+        m_onHandDetached = OnHandDetached;
+    }
+
+    private void OnDisable()
+    {
+        if (m_interactableHosts == null || m_interactableHosts.Count == 0)
+            return;
+        
+        foreach (var host in m_interactableHosts)
+        {
+            host.onHandAttachedDelegate -= m_onHandAttached;
+            host.onHandDetachedDelegate -= m_onHandDetached;
+        }
     }
 
     public static bool IsActorProp(MarrowEntity entity)
@@ -77,6 +101,28 @@ public class Prop(IntPtr ptr) : MonoBehaviour(ptr)
     public void SetEntity(MarrowEntity entity)
     {
         m_entity = entity;
+
+        if (!m_entity)
+            return;
+        
+        var behaviours = m_entity._behaviours;
+
+        foreach (var behaviour in behaviours)
+        {
+            InteractableHost interactableHost = behaviour.GetComponent<InteractableHost>();
+            
+            if (!interactableHost)
+                continue;
+            
+            m_interactableHosts.Add(interactableHost);
+        }
+            
+
+        foreach (var host in m_interactableHosts)
+        {
+            host.onHandAttachedDelegate += m_onHandAttached;
+            host.onHandDetachedDelegate += m_onHandDetached;
+        }
     }
 
     public void SetActor(Trackable actor)
@@ -167,8 +213,21 @@ public class Prop(IntPtr ptr) : MonoBehaviour(ptr)
 
             MarrowBody body = m_entity.Bodies[i];
 
-            body.transform.position = Vector3.Lerp(previousPosition, nextPosition, delta);
-            body.transform.rotation = Quaternion.Slerp(previousRotation, nextRotation, delta);
+            if (m_isOwned)
+            {
+                body._rigidbody.isKinematic = true;
+                body.transform.position = Vector3.Lerp(previousPosition, nextPosition, delta);
+                body.transform.rotation = Quaternion.Slerp(previousRotation, nextRotation, delta);
+            }
+            else
+            {
+                if (body._rigidbody.isKinematic)
+                {
+                    body._rigidbody.isKinematic = false;
+                    body.AddForce(nextTransformFrames[i].rigidbodyVelocity, ForceMode.VelocityChange);
+                    body.AddTorque(nextTransformFrames[i].rigidbodyAngularVelocity, ForceMode.VelocityChange);
+                }
+            }
         }
 
         foreach(var actionFrame in m_actionFrames)
@@ -202,12 +261,22 @@ public class Prop(IntPtr ptr) : MonoBehaviour(ptr)
                 position = body.transform.position,
                 rotation = body.transform.rotation,
                 scale = body.transform.localScale,
+                rigidbodyVelocity = body._rigidbody.velocity,
+                rigidbodyAngularVelocity = body._rigidbody.angularVelocity,
                 frameTime = Recorder.Instance.RecordingTime
             };
 
             if (frame == 0)
             {
                 objectFrames.Add(objectFrame);
+                foreach (var host in m_interactableHosts)
+                {
+                    if (host.HandCount() != 0)
+                    {
+                        RecordAction(() => Own());
+                        break;
+                    }
+                }
             }
             else
             {
@@ -242,5 +311,46 @@ public class Prop(IntPtr ptr) : MonoBehaviour(ptr)
     public void ResetTicks()
     {
         m_stateTick = 0;
+    }
+
+    private void OnHandAttached(InteractableHost host, Hand hand)
+    {
+        if (Director.PlayState != PlayState.Recording)
+            return;
+        
+        RecordAction(() => Own());
+        
+        Logging.Msg("OnHandAttached");
+    }
+
+    private void OnHandDetached(InteractableHost host, Hand hand)
+    {
+        if (Director.PlayState != PlayState.Recording)
+            return;
+
+        RecordAction(() => Disown());
+        
+        Logging.Msg("OnHandDetached");
+    }
+
+    // NOTE FOR THE FUTURE ABOUT OWNERSHIP:
+    // Ownership of props is very tricky to implement properly.
+    // Here is my ideas/criteria for ownership.
+    // ---------------------------------
+    // 1. Ungrabbed props are owned by the recording actor by default
+    // 2. If Actor B grabs it before Actor A, Actor B owns it (and vice versa)
+    // 3. If at least one recording actor hand is on the prop, they own it
+    // 4. If multiple actors are grabbing the same prop, whoever grabbed the prop first will still own it
+    // 5. If nobody is holding/grabbing the prop, nobody owns it
+    // 6. Ownership cannot be taken away from vehicles; it belongs to whomever propified it first
+    
+    private void Own()
+    {
+        m_isOwned = true;
+    }
+
+    private void Disown()
+    {
+        m_isOwned = false;
     }
 }
