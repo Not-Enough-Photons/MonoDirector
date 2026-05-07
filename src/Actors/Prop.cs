@@ -9,6 +9,27 @@ using NEP.MonoDirector.State;
 
 namespace NEP.MonoDirector.Actors;
 
+// NOTE FOR THE FUTURE ABOUT OWNERSHIP:
+// Ownership of props is very tricky to implement properly.
+// Here are my ideas/criteria for ownership.
+// ---------------------------------
+// 1. Ungrabbed props are owned by the recording actor by default
+// 2. If Actor B grabs it before Actor A, Actor B owns it (and vice versa)
+// 3. If at least one recording actor hand is on the prop, they own it
+// 4. If multiple actors are grabbing the same prop, whoever grabbed the prop first will still own it
+// 5. If nobody is holding/grabbing the prop, nobody owns it
+// 6. Ownership cannot be taken away from vehicles; it belongs to whomever propified it first
+// 7. Unowned props are physical until grabbed, where they become kinematic
+// 8. Ownership transfer of props must override their object frames
+// ---------------------------------
+// 
+// OWNERSHIP THOUGHTS:
+// - Mediation of ownership could be done through a class that listens for grabs on props
+// - Actors could be refactored to have "actor hands" that also listen for grabs and can help fire events
+// - Make this more efficient and not use as much code
+// - Maybe not record actions for owning/disowning props
+
+
 [MelonLoader.RegisterTypeInIl2Cpp]
 public class Prop(IntPtr ptr) : MonoBehaviour(ptr)
 {
@@ -332,17 +353,6 @@ public class Prop(IntPtr ptr) : MonoBehaviour(ptr)
         
         Logging.Msg("OnHandDetached");
     }
-
-    // NOTE FOR THE FUTURE ABOUT OWNERSHIP:
-    // Ownership of props is very tricky to implement properly.
-    // Here is my ideas/criteria for ownership.
-    // ---------------------------------
-    // 1. Ungrabbed props are owned by the recording actor by default
-    // 2. If Actor B grabs it before Actor A, Actor B owns it (and vice versa)
-    // 3. If at least one recording actor hand is on the prop, they own it
-    // 4. If multiple actors are grabbing the same prop, whoever grabbed the prop first will still own it
-    // 5. If nobody is holding/grabbing the prop, nobody owns it
-    // 6. Ownership cannot be taken away from vehicles; it belongs to whomever propified it first
     
     private void Own()
     {
