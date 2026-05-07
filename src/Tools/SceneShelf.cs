@@ -164,15 +164,22 @@ public class SceneShelf(IntPtr ptr) : MonoBehaviour(ptr)
             return;
         }
 
-        int index = Director.ActiveFilm.Scenes.Count - 1;
-
-        if (index <= 0)
-            index = 0;
-
-        Scene previousScene = Director.ActiveFilm.Scenes[index];
+        if (Director.ActiveFilm.Scenes.Count <= 1)
+        {
+            MelonCoroutines.Start(new
+                    WaitForAssetSpawn<SceneReel>(m_reelSpawnable, Vector3.zero, Quaternion.identity)
+                .Then(newReel =>
+                {
+                    var firstSlot = m_slots[0];
+                    newReel.SetColor(Color.HSVToRGB(Random.value, 1.0f, 1.0f));
+                    newReel.SetScene(Director.ActiveScene);
+                    newReel.Connect(firstSlot);
+                    firstSlot.SetReel(newReel);
+                }));
+        }
+        
         Director.RemoveScene(m_deleteSceneSlot.Reel.Scene);
-        Director.SetScene(previousScene);
-
+        
         m_deleteSceneSlot.Reel.Despawn();
         m_deleteSceneSlot.Reel.SetScene(null);
         // m_deleteStageSocket.Reel.Connect(m_newStageSocket);
