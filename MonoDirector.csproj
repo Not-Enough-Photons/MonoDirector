@@ -158,6 +158,7 @@
 		<Compile Include="src\UI\Marker.cs" />
 		<Compile Include="src\UI\MarkerManager.cs" />
 		<Compile Include="src\UI\MDBoneMenu.cs" />
+		<Compile Include="src\UI\Menu\WorldPage.cs" />
 		<Compile Include="src\UI\PropFrameManager.cs" />
 		<Compile Include="src\UI\PropMarker.cs" />
 		<Compile Include="src\UI\MenuBootstrap.cs" />

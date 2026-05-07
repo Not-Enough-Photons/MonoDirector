@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using NEP.MonoDirector.UI.Interaction;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,75 +9,43 @@ namespace NEP.MonoDirector.UI.Menus;
 [MelonLoader.RegisterTypeInIl2Cpp]
 public class SettingsPage(IntPtr ptr) : MonoBehaviour(ptr)
 {
-    private Menu _menu;
+    private Menu m_menu;
 
-    private Button button_Audio;
-    private Button button_Camera;
-    private Button button_World;
-    private Button button_Debug;
-    private Button button_Credits;
+    private UIButton m_buttonAudio;
+    private UIButton m_buttonCamera;
+    private UIButton m_buttonWorld;
+    private UIButton m_buttonDebug;
+    private UIButton m_buttonCredits;
 
-    private GameObject page_Audio;
-    private GameObject page_Camera;
-    private GameObject page_Credits;
+    private GameObject m_pageAudio;
+    private GameObject m_pageCamera;
+    private GameObject m_pageCredits;
 
-    private Transform optionsContainer;
-    private Transform pageContainer;
-
-    private bool initialized = false;
-
-    public void Initialize(Menu menu)
+    private void Awake()
     {
-        if(initialized)
-        {
-            return;
-        }
+        m_menu = GetComponentInParent<Menu>();
+        
+        Transform optionsGroup = transform.GetChild(0);
 
-        optionsContainer = transform.GetChild(0);
-        pageContainer = transform.GetChild(1);
-
-        button_Audio = optionsContainer.GetChild(0).GetComponent<Button>();
-        button_Camera = optionsContainer.GetChild(1).GetComponent<Button>();
-        button_World = optionsContainer.GetChild(2).GetComponent<Button>();
-        button_Debug = optionsContainer.GetChild(3).GetComponent<Button>();
-        button_Credits = optionsContainer.GetChild(4).GetComponent<Button>();
-
-        page_Audio = pageContainer.GetChild(0).gameObject;
-        page_Camera = pageContainer.GetChild(1).gameObject;
-        page_Credits = pageContainer.GetChild(2).gameObject;
-
-        // button_Audio.onClick.AddListener(() => OpenPage("Audio"));
-        // button_Camera.onClick.AddListener(() => OpenPage("Camera"));
-        // button_Credits.onClick.AddListener(() => OpenPage("Credits"));
-
-        optionsContainer.gameObject.SetActive(true);
-        pageContainer.gameObject.SetActive(false);
+        m_buttonAudio = optionsGroup.Find("Option_Audio").GetComponent<UIButton>();
+        m_buttonCamera = optionsGroup.Find("Option_Camera").GetComponent<UIButton>();
+        m_buttonWorld = optionsGroup.Find("Option_World").GetComponent<UIButton>();
+        m_buttonDebug = optionsGroup.Find("Option_Debug").GetComponent<UIButton>();
+        m_buttonCredits = optionsGroup.Find("Option_Credits").GetComponent<UIButton>();
     }
 
-    public void OpenPage(string page)
+    private void OnEnable()
     {
-        switch (page)
-        {
-            case "Audio":
-                page_Audio.SetActive(true);
-                page_Camera.SetActive(false);
-                page_Credits.SetActive(false);
-                break;
-            case "Camera":
-                page_Audio.SetActive(false);
-                page_Camera.SetActive(true);
-                page_Credits.SetActive(false);
-                break;
-            case "Credits":
-                page_Audio.SetActive(false);
-                page_Camera.SetActive(false);
-                page_Credits.SetActive(true);
-                break;
-            default:
-                throw new System.Exception("Invalid options page!");
-        }
+        m_buttonWorld.OnClicked += OnWorldButtonClicked;
+    }
 
-        optionsContainer.gameObject.SetActive(false);
-        pageContainer.gameObject.SetActive(true);
+    private void OnDisable()
+    {
+        m_buttonWorld.OnClicked -= OnWorldButtonClicked;
+    }
+
+    private void OnWorldButtonClicked()
+    {
+        m_menu.GoToPage("World");
     }
 }

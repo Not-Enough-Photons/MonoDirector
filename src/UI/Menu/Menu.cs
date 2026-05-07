@@ -19,6 +19,7 @@ public class Menu(IntPtr ptr) : MonoBehaviour(ptr)
     private GameObject m_defaultPage;
     private GameObject m_currentPage;
     private GameObject m_previousPage;
+    private Stack<string> m_pageHistory;
 
     private UIButton m_closeButton;
     private UIButton m_backButton;
@@ -30,12 +31,13 @@ public class Menu(IntPtr ptr) : MonoBehaviour(ptr)
         Instance = this;
 
         m_pages = new List<GameObject>();
+        m_pageHistory = new Stack<string>();
 
-        Transform pageGroup = transform.Find("Body/Pages");
+        Transform mainPageGroup = transform.Find("Body/Pages");
 
-        for (int i = 0; i < pageGroup.childCount; i++)
+        for (int i = 0; i < mainPageGroup.childCount; i++)
         {
-            GameObject pageObject = pageGroup.GetChild(i).gameObject;
+            GameObject pageObject = mainPageGroup.GetChild(i).gameObject;
             pageObject.SetActive(false);
             m_pages.Add(pageObject);
         }
@@ -86,14 +88,19 @@ public class Menu(IntPtr ptr) : MonoBehaviour(ptr)
         return null;
     }
 
-    public void GoToPage(string name)
+    public void GoToPage(string name, bool back = false)
     {
         foreach (var pageToDisable in m_pages)
             pageToDisable.SetActive(false);
-        
+
         m_previousPage = m_currentPage;
+
         GameObject page = GetPage(name);
         m_currentPage = page;
+
+        if (m_previousPage && !back)
+            m_pageHistory.Push(m_previousPage.name);
+        
         m_currentPage.SetActive(true);
         m_title.text = m_currentPage.name;
         
@@ -105,8 +112,12 @@ public class Menu(IntPtr ptr) : MonoBehaviour(ptr)
 
     private void OnBackButtonClicked()
     {
-        string pageName = m_previousPage.name;
-        GoToPage(pageName);
+        if (m_pageHistory.Count == 0)
+            return;
+
+        string page = m_pageHistory.Pop();
+
+        GoToPage(page, true);
     }
     
     private void OnCloseButtonClicked()

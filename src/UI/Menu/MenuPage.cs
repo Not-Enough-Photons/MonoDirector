@@ -70,8 +70,7 @@ public class MenuPage(IntPtr ptr) : MonoBehaviour(ptr)
 
     private void OnSettingsButtonClicked()
     {
-        MenuBootstrap.OpenPage(MDBoneMenu.SettingsPage);
-        m_menu.Hide();
+        m_menu.GoToPage("Settings");
     }
 
     private void OnExitButtonClicked()

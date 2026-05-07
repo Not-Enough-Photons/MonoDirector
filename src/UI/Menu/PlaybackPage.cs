@@ -38,11 +38,13 @@ public class PlaybackPage(IntPtr ptr) : MonoBehaviour(ptr)
 
     private void OnRecordPressed()
     {
+        Menu.Instance.Hide();
         Director.Record();
     }
 
     private void OnPlayPressed()
     {
+        Menu.Instance.Hide();
         Director.Play();
     }
 
