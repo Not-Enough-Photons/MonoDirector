@@ -13,7 +13,7 @@ public class ActorFrame
         m_gameObject = gameObject;
     }
 
-    public bool Active => m_gameObject.activeInHierarchy;
+    public bool Active => m_gameObject != null && m_gameObject.activeInHierarchy;
     public bool HasTarget => m_target != null;
 
     private GameObject m_gameObject;
