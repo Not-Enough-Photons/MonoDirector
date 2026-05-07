@@ -11,7 +11,7 @@ using System.Collections;
 using NEP.MonoDirector.UI.Interaction;
 using UnityEngine;
 using NEP.MonoDirector.Yielding;
-
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 namespace NEP.MonoDirector.Tools;
@@ -26,6 +26,8 @@ public class SceneShelf(IntPtr ptr) : MonoBehaviour(ptr)
     private SceneShelfSlot m_newSceneSlot;
     private SceneShelfSlot m_deleteSceneSlot;
     private SceneShelfSlot m_activeSceneSlot;
+
+    private GridLayoutGroup m_layout;
 
     private UIButton m_closeButton;
 
@@ -53,6 +55,8 @@ public class SceneShelf(IntPtr ptr) : MonoBehaviour(ptr)
         m_activeSceneSlot = transform.Find("Canvas/ActiveStage").GetComponent<SceneShelfSlot>();
         m_deleteSfx = transform.Find("Canvas/Trash/DeleteSFX").GetComponent<AudioSource>();
 
+        m_layout = transform.Find("Canvas/Shelf").GetComponent<GridLayoutGroup>();
+        
         m_closeButton = transform.Find("Canvas/CloseButton").GetComponent<UIButton>();
 
         RegisterSpawnable();
@@ -222,10 +226,11 @@ public class SceneShelf(IntPtr ptr) : MonoBehaviour(ptr)
                 .Then(reel =>
                 {
                     reel.Hide();
-                    slot.SetReel(reel);
-                    reel.SetScene(scene);
-                    reel.Connect(slot);
                     reel.SetColor(Color.HSVToRGB(Random.value, 1.0f, 1.0f));
+                    reel.SetScene(scene);
+                    slot.Initialize();
+                    slot.SetReel(reel);
+                    reel.Connect(slot);
                 });
         }
 
@@ -238,6 +243,9 @@ public class SceneShelf(IntPtr ptr) : MonoBehaviour(ptr)
                 m_newSceneSlot.SetReel(reel);
                 reel.Hide();
             });
+        
+        // Re-enable the layout group to fix positional issues
+        m_layout.enabled = true;
     }
 
     private void UpdateSlotLayout()
