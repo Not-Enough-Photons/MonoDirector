@@ -48,6 +48,12 @@ public class PointToolEntity(IntPtr ptr) : DirectedComponent(ptr)
 
     protected override void OnPlayStateSet(PlayState playState)
     {
+        if (Settings.World.showGizmos)
+        {
+            Show();
+            return;
+        }
+        
         if (playState == PlayState.Preplaying
         || playState == PlayState.Playing)
         {

@@ -24,6 +24,7 @@ public static class Settings
         public static bool ignoreSlomo = false;
         public static bool temporalScaling = false;
         public static bool recordActors = true;
+        public static bool showGizmos = false;
     }
 
     public static class Debug
