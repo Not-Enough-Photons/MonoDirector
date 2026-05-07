@@ -36,12 +36,19 @@ public class SettingsPage(IntPtr ptr) : MonoBehaviour(ptr)
 
     private void OnEnable()
     {
+        m_buttonAudio.OnClicked += OnAudioButtonClicked;
         m_buttonWorld.OnClicked += OnWorldButtonClicked;
     }
 
     private void OnDisable()
     {
+        m_buttonAudio.OnClicked -= OnAudioButtonClicked;
         m_buttonWorld.OnClicked -= OnWorldButtonClicked;
+    }
+
+    private void OnAudioButtonClicked()
+    {
+        m_menu.GoToPage("Audio");
     }
 
     private void OnWorldButtonClicked()
