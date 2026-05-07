@@ -114,6 +114,7 @@ public static class PropBuilder
 
             Caster.RemoveProp(actorProp);
             PropFrameManager.RemoveFrameFromProp(actorProp);
+            MarkerManager.RemoveMarkerFromProp(actorProp);
             Director.ActiveScene.RemoveProp(actorProp);
             GameObject.Destroy(actorProp);
         }
