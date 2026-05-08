@@ -60,7 +60,7 @@ public class Prop(IntPtr ptr) : MonoBehaviour(ptr)
     protected List<InteractableHost> m_interactableHosts;
 
     protected bool m_isRecording;
-
+ 
     private FrameGroup m_previousFrame;
     private FrameGroup m_nextFrame;
 
@@ -137,8 +137,7 @@ public class Prop(IntPtr ptr) : MonoBehaviour(ptr)
             
             m_interactableHosts.Add(interactableHost);
         }
-            
-
+        
         foreach (var host in m_interactableHosts)
         {
             host.onHandAttachedDelegate += m_onHandAttached;
@@ -233,7 +232,11 @@ public class Prop(IntPtr ptr) : MonoBehaviour(ptr)
             Quaternion nextRotation = nextTransformFrames[i].rotation;
 
             MarrowBody body = m_entity.Bodies[i];
-
+            
+            body.transform.position = Vector3.Lerp(previousPosition, nextPosition, delta);
+            body.transform.rotation = Quaternion.Slerp(previousRotation, nextRotation, delta);
+            
+#if ENABLE_OWNERSHIP
             if (m_isOwned)
             {
                 body._rigidbody.isKinematic = true;
@@ -249,6 +252,7 @@ public class Prop(IntPtr ptr) : MonoBehaviour(ptr)
                     body.AddTorque(nextTransformFrames[i].rigidbodyAngularVelocity, ForceMode.VelocityChange);
                 }
             }
+#endif
         }
 
         foreach(var actionFrame in m_actionFrames)
@@ -290,6 +294,8 @@ public class Prop(IntPtr ptr) : MonoBehaviour(ptr)
             if (frame == 0)
             {
                 objectFrames.Add(objectFrame);
+                
+#if ENABLE_OWNERSHIP
                 foreach (var host in m_interactableHosts)
                 {
                     if (host.HandCount() != 0)
@@ -298,6 +304,7 @@ public class Prop(IntPtr ptr) : MonoBehaviour(ptr)
                         break;
                     }
                 }
+#endif
             }
             else
             {
@@ -339,28 +346,32 @@ public class Prop(IntPtr ptr) : MonoBehaviour(ptr)
         if (Director.PlayState != PlayState.Recording)
             return;
         
+#if ENABLE_OWNERSHIP
         RecordAction(() => Own());
-        
-        Logging.Msg("OnHandAttached");
+#endif
     }
 
     private void OnHandDetached(InteractableHost host, Hand hand)
     {
         if (Director.PlayState != PlayState.Recording)
             return;
-
-        RecordAction(() => Disown());
         
-        Logging.Msg("OnHandDetached");
+#if ENABLE_OWNERSHIP
+        RecordAction(() => Disown());
+#endif
     }
     
     private void Own()
     {
+#if ENABLE_OWNERSHIP
         m_isOwned = true;
+#endif
     }
 
     private void Disown()
     {
+#if ENABLE_OWNERSHIP
         m_isOwned = false;
+#endif
     }
 }
