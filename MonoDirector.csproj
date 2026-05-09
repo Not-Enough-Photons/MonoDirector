@@ -62,6 +62,7 @@
 		<Compile Include="src\Downloading\PalletVersion.cs" />
 		<Compile Include="src\Downloading\PlatformObject.cs" />
 		<Compile Include="src\Downloading\ModObject.cs" />
+		<Compile Include="src\Extensions\TransformExtensions.cs" />
 		<Compile Include="src\Film.cs" />
 		<Compile Include="src\Logging.cs" />
 		<Compile Include="src\Patches\Rig\PreferencesPanelView.cs" />
