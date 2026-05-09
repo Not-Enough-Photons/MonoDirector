@@ -112,6 +112,16 @@ public static class Caster
         prop.SetPhysicsActive(true);
         m_props.Remove(prop);
         m_recordProps.Remove(prop);
+
+        // Tell the actor to remove the owned prop as well
+        // If we don't do this, the destroyed prop will still exist and cause issues!
+        if (prop.Actor != null)
+        {
+            // TODO: Change Prop.Actor to use Actor type instead of Trackable
+            Actor actor = (Actor)prop.Actor;
+            actor.DisownProp(prop);
+        }
+        
         OnPropRemoved?.Invoke(prop);
     }
 
