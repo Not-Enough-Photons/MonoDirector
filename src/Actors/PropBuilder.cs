@@ -35,8 +35,15 @@ public static class PropBuilder
             // Check for a loaded magazine
             if (prop.Gun.HasMagazine())
             {
-                Magazine magazine = prop.Gun.ammoSocket._magazinePlug.magazine;
-                BuildProp(magazine.interactableHost.marrowEntity);
+                AmmoSocket ammoSocket = prop.Gun.ammoSocket;
+
+                // Some guns do not have a magazine, but can still be loaded.
+                // Shotguns do this for instance, so check if that's the case.
+                if (ammoSocket.HasMagazine)
+                {
+                    MarrowEntity magazine = ammoSocket._magazinePlug.magazine.interactableHost.marrowEntity;
+                    BuildProp(magazine);
+                }
             }
 
             Caster.AddRecordProp(prop);
