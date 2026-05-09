@@ -308,10 +308,10 @@ public class Actor : Trackable, IBinaryData
 
     public override void Delete()
     {
-        foreach (var ownedProp in m_ownedProps)
+        var ownedProps = m_ownedProps.ToList();
+        
+        foreach (var ownedProp in ownedProps)
         {
-            MarkerManager.RemoveMarkerFromProp(ownedProp);
-            Caster.RemoveProp(ownedProp);
             ownedProp.DeleteAllFrames();
             PropBuilder.RemoveProp(ownedProp.Entity);
         }
