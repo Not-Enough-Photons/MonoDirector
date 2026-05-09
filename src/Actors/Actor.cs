@@ -296,11 +296,13 @@ public class Actor : Trackable, IBinaryData
 
     public void OwnProp(Prop prop)
     {
+        prop.SetActor(this);
         m_ownedProps.Add(prop);
     }
 
     public void DisownProp(Prop prop)
     {
+        prop.SetActor(null);
         m_ownedProps.Remove(prop);
     }
 
