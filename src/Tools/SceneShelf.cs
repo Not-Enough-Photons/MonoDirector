@@ -8,6 +8,7 @@ using MelonLoader;
 using NEP.MonoDirector.Core;
 
 using System.Collections;
+using NEP.MonoDirector.Extensions;
 using NEP.MonoDirector.UI.Interaction;
 using UnityEngine;
 using NEP.MonoDirector.Yielding;
@@ -71,11 +72,8 @@ public class SceneShelf(IntPtr ptr) : MonoBehaviour(ptr)
         m_film = Director.ActiveFilm;
 
         Transform playerChest = BoneLib.Player.PhysicsRig.m_chest;
-        transform.position = playerChest.position + playerChest.forward * 2f;
-        // Calculate look at
-        Vector3 lookRotation = Quaternion.LookRotation(playerChest.position - transform.position).eulerAngles;
-        Quaternion yRotation = Quaternion.Euler(0f, lookRotation.y, 0f);
-        transform.rotation = yRotation;
+        transform.position = playerChest.position + playerChest.forward;
+        transform.LookAtYAxis(playerChest);
 
         foreach (var slot in m_slots)
         {

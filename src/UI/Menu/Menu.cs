@@ -3,6 +3,7 @@ using NEP.MonoDirector.UI.Interaction;
 using BoneLib;
 using Il2CppTMPro;
 using MelonLoader;
+using NEP.MonoDirector.Extensions;
 using NEP.MonoDirector.Tools;
 using UnityEngine;
 
@@ -66,10 +67,7 @@ public class Menu(IntPtr ptr) : MonoBehaviour(ptr)
     {
         Transform playerChest = BoneLib.Player.PhysicsRig.m_chest;
         transform.position = playerChest.position + playerChest.forward;
-        // Calculate look at
-        Vector3 lookRotation = Quaternion.LookRotation(playerChest.position - transform.position).eulerAngles;
-        Quaternion yRotation = Quaternion.Euler(0f, lookRotation.y + 180f, 0f);
-        transform.rotation = yRotation;
+        transform.LookAtYAxis(playerChest, 180f);
     }
     
     public void Hide() => gameObject.SetActive(false);
