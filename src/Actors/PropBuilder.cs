@@ -107,23 +107,25 @@ public static class PropBuilder
     
     public static void RemoveProp(MarrowEntity entity)
     {
-        Prop actorProp = entity.GetComponent<Prop>();
+        // Prop already removed
+        if (!entity.TryGetComponent(out Prop prop))
+            return;
 
         if (Director.PlayState == State.PlayState.Stopped)
         {
 #if DEBUG
             MelonLoader.MelonLogger.Msg($"Removing component from {entity.name}");
 #endif
-            if (actorProp is TrackedVehicle vehicle)
+            if (prop is TrackedVehicle vehicle)
             {
                 vehicle.RemoveVehicle();
             }
 
-            Caster.RemoveProp(actorProp);
-            PropFrameManager.RemoveFrameFromProp(actorProp);
-            MarkerManager.RemoveMarkerFromProp(actorProp);
-            Director.ActiveScene.RemoveProp(actorProp);
-            GameObject.Destroy(actorProp);
+            Caster.RemoveProp(prop);
+            PropFrameManager.RemoveFrameFromProp(prop);
+            MarkerManager.RemoveMarkerFromProp(prop);
+            Director.ActiveScene.RemoveProp(prop);
+            GameObject.Destroy(prop);
         }
     } 
 }

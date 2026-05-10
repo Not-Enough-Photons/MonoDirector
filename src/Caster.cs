@@ -65,17 +65,6 @@ public static class Caster
         Constants.RigManager.Teleport(actorPosition, true);
         Constants.RigManager.SwapAvatar(actor.ClonedAvatar);
 
-        // Any props recorded by this actor must be removed if we're recasting
-        // If we don't, the props will still play, but they will be floating in the air aimlessly.
-        // Spooky!
-
-        for (int i = actor.OwnedProps.Count - 1; i >= 0; i--)
-        {
-            Prop prop = actor.OwnedProps[i];
-            actor.DisownProp(prop);
-            GameObject.Destroy(prop);
-        }
-
         UncastActor(actor);
 
         OnActorRecasted?.Invoke(actor);

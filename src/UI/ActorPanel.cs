@@ -144,11 +144,7 @@ public class ActorPanel(IntPtr ptr) : MonoBehaviour(ptr)
         var selectedActors = Caster.SelectedActors.ToList();
         
         foreach (var actor in selectedActors)
-        {
             Director.RemoveActor(actor);
-            // TODO: Move this into Caster or something
-            Director.ActiveScene.RemoveActor(actor);
-        }
 
         Hide();
     }

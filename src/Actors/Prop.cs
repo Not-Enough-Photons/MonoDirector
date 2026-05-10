@@ -1,4 +1,5 @@
-﻿using NEP.MonoDirector.Core;
+﻿using Il2CppSLZ.Bonelab;
+using NEP.MonoDirector.Core;
 using NEP.MonoDirector.Data;
 
 using UnityEngine;
@@ -63,7 +64,7 @@ public class Prop(IntPtr ptr) : MonoBehaviour(ptr)
  
     private FrameGroup m_previousFrame;
     private FrameGroup m_nextFrame;
-
+    
     private Action<InteractableHost, Hand> m_onHandAttached;
     private Action<InteractableHost, Hand> m_onHandDetached;
 
@@ -286,8 +287,10 @@ public class Prop(IntPtr ptr) : MonoBehaviour(ptr)
                 position = body.transform.position,
                 rotation = body.transform.rotation,
                 scale = body.transform.localScale,
+#if ENABLE_OWNERSHIP
                 rigidbodyVelocity = body._rigidbody.velocity,
                 rigidbodyAngularVelocity = body._rigidbody.angularVelocity,
+#endif
                 frameTime = Recorder.Instance.RecordingTime
             };
 
@@ -317,7 +320,7 @@ public class Prop(IntPtr ptr) : MonoBehaviour(ptr)
 
         m_propFrames.Add(group);
     }
-
+    
     public virtual void RecordAction(Action action)
     {
         RecordAction(action, Recorder.Instance.RecordingTime);
