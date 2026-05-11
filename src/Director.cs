@@ -14,25 +14,13 @@ public static class Director
     public static Film ActiveFilm { get => m_activeFilm; }
     public static Scene ActiveScene { get => m_activeScene; }
 
-    public static Actor SelectedActor { get => m_selectedActor; }
-
-    public static FreeCamera Camera { get => m_camera; }
-    public static CameraVolume Volume { get => m_camera.GetComponent<CameraVolume>(); }
-
     public static PlayState PlayState { get => m_playState; }
     public static PlayState LastPlayState { get => m_lastPlayState; }
     public static CaptureState CaptureState { get => m_captureState; }
 
-    public static int WorldTick { get => m_worldTick; }
-
     public static event Action<Scene> OnSceneAdded;
     public static event Action<Scene> OnSceneRemoved;
     public static event Action<Scene> OnSceneSet;
-
-    public static event Action<Actor> OnActorSelected;
-    public static event Action<Actor> OnActorDeselected;
-
-    private static Actor m_selectedActor;
 
     private static Playback m_playback;
     private static Recorder m_recorder;
@@ -43,8 +31,6 @@ public static class Director
     private static PlayState m_playState = PlayState.Stopped;
     private static PlayState m_lastPlayState;
     private static CaptureState m_captureState = CaptureState.CaptureActor;
-
-    private static FreeCamera m_camera;
 
     private static int m_worldTick;
 
@@ -133,11 +119,6 @@ public static class Director
     public static void Stop()
     {
         SetPlayState(PlayState.Stopped);
-    }
-
-    public static void SetCamera(FreeCamera camera)
-    {
-        m_camera = camera;
     }
 
     public static void AddScene(Scene scene)
