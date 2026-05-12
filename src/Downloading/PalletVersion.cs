@@ -19,7 +19,17 @@ public struct PalletVersion
         return (lhs.Major != rhs.Major) || (lhs.Minor != rhs.Minor) || (lhs.Patch != rhs.Patch);
     }
 
-    public int Major;
-    public int Minor;
-    public int Patch;
+    public static bool operator > (PalletVersion lhs, PalletVersion rhs)
+    {
+        return (lhs.Major > rhs.Major) || (lhs.Minor > rhs.Minor) || (lhs.Patch > rhs.Patch);
+    }
+    
+    public static bool operator < (PalletVersion lhs, PalletVersion rhs)
+    {
+        return (lhs.Major < rhs.Major) || (lhs.Minor < rhs.Minor) || (lhs.Patch < rhs.Patch);
+    }
+
+    public readonly int Major;
+    public readonly int Minor;
+    public readonly int Patch;
 }

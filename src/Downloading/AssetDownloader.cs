@@ -46,7 +46,7 @@ public static class AssetDownloader
         PalletVersion version = new(int.Parse(versions[0]), int.Parse(versions[1]), int.Parse(versions[2]));
         PalletVersion websiteVersion = new(int.Parse(websiteVersions[0]), int.Parse(websiteVersions[1]), int.Parse(websiteVersions[2]));
 
-        return version != websiteVersion;
+        return version < websiteVersion;
     }
 
     public static bool CheckInstall()
