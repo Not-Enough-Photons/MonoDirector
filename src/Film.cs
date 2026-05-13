@@ -33,6 +33,9 @@ public sealed class Film
         m_scenes.Remove(scene);
         m_runtime -= scene.Duration;
 
+        if (m_runtime <= 0f)
+            m_runtime = 0f;
+
         for (int i = 0; i < m_scenes.Count; i++)
             m_scenes[i].SetIndex(i);
     }
