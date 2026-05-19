@@ -1,7 +1,7 @@
 ﻿using NEP.MonoDirector.Actors;
 using NEP.MonoDirector.Cameras;
 using NEP.MonoDirector.State;
-
+using NEP.MonoDirector.UI;
 using UnityEngine;
 
 namespace NEP.MonoDirector.Core;
@@ -40,6 +40,8 @@ public static class Director
         m_recorder = new Recorder();
         Caster.Initialize();
 
+        Caster.OnActorRecasted += (_) => Record();
+        
         Events.OnPrePlayback += () => SetPlayState(PlayState.Preplaying);
         Events.OnPreRecord += () => SetPlayState(PlayState.Prerecording);
 
@@ -53,6 +55,8 @@ public static class Director
 
     internal static void Shutdown()
     {
+        Caster.OnActorRecasted -= (_) => Record();
+        
         Events.OnPrePlayback -= () => SetPlayState(PlayState.Preplaying);
         Events.OnPreRecord -= () => SetPlayState(PlayState.Prerecording);
 
@@ -169,12 +173,15 @@ public static class Director
         foreach (var actor in Caster.Cast)
         {
             actor.ActorBody.AllowCollisions(false);
-            actor.ClonedAvatar.gameObject.SetActive(false);
+            actor.Hide();
+            MarkerManager.RemoveMarkerFromActor(actor.Proxy);
         }
 
         foreach (var prop in Caster.Props)
         {
             prop.gameObject.SetActive(false);
+            MarkerManager.RemoveMarkerFromProp(prop);
+            PropFrameManager.RemoveFrameFromProp(prop);
         }
 
         Caster.ClearCast();
@@ -189,14 +196,17 @@ public static class Director
         foreach (var actor in Caster.Cast)
         {
             actor.ActorBody.AllowCollisions(true);
-            actor.ClonedAvatar.gameObject.SetActive(true);
+            actor.Show();
             actor.OnSceneBegin();
+            MarkerManager.AddMarkerToActor(actor.Proxy);
         }
 
         foreach (var prop in Caster.Props)
         {
             prop.gameObject.SetActive(true);
             prop.OnSceneBegin();
+            MarkerManager.AddMarkerToProp(prop);
+            PropFrameManager.AddFrameToProp(prop);
         }
 
         OnSceneSet?.Invoke(scene);
