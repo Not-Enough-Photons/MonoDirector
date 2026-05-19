@@ -65,9 +65,9 @@ public class Menu(IntPtr ptr) : MonoBehaviour(ptr)
 
     public void Teleport()
     {
-        Transform playerChest = BoneLib.Player.PhysicsRig.m_chest;
-        transform.position = playerChest.position + playerChest.forward;
-        transform.LookAtYAxis(playerChest, 180f);
+        Transform playerHead = BoneLib.Player.Head;
+        transform.position = playerHead.position + playerHead.forward;
+        transform.LookAtYAxis(playerHead, 180f);
     }
     
     public void Hide() => gameObject.SetActive(false);

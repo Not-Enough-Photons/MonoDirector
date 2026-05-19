@@ -71,9 +71,9 @@ public class SceneShelf(IntPtr ptr) : MonoBehaviour(ptr)
     {
         m_film = Director.ActiveFilm;
 
-        Transform playerChest = BoneLib.Player.PhysicsRig.m_chest;
-        transform.position = playerChest.position + playerChest.forward;
-        transform.LookAtYAxis(playerChest);
+        Transform playerHead = BoneLib.Player.Head;
+        transform.position = playerHead.position + playerHead.forward;
+        transform.LookAtYAxis(playerHead);
 
         foreach (var slot in m_slots)
         {
