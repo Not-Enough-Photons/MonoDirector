@@ -5,9 +5,9 @@ using UnityEngine;
 
 namespace NEP.MonoDirector.Actors;
 
-public class Trackable
+public class Archetype
 {
-    public Trackable()
+    public Archetype()
     {
         objectFrames = new List<ObjectFrame>();
         actionFrames = new List<ActionFrame>();

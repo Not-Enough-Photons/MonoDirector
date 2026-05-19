@@ -34,7 +34,7 @@ namespace NEP.MonoDirector.Actors;
 [MelonLoader.RegisterTypeInIl2Cpp]
 public class Prop(IntPtr ptr) : MonoBehaviour(ptr)
 {
-    public Trackable Actor => m_actor;
+    public Archetype Actor => m_actor;
     public IReadOnlyList<FrameGroup> PropFrames => m_propFrames.AsReadOnly();
     public MarrowEntity Entity => m_entity;
 
@@ -48,7 +48,7 @@ public class Prop(IntPtr ptr) : MonoBehaviour(ptr)
         Il2CppInterop.Runtime.Il2CppType.Of<Atv>()
     };
 
-    protected Trackable m_actor;
+    protected Archetype m_actor;
     protected MarrowEntity m_entity;
 
     protected int m_stateTick;
@@ -146,7 +146,7 @@ public class Prop(IntPtr ptr) : MonoBehaviour(ptr)
         }
     }
 
-    public void SetActor(Trackable actor)
+    public void SetActor(Archetype actor)
     {
         this.m_actor = actor;
     }

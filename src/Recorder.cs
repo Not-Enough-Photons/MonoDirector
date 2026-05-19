@@ -182,7 +182,7 @@ public class Recorder
             m_activeActor?.Microphone?.SetCorrectionMode(Audio.ActorSpeech.AudioCorrectionMode.Corrected);
             m_activeActor?.Microphone?.RecordMicrophone();
 
-            foreach (Trackable castMember in Caster.Cast)
+            foreach (Archetype castMember in Caster.Cast)
             {
                 if (castMember != null && castMember is Actor actorPlayer)
                 {
@@ -268,7 +268,7 @@ public class Recorder
 
             m_activeActor?.Microphone?.StopRecording();
 
-            foreach (Trackable castMember in Caster.Cast)
+            foreach (Archetype castMember in Caster.Cast)
             {
                 if (castMember != null && castMember is Actor actorPlayer)
                 {

@@ -46,7 +46,7 @@
 		<Compile Include="src\Actors\MagazineProp.cs" />
 		<Compile Include="src\Actors\Prop.cs" />
 		<Compile Include="src\Actors\PropBuilder.cs" />
-		<Compile Include="src\Actors\Trackable.cs" />
+		<Compile Include="src\Actors\Archetype.cs" />
 		<Compile Include="src\Actors\TrackedVehicle.cs" />
 		<Compile Include="src\Audio\ActorSpeech.cs" />
 		<Compile Include="src\Audio\AudioManager.cs" />

@@ -15,7 +15,7 @@ using Il2CppSLZ.Marrow;
 
 namespace NEP.MonoDirector.Actors;
 
-public class Actor : Trackable, IBinaryData
+public class Actor : Archetype, IBinaryData
 {
     public Actor() : base()
     {

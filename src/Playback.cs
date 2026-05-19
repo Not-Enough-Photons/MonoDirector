@@ -181,7 +181,7 @@ public class Playback
     {
         try
         {
-            foreach (Trackable castMember in Caster.Cast)
+            foreach (Archetype castMember in Caster.Cast)
             {
                 if (castMember != null && castMember is Actor actorPlayer)
                 {
@@ -251,7 +251,7 @@ public class Playback
     /// Animates the provided actor
     /// </summary>
     /// <param name="actor">The actor to "act"</param>
-    public void AnimateActor(Trackable actor)
+    public void AnimateActor(Archetype actor)
     {
         if (actor != null)
             actor.Act();
