@@ -145,7 +145,6 @@ public static class Caster
     public static void ClearProps()
     {
         m_props.Clear();
-        m_recordProps.Clear();
     }
 
     public static void ClearRecordProps()
