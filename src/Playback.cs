@@ -137,6 +137,7 @@ public class Playback
             {
                 if (actor is Actor actorPlayer)
                 {
+                    actorPlayer?.Microphone?.StopPlayback();
                     actorPlayer?.Microphone?.Playback();
 
                     if (actorPlayer.Hidden)
