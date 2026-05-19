@@ -123,7 +123,7 @@ public static class MarkerManager
 
     private static void ShowMarkers(PlayState playState)
     {
-        if (playState == PlayState.Preplaying || playState == PlayState.Prerecording)
+        if (playState == PlayState.Playing || playState == PlayState.Recording)
         {
             foreach (var marker in m_loadedMarkers)
                 marker.Hide();
