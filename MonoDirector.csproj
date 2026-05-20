@@ -48,6 +48,8 @@
 		<Compile Include="src\Archetype\Prop\Prop.cs" />
 		<Compile Include="src\Archetype\Prop\PropBuilder.cs" />
 		<Compile Include="src\Archetype\Prop\TrackedVehicle.cs" />
+		<Compile Include="src\Archetype\Proxy\ActorProxy.cs" />
+		<Compile Include="src\Archetype\Proxy\ArchetypeProxy.cs" />
 		<Compile Include="src\Audio\ActorSpeech.cs" />
 		<Compile Include="src\Audio\AudioManager.cs" />
 		<Compile Include="src\Audio\FeedbackSFX.cs" />
@@ -117,8 +119,6 @@
 		<Compile Include="src\Patches\VRMK\PlayerAvatarArt.cs" />
 		<Compile Include="src\Photographer.cs" />
 		<Compile Include="src\Playback.cs" />
-		<Compile Include="src\Proxy\ActorProxy.cs" />
-		<Compile Include="src\Proxy\TrackableProxy.cs" />
 		<Compile Include="src\Recorder.cs" />
 		<Compile Include="src\Settings.cs" />
 		<Compile Include="src\State\BodyPart.cs" />

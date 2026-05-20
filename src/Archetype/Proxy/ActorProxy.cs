@@ -8,7 +8,7 @@ using UnityEngine;
 namespace NEP.MonoDirector.Proxy;
 
 [MelonLoader.RegisterTypeInIl2Cpp]
-public class ActorProxy(IntPtr ptr) : TrackableProxy(ptr)
+public class ActorProxy(IntPtr ptr) : ArchetypeProxy(ptr)
 {
     public Actor Actor { get => m_actor; }
     public BoxCollider Collider { get => m_triggerHull; }
