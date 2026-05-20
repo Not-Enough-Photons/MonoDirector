@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 
 using MelonLoader;
-using NEP.MonoDirector.Actors;
+using NEP.MonoDirector.Archetype;
 using NEP.MonoDirector.Audio;
 using NEP.MonoDirector.State;
 
@@ -93,7 +93,7 @@ public class Recorder
     {
         foreach (var castMember in Caster.Cast)
         {
-            castMember?.Act();
+            castMember?.Perform();
         }
     }
 
@@ -103,7 +103,7 @@ public class Recorder
         {
             if (Settings.World.recordActors)
             {
-                m_activeActor.RecordFrame();
+                m_activeActor.Record();
             }
 
             foreach (var prop in Caster.RecordProps)
@@ -182,15 +182,12 @@ public class Recorder
             m_activeActor?.Microphone?.SetCorrectionMode(Audio.ActorSpeech.AudioCorrectionMode.Corrected);
             m_activeActor?.Microphone?.RecordMicrophone();
 
-            foreach (Archetype castMember in Caster.Cast)
+            foreach (Actor actor in Caster.Cast)
             {
-                if (castMember != null && castMember is Actor actorPlayer)
-                {
-                    actorPlayer?.Microphone?.Playback();
+                actor.Microphone?.Playback();
 
-                    if (actorPlayer.Hidden)
-                        actorPlayer.Hide();
-                }
+                if (actor.Hidden)
+                    actor.Hide();
             }
         }
         catch (Exception e)
@@ -243,7 +240,7 @@ public class Recorder
             {
                 if (castMember != null)
                 {
-                    castMember.Act();
+                    castMember.Perform();
                 }
             }
         }
@@ -268,15 +265,12 @@ public class Recorder
 
             m_activeActor?.Microphone?.StopRecording();
 
-            foreach (Archetype castMember in Caster.Cast)
+            foreach (Actor actor in Caster.Cast)
             {
-                if (castMember != null && castMember is Actor actorPlayer)
-                {
-                    actorPlayer?.Microphone?.StopPlayback();
+                actor.Microphone?.StopPlayback();
 
-                    if (actorPlayer.Hidden)
-                        actorPlayer.Show();
-                }
+                if (actor.Hidden)
+                    actor.Show();
             }
 
 #if DEBUG

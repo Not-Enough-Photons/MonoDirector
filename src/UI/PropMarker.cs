@@ -1,5 +1,5 @@
 ﻿using Il2CppSLZ.Marrow;
-using NEP.MonoDirector.Actors;
+using NEP.MonoDirector.Archetype;
 using UnityEngine;
 
 namespace NEP.MonoDirector.UI;

@@ -1,4 +1,4 @@
-﻿using NEP.MonoDirector.Actors;
+﻿using NEP.MonoDirector.Archetype;
 
 using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.Data;

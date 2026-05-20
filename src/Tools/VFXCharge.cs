@@ -1,7 +1,7 @@
 ﻿using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.Pool;
 using MelonLoader;
-using NEP.MonoDirector.Actors;
+using NEP.MonoDirector.Archetype;
 using NEP.MonoDirector.Audio;
 using NEP.MonoDirector.Core;
 using UnityEngine;

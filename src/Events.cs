@@ -1,4 +1,4 @@
-﻿using NEP.MonoDirector.Actors;
+﻿using NEP.MonoDirector.Archetype;
 using NEP.MonoDirector.State;
 
 using System;

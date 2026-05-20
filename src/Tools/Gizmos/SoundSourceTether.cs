@@ -1,4 +1,4 @@
-﻿using NEP.MonoDirector.Actors;
+﻿using NEP.MonoDirector.Archetype;
 using NEP.MonoDirector.Audio;
 using NEP.MonoDirector.Proxy;
 

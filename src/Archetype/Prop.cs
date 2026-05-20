@@ -8,7 +8,7 @@ using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.Interaction;
 using NEP.MonoDirector.State;
 
-namespace NEP.MonoDirector.Actors;
+namespace NEP.MonoDirector.Archetype;
 
 // NOTE FOR THE FUTURE ABOUT OWNERSHIP:
 // Ownership of props is very tricky to implement properly.

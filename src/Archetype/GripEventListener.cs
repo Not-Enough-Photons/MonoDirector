@@ -3,7 +3,7 @@ using UnityEngine;
 
 using Il2CppSLZ.Bonelab;
 
-namespace NEP.MonoDirector.Actors;
+namespace NEP.MonoDirector.Archetype;
 
 [MelonLoader.RegisterTypeInIl2Cpp]
 public class GripEventListener(IntPtr ptr) : MonoBehaviour(ptr)

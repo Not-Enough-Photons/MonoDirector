@@ -1,5 +1,5 @@
 ﻿using Il2CppSLZ.Marrow;
-using NEP.MonoDirector.Actors;
+using NEP.MonoDirector.Archetype;
 using NEP.MonoDirector.Cameras;
 using NEP.MonoDirector.Data;
 using NEP.MonoDirector.Proxy;

@@ -3,7 +3,7 @@ using NEP.MonoDirector.Data;
 
 using Il2CppSLZ.Marrow;
 
-namespace NEP.MonoDirector.Actors;
+namespace NEP.MonoDirector.Archetype;
 
 [MelonLoader.RegisterTypeInIl2Cpp]
 public class TrackedVehicle(IntPtr ptr) : Prop(ptr)

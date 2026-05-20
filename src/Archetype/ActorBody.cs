@@ -10,7 +10,7 @@ using Il2CppSLZ.Marrow.Audio;
 using MarrowAvatar = Il2CppSLZ.VRMK.Avatar;
 using Random = UnityEngine.Random;
 
-namespace NEP.MonoDirector.Actors;
+namespace NEP.MonoDirector.Archetype;
 
 public class ActorBody
 {

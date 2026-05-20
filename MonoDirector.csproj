@@ -35,19 +35,19 @@
 
 	<ItemGroup>
 		<Compile Include="Properties\AssemblyInfo.cs" />
-		<Compile Include="src\Actors\Actor.cs" />
-		<Compile Include="src\Actors\ActorBody.cs" />
-		<Compile Include="src\Actors\ActorNPC.cs" />
-		<Compile Include="src\Actors\ActorNPCBuilder.cs" />
-		<Compile Include="src\Actors\ActorSkeleton.cs" />
-		<Compile Include="src\Actors\BreakableProp.cs" />
-		<Compile Include="src\Actors\GripEventListener.cs" />
-		<Compile Include="src\Actors\GunProp.cs" />
-		<Compile Include="src\Actors\MagazineProp.cs" />
-		<Compile Include="src\Actors\Prop.cs" />
-		<Compile Include="src\Actors\PropBuilder.cs" />
-		<Compile Include="src\Actors\Archetype.cs" />
-		<Compile Include="src\Actors\TrackedVehicle.cs" />
+		<Compile Include="src\Archetype\Actor.cs" />
+		<Compile Include="src\Archetype\ActorBody.cs" />
+		<Compile Include="src\Archetype\ActorNPC.cs" />
+		<Compile Include="src\Archetype\ActorNPCBuilder.cs" />
+		<Compile Include="src\Archetype\ActorSkeleton.cs" />
+		<Compile Include="src\Archetype\BreakableProp.cs" />
+		<Compile Include="src\Archetype\GripEventListener.cs" />
+		<Compile Include="src\Archetype\GunProp.cs" />
+		<Compile Include="src\Archetype\MagazineProp.cs" />
+		<Compile Include="src\Archetype\Prop.cs" />
+		<Compile Include="src\Archetype\PropBuilder.cs" />
+		<Compile Include="src\Archetype\Archetype.cs" />
+		<Compile Include="src\Archetype\TrackedVehicle.cs" />
 		<Compile Include="src\Audio\ActorSpeech.cs" />
 		<Compile Include="src\Audio\AudioManager.cs" />
 		<Compile Include="src\Audio\FeedbackSFX.cs" />

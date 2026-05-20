@@ -1,6 +1,6 @@
 ﻿using HarmonyLib;
 using NEP.MonoDirector;
-using NEP.MonoDirector.Actors;
+using NEP.MonoDirector.Archetype;
 using NEP.MonoDirector.Core;
 
 using Il2CppSLZ.Marrow;

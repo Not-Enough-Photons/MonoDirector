@@ -1,6 +1,6 @@
 ﻿using Il2CppCysharp.Threading.Tasks.Triggers;
 using Il2CppSLZ.Bonelab;
-using NEP.MonoDirector.Actors;
+using NEP.MonoDirector.Archetype;
 using UnityEngine;
 
 namespace NEP.MonoDirector.Core;

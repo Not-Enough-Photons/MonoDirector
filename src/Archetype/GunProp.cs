@@ -7,7 +7,7 @@ using Il2CppSLZ.Marrow.Combat;
 using Il2CppSLZ.Marrow.Pool;
 using UnityEngine;
 
-namespace NEP.MonoDirector.Actors;
+namespace NEP.MonoDirector.Archetype;
 
 [MelonLoader.RegisterTypeInIl2Cpp]
 public class GunProp(IntPtr ptr) : Prop(ptr)

@@ -1,4 +1,4 @@
-﻿using NEP.MonoDirector.Actors;
+﻿using NEP.MonoDirector.Archetype;
 using NEP.MonoDirector.Cameras;
 using NEP.MonoDirector.State;
 using NEP.MonoDirector.UI;

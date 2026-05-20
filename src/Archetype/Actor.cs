@@ -12,39 +12,13 @@ using NEP.MonoDirector.Proxy;
 using Il2CppSLZ.Marrow.Warehouse;
 using NEP.MonoDirector.UI;
 using Il2CppSLZ.Marrow;
+using NEP.MonoDirector.State;
 
-namespace NEP.MonoDirector.Actors;
+namespace NEP.MonoDirector.Archetype;
 
 public class Actor : Archetype, IBinaryData
 {
-    public Actor() : base()
-    {
-#if DEBUG
-        //m_previousFrameDebugger = new Transform[55];
-        //m_nextFrameDebugger = new Transform[55];
-        //
-        //GameObject baseCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        //
-        //baseCube.GetComponent<BoxCollider>().enabled = false;
-        //baseCube.transform.localScale = Vector3.one * 0.03F;
-        //
-        //MeshRenderer renderer = baseCube.GetComponent<MeshRenderer>();
-        //// renderer.material = new Material(Shader.Find(Jevil.Const.UrpLitName));
-        //
-        //GameObject empty = new GameObject("MONODIRECTOR DEBUG VIZ");
-        //baseCube.transform.parent = empty.transform;
-        //
-        //for (int i = 0; i < 55; i++)
-        //{
-        //    m_previousFrameDebugger[i] = GameObject.Instantiate(empty).transform;
-        //    m_nextFrameDebugger[i] = GameObject.Instantiate(empty).transform;
-        //}
-        //
-        //GameObject.Destroy(baseCube);
-#endif
-    }
-    
-    public Actor(MarrowAvatar avatar) : this()
+    public Actor(MarrowAvatar avatar)
     {
         avatarCrate = Constants.RigManager.AvatarCrate.Crate;
         
@@ -70,7 +44,8 @@ public class Actor : Archetype, IBinaryData
         (int)HumanBodyBones.RightEye,
     };
 
-
+    public string ActorName { get => m_actorName; }
+    
     private AvatarCrate avatarCrate;
     public AvatarCrate AvatarCrate => avatarCrate;
     
@@ -93,6 +68,8 @@ public class Actor : Archetype, IBinaryData
 
     protected List<FrameGroup> m_avatarFrames;
 
+    private string m_actorName;
+    
     private ActorBody m_body;
     private ActorProxy m_proxy;
     private ActorSpeech m_microphone;
@@ -112,8 +89,8 @@ public class Actor : Archetype, IBinaryData
     private Transform[] m_avatarBones;
     private Transform[] m_clonedRigBones;
 
-    private FrameGroup m_previousFrame;
-    private FrameGroup m_nextFrame;
+    private new FrameGroup m_previousFrame;
+    private new FrameGroup m_nextFrame;
 
     private Transform m_lastPelvisParent;
     private int m_headIndex;
@@ -127,8 +104,9 @@ public class Actor : Archetype, IBinaryData
 
     public override void OnSceneBegin()
     {
-        base.OnSceneBegin();
-
+        foreach (var action in m_actions)
+            action.Reset();
+        
         // m_body.AllowCollisions(true);
 
         for (int i = 0; i < 55; i++)
@@ -145,7 +123,12 @@ public class Actor : Archetype, IBinaryData
         }
     }
 
-    public override void Act()
+    public override void OnSceneEnd()
+    {
+        
+    }
+
+    public override void Perform()
     {
         m_previousFrame = new FrameGroup();
         m_nextFrame = new FrameGroup();
@@ -207,9 +190,9 @@ public class Actor : Archetype, IBinaryData
 #endif
         }
         
-        for(int i = 0; i < actionFrames.Count; i++)
+        for(int i = 0; i < m_actions.Count; i++)
         {
-            var actionFrame = actionFrames[i];
+            var actionFrame = m_actions[i];
 
             if(Playback.Instance.PlaybackTime < actionFrame.timestamp)
             {
@@ -229,7 +212,7 @@ public class Actor : Archetype, IBinaryData
     /// Records the actor's bones, positons, and rotations for this frame.
     /// </summary>
     /// <param name="index">The frame to record the bones.</param>
-    public override void RecordFrame()
+    public override void Record()
     {
         FrameGroup frameGroup = new FrameGroup();
         CaptureBoneFrames(m_avatarBones);
@@ -237,8 +220,17 @@ public class Actor : Archetype, IBinaryData
         m_avatarFrames.Add(frameGroup);
     }
 
+    public override void RecordAction(Action action)
+    {
+        if (Director.PlayState != PlayState.Recording)
+            return;
+        
+        m_actions.Add(new ActionFrame(action, Recorder.Instance.RecordingTime));
+    }
+
     public void CloneAvatar()
     {
+        // TODO: Use new WaitForAsset coroutine
         GameObject clonedAvatarObject = GameObject.Instantiate(m_playerAvatar.gameObject);
         m_clonedAvatar = clonedAvatarObject.GetComponent<MarrowAvatar>();
 
@@ -254,9 +246,9 @@ public class Actor : Archetype, IBinaryData
         m_clonedRigBones = GetAvatarBones(m_clonedAvatar);
 
         GameObject.Destroy(m_clonedAvatar.GetComponent<LODGroup>());
-
-        actorName = Constants.RigManager.AvatarCrate.Crate.Title;
-        m_clonedAvatar.name = actorName;
+        
+        m_actorName = Constants.RigManager.AvatarCrate.Crate.Title;
+        m_clonedAvatar.name = m_actorName;
         ShowHairMeshes(m_clonedAvatar);
 
         m_microphone.SetAvatar(m_clonedAvatar);

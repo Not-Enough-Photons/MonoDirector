@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections;
 using MelonLoader;
-using NEP.MonoDirector.Actors;
+
+using NEP.MonoDirector.Archetype;
 using NEP.MonoDirector.Audio;
 using NEP.MonoDirector.State;
 
@@ -181,15 +182,12 @@ public class Playback
     {
         try
         {
-            foreach (Archetype castMember in Caster.Cast)
+            foreach (Actor actor in Caster.Cast)
             {
-                if (castMember != null && castMember is Actor actorPlayer)
-                {
-                    actorPlayer?.Microphone?.StopPlayback();
+                actor.Microphone?.StopPlayback();
 
-                    if (actorPlayer.Hidden)
-                        actorPlayer.Show();
-                }
+                if (actor.Hidden)
+                    actor.Show();
             }
 
             if (m_playRoutine != null)
@@ -234,8 +232,8 @@ public class Playback
     {
         try
         {
-            foreach (var castMember in Caster.Cast)
-                AnimateActor(castMember);
+            foreach (var actor in Caster.Cast)
+                AnimateActor(actor);
 
             foreach (var prop in Caster.Props)
                 AnimateProp(prop);
@@ -251,10 +249,10 @@ public class Playback
     /// Animates the provided actor
     /// </summary>
     /// <param name="actor">The actor to "act"</param>
-    public void AnimateActor(Archetype actor)
+    public void AnimateActor(Actor actor)
     {
         if (actor != null)
-            actor.Act();
+            actor.Perform();
     }
 
     /// <summary>

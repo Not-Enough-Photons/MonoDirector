@@ -7,7 +7,7 @@ using NEP.MonoDirector.UI;
 using UnityEngine;
 using static Il2CppSLZ.Marrow.PuppetMasta.Muscle;
 
-namespace NEP.MonoDirector.Actors;
+namespace NEP.MonoDirector.Archetype;
 
 public static class PropBuilder
 {

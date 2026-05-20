@@ -1,5 +1,5 @@
 ﻿using Il2CppSLZ.Marrow.Warehouse;
-using NEP.MonoDirector.Actors;
+using NEP.MonoDirector.Archetype;
 
 namespace NEP.MonoDirector.Core;
 

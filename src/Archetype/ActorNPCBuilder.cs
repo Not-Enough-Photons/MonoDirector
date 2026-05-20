@@ -8,7 +8,7 @@ using Il2CppSLZ.Bonelab;
 using Il2CppSLZ.Marrow.Pool;
 using Il2CppSLZ.VFX;
 
-namespace NEP.MonoDirector.Actors;
+namespace NEP.MonoDirector.Archetype;
 
 public static class ActorNPCBuilder
 {

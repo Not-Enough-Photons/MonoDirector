@@ -1,4 +1,4 @@
-﻿using NEP.MonoDirector.Actors;
+﻿using NEP.MonoDirector.Archetype;
 using NEP.MonoDirector.Core;
 using NEP.MonoDirector.Data;
 using NEP.MonoDirector.Proxy;

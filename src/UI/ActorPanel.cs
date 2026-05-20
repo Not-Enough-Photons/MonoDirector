@@ -4,7 +4,7 @@ using Il2CppTMPro;
 using UnityEngine.UI;
 
 using NEP.MonoDirector.Core;
-using NEP.MonoDirector.Actors;
+using NEP.MonoDirector.Archetype;
 using NEP.MonoDirector.State;
 using NEP.MonoDirector.UI.Interaction;
 

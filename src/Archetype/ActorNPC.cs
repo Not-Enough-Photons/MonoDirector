@@ -5,7 +5,7 @@ using UnityEngine;
 using NEP.MonoDirector.Data;
 using Il2CppSLZ.Marrow.Combat;
 
-namespace NEP.MonoDirector.Actors;
+namespace NEP.MonoDirector.Archetype;
 
 public class ActorNPC
 {
