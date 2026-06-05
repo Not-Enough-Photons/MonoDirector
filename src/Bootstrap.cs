@@ -39,7 +39,7 @@ public static class Bootstrap
         Directory.CreateDirectory(Constants.dirSFX);
         Directory.CreateDirectory(Constants.dirImg);
 
-        Hooking.OnLevelLoaded += (info) => OnLevelLoaded();
+        Hooking.OnLevelLoaded += OnLevelLoaded;
         Hooking.OnWarehouseReady += OnWarehouseReady;
 
         MDBoneMenu.Initialize();
@@ -54,6 +54,7 @@ public static class Bootstrap
 
     internal static void Update()
     {
+        Director.Update();
         MarkerManager.Update();
         ActorFrameManager.Update();
         //PropMarkerManager.Update();
@@ -61,6 +62,7 @@ public static class Bootstrap
 
     internal static void Shutdown()
     {
+        Director.Save("test");
         FeedbackSFX.Shutdown();
     }
 
@@ -107,7 +109,7 @@ public static class Bootstrap
         WarehouseLoader.GenerateSpawnablesFromSounds();
     }
 
-    internal static void OnLevelLoaded()
+    internal static void OnLevelLoaded(LevelInfo info)
     {
         if (!m_audioImportInstalled)
         {
@@ -154,6 +156,7 @@ public static class Bootstrap
         FeedbackSFX.Initialize();
 
         Director.Shutdown();
+        Director.SetLevel(info.barcode);
         Director.Initialize();
 
         CreateUI();

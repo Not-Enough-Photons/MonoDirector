@@ -1,6 +1,8 @@
 ﻿using Il2CppCysharp.Threading.Tasks.Triggers;
 using Il2CppSLZ.Bonelab;
-using NEP.MonoDirector.Archetype;
+using Il2CppTriangleNet.Geometry;
+using NEP.MonoDirector.Archetypes;
+using NEP.MonoDirector.Tools;
 using UnityEngine;
 
 namespace NEP.MonoDirector.Core;
@@ -63,7 +65,7 @@ public static class Caster
     {
         Vector3 actorPosition = actor.Frames[0].TransformFrames[0].position;
         Constants.RigManager.Teleport(actorPosition, true);
-        Constants.RigManager.SwapAvatar(actor.ClonedAvatar);
+        Constants.RigManager.SwapAvatar(actor.Avatar);
 
         UncastActor(actor);
 
@@ -98,16 +100,16 @@ public static class Caster
 
     public static void RemoveProp(Prop prop)
     {
-        prop.SetPhysicsActive(true);
+        prop.Proxy.SetPhysicsActive(true);
         m_props.Remove(prop);
         m_recordProps.Remove(prop);
 
         // Tell the actor to remove the owned prop as well
         // If we don't do this, the destroyed prop will still exist and cause issues!
-        if (prop.Actor != null)
+        if (prop.Owner != null)
         {
             // TODO: Change Prop.Actor to use Actor type instead of Trackable
-            Actor actor = (Actor)prop.Actor;
+            Actor actor = prop.Owner;
             actor.DisownProp(prop);
         }
         

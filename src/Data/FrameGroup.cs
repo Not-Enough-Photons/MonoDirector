@@ -57,13 +57,10 @@ public struct FrameGroup : IBinaryData
     
     public void FromBinary(Stream stream)
     {
-        //Logging.Msg($"[FrameGroup]: FromBinary() Called!");
-        
+        BinaryReader reader = new BinaryReader(stream);
+
         // Check the version number
-        byte[] versionBytes = new byte[sizeof(short)];
-        stream.Read(versionBytes, 0, versionBytes.Length);
-        
-        short version = BitConverter.ToInt16(versionBytes, 0);
+        short version = reader.ReadInt16();
 
         if (version != (short)VersionNumber.V1)
             throw new Exception($"Unsupported version type! Value was {version}");
@@ -71,13 +68,11 @@ public struct FrameGroup : IBinaryData
         // Deserialize
         if (version == (short)VersionNumber.V1)
         {
-            byte[] headerBytes = new byte[sizeof(int) + sizeof(float)];
-            stream.Read(headerBytes, 0, headerBytes.Length);
+            float frameTime = reader.ReadSingle();
+            int numFrames = reader.ReadInt32();
 
-            FrameTime = BitConverter.ToSingle(headerBytes, 0);
+            FrameTime = frameTime;
             
-            int numFrames = BitConverter.ToInt32(headerBytes, sizeof(float));
-
 #if DEBUG
             Logging.Msg($"[ACTOR]: GrFrameDT is {FrameTime}");
             Logging.Msg($"[ACTOR]: GrOfCount is {numFrames}");

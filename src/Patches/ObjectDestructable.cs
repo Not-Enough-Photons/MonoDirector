@@ -1,7 +1,8 @@
-﻿using NEP.MonoDirector.Archetype;
+﻿using NEP.MonoDirector.Archetypes;
 using NEP.MonoDirector.Core;
 
 using Il2CppSLZ.Marrow;
+using NEP.MonoDirector.Archetypes.Proxy;
 
 namespace NEP.MonoDirector.Patches;
 
@@ -17,8 +18,8 @@ internal static class ObjectDestructiblePatches
 
         static void OnObjectDestroyed(ObjectDestructible destructable)
         {
-            var prop = destructable.GetComponent<BreakableProp>();
-            prop?.RecordAction(prop.DestructionEvent);
+            if (destructable.TryGetComponent(out PropProxy proxy))
+                return;
         }
     }
 }

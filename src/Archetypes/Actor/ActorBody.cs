@@ -10,7 +10,7 @@ using Il2CppSLZ.Marrow.Audio;
 using MarrowAvatar = Il2CppSLZ.VRMK.Avatar;
 using Random = UnityEngine.Random;
 
-namespace NEP.MonoDirector.Archetype;
+namespace NEP.MonoDirector.Archetypes;
 
 public class ActorBody
 {
@@ -18,7 +18,7 @@ public class ActorBody
     {
         public void Attach(Actor actor, HumanBodyBones bone)
         {
-            part.transform.parent = actor.ClonedAvatar.animator.GetBoneTransform(bone);
+            part.transform.parent = actor.Avatar.animator.GetBoneTransform(bone);
             part.transform.localPosition = part.transform.parent.localPosition;
             part.transform.rotation = part.transform.parent.rotation;
         }
@@ -76,24 +76,24 @@ public class ActorBody
         GameObject triggerHullObject = new GameObject("Actor Trigger Hull");
         BoxCollider triggerHull = triggerHullObject.AddComponent<BoxCollider>();
         triggerHull.isTrigger = true;
-        float avatarHeight = actor.ClonedAvatar.height;
-        float avatarWidth = actor.ClonedAvatar._waistEllipseX + actor.ClonedAvatar._waistEllipseZ;
+        float avatarHeight = actor.Avatar.height;
+        float avatarWidth = actor.Avatar._waistEllipseX + actor.Avatar._waistEllipseZ;
         triggerHull.size = new Vector3(avatarWidth, avatarHeight, avatarWidth);
-        triggerHullObject.transform.SetParent(actor.ClonedAvatar.transform);
+        triggerHullObject.transform.SetParent(actor.Avatar.transform);
         triggerHullObject.transform.localPosition = Vector3.zero;
         triggerHullObject.transform.localRotation = Quaternion.identity;
     }
 
     private void SetupCollisions()
     {
-        Transform actorHead = actor.ClonedAvatar.animator.GetBoneTransform(HumanBodyBones.Head);
-        Transform actorChest = actor.ClonedAvatar.animator.GetBoneTransform(HumanBodyBones.UpperChest);
-        Transform actorSpine = actor.ClonedAvatar.animator.GetBoneTransform(HumanBodyBones.Spine);
-        Transform actorHips = actor.ClonedAvatar.animator.GetBoneTransform(HumanBodyBones.Hips);
-        Transform actorLeftHand = actor.ClonedAvatar.animator.GetBoneTransform(HumanBodyBones.LeftHand);
-        Transform actorRightHand = actor.ClonedAvatar.animator.GetBoneTransform(HumanBodyBones.RightHand);
-        Transform actorLeftFoot = actor.ClonedAvatar.animator.GetBoneTransform(HumanBodyBones.LeftFoot);
-        Transform actorRightFoot = actor.ClonedAvatar.animator.GetBoneTransform(HumanBodyBones.RightFoot);
+        Transform actorHead = actor.Avatar.animator.GetBoneTransform(HumanBodyBones.Head);
+        Transform actorChest = actor.Avatar.animator.GetBoneTransform(HumanBodyBones.UpperChest);
+        Transform actorSpine = actor.Avatar.animator.GetBoneTransform(HumanBodyBones.Spine);
+        Transform actorHips = actor.Avatar.animator.GetBoneTransform(HumanBodyBones.Hips);
+        Transform actorLeftHand = actor.Avatar.animator.GetBoneTransform(HumanBodyBones.LeftHand);
+        Transform actorRightHand = actor.Avatar.animator.GetBoneTransform(HumanBodyBones.RightHand);
+        Transform actorLeftFoot = actor.Avatar.animator.GetBoneTransform(HumanBodyBones.LeftFoot);
+        Transform actorRightFoot = actor.Avatar.animator.GetBoneTransform(HumanBodyBones.RightFoot);
 
         head = new GameObject("Head");
         chest = new GameObject("Chest");
@@ -158,12 +158,12 @@ public class ActorBody
         leftHand.transform.rotation = Quaternion.identity;
         rightHand.transform.rotation = Quaternion.identity;
 
-        headVFX.surfaceData = actor.ClonedAvatar.surfaceData;
-        chestVFX.surfaceData = actor.ClonedAvatar.surfaceData;
-        spineVFX.surfaceData = actor.ClonedAvatar.surfaceData;
-        hipVFX.surfaceData = actor.ClonedAvatar.surfaceData;
-        leftHandVFX.surfaceData = actor.ClonedAvatar.surfaceData;
-        rightHandVFX.surfaceData = actor.ClonedAvatar.surfaceData;
+        headVFX.surfaceData = actor.Avatar.surfaceData;
+        chestVFX.surfaceData = actor.Avatar.surfaceData;
+        spineVFX.surfaceData = actor.Avatar.surfaceData;
+        hipVFX.surfaceData = actor.Avatar.surfaceData;
+        leftHandVFX.surfaceData = actor.Avatar.surfaceData;
+        rightHandVFX.surfaceData = actor.Avatar.surfaceData;
     }
 
     private void SetupAudio()
@@ -172,9 +172,8 @@ public class ActorBody
         footstepJogAudio = new List<AudioClip>();
         landingAudio = new List<AudioClip>();
 
-        MarrowAvatar avatar = actor.PlayerAvatar;
-
-
+        MarrowAvatar avatar = Constants.Avatar;
+        
         Il2CppReferenceArray<AudioClip> avatarWalkingClips = avatar.footstepsWalk?.audioClips;
         Il2CppReferenceArray<AudioClip> avatarJoggingClips = avatar.footstepsJog?.audioClips;
 

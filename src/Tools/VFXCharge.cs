@@ -1,7 +1,7 @@
 ﻿using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.Pool;
 using MelonLoader;
-using NEP.MonoDirector.Archetype;
+using NEP.MonoDirector.Archetypes;
 using NEP.MonoDirector.Audio;
 using NEP.MonoDirector.Core;
 using UnityEngine;
@@ -119,8 +119,8 @@ public class VFXCharge(IntPtr ptr) : PointToolEntity(ptr)
     {
         if (m_prop == null)
         {
-            m_prop = gameObject.AddComponent<Prop>();
-            Caster.AddProp(m_prop);
+            //m_prop = gameObject.AddComponent<Prop>();
+            //Caster.AddProp(m_prop);
         }
     }
 
@@ -135,14 +135,14 @@ public class VFXCharge(IntPtr ptr) : PointToolEntity(ptr)
                 Caster.RemoveProp(m_prop);
             }
             
-            Destroy(m_prop);
+            //Destroy(m_prop);
             m_prop = null;
         }
     }
 
     public void RecordTrigger()
     {
-        m_prop.RecordAction(() => TriggerVFX());
+        // m_prop.RecordAction(() => TriggerVFX());
     }
 
     public void SetParticles(List<ParticleSystem> particles)

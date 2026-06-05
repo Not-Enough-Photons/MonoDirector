@@ -3,7 +3,7 @@ using UnityEngine;
 
 using Il2CppSLZ.Bonelab;
 
-namespace NEP.MonoDirector.Archetype;
+namespace NEP.MonoDirector.Archetypes;
 
 [MelonLoader.RegisterTypeInIl2Cpp]
 public class GripEventListener(IntPtr ptr) : MonoBehaviour(ptr)
@@ -65,7 +65,7 @@ public class GripEventListener(IntPtr ptr) : MonoBehaviour(ptr)
             return;
         }
 
-        prop.RecordAction(new System.Action(() => gripEvents.OnAttach?.Invoke()));
+        prop.RecordAction((byte)ActionType.GripEventAttached, new System.Action(() => gripEvents.OnAttach?.Invoke()));
     }
 
     private void OnDetach()
@@ -80,7 +80,7 @@ public class GripEventListener(IntPtr ptr) : MonoBehaviour(ptr)
             return;
         }
 
-        prop.RecordAction(new System.Action(() => gripEvents.OnDetach?.Invoke()));
+        prop.RecordAction((byte)ActionType.GripEventDetached, new System.Action(() => gripEvents.OnDetach?.Invoke()));
     }
 
     private void OnIndexDown()
@@ -95,7 +95,7 @@ public class GripEventListener(IntPtr ptr) : MonoBehaviour(ptr)
             return;
         }
 
-        prop.RecordAction(new System.Action(() => gripEvents.OnIndexDown?.Invoke()));
+        prop.RecordAction((byte)ActionType.GripEventIndexDown, new System.Action(() => gripEvents.OnIndexDown?.Invoke()));
     }
 
     private void OnMenuTapDown()
@@ -110,6 +110,6 @@ public class GripEventListener(IntPtr ptr) : MonoBehaviour(ptr)
             return;
         }
 
-        prop.RecordAction(new System.Action(() => gripEvents.OnMenuTapDown?.Invoke()));
+        prop.RecordAction((byte)ActionType.GripEventMenuTap, new System.Action(() => gripEvents.OnMenuTapDown?.Invoke()));
     }
 }

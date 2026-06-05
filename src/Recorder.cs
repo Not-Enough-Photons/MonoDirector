@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 
 using MelonLoader;
-using NEP.MonoDirector.Archetype;
+using NEP.MonoDirector.Archetypes;
 using NEP.MonoDirector.Audio;
 using NEP.MonoDirector.State;
 
@@ -108,7 +108,7 @@ public class Recorder
 
             foreach (var prop in Caster.RecordProps)
             {
-                prop.Record(m_recordTick);
+                prop.Record();
             }
 
             foreach (var castMember in Caster.Cast)
@@ -273,47 +273,10 @@ public class Recorder
                     actor.Show();
             }
 
-#if DEBUG
-            /*
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-            byte[] actorBytes = ActiveActor.ToBinary();
-            sw.Stop();
-
-            Main.Logger.Msg($"[STOPWATCH]: Actor::ToBinary() took {sw.ElapsedMilliseconds}...");
-
-            sw.Restart();
-
-            using (FileStream file = File.Open("test.mdat", FileMode.Create))
-            {
-                uint ident = ActiveActor.GetBinaryID();
-                file.Write(BitConverter.GetBytes(ident), 0, sizeof(uint));
-
-                file.Write(actorBytes, 0, actorBytes.Length);
-            };
-
-            sw.Stop();
-
-            Main.Logger.Msg($"[STOPWATCH]: Writing MDAT took {sw.ElapsedMilliseconds}...");
-            sw.Restart();
-
-            // Then try to read it back
-            using (FileStream file = File.Open("test.mdat", FileMode.Open))
-            {
-                // Seek past the first 4 bytes
-                file.Seek(4, SeekOrigin.Begin);
-                ActiveActor.FromBinary(file);
-            }
-
-            sw.Stop();
-
-            Main.Logger.Msg($"[STOPWATCH]: Actor::FromBinary() took {sw.ElapsedMilliseconds}...");
-            */
-#endif
-
             if (Settings.World.recordActors)
             {
-                m_activeActor.CloneAvatar();
+                m_activeActor.CreateProxy(Constants.Avatar);
+                m_activeActor.UpdateClone();
 
                 foreach (var recordedProp in Caster.RecordProps)
                 {

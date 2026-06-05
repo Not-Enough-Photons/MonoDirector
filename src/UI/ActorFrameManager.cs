@@ -4,7 +4,7 @@ using Il2CppSLZ.Marrow.Pool;
 using Il2CppSLZ.Marrow.Warehouse;
 using NEP.MonoDirector.Core;
 using NEP.MonoDirector.Data;
-using NEP.MonoDirector.Proxy;
+using NEP.MonoDirector.Archetypes.Proxy;
 using NEP.MonoDirector.State;
 using UnityEngine;
 

@@ -1,7 +1,8 @@
-﻿using NEP.MonoDirector.Archetype;
+﻿using NEP.MonoDirector.Archetypes;
 
 using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.Data;
+using NEP.MonoDirector.Archetypes.Proxy;
 
 namespace NEP.MonoDirector.Patches;
 
@@ -12,8 +13,11 @@ internal static class GunPatches
     {
         internal static void Postfix(Gun __instance)
         {
-            var gunProp = __instance.gameObject.GetComponent<GunProp>();
-            gunProp?.RecordAction(new System.Action(() => gunProp.GunFakeFire()));
+            if (!__instance.TryGetComponent(out PropProxy proxy))
+                return;
+
+            GunProp prop = (GunProp)proxy.Prop;
+            prop.RecordAction((byte)ActionType.Fire, () => prop.GunFakeFire());
         }
     }
 
@@ -22,8 +26,11 @@ internal static class GunPatches
     {
         internal static void Postfix(Gun __instance, Gun.AnimationStates state, float perc)
         {
-            var gunProp = __instance.gameObject.GetComponent<GunProp>();
-            gunProp?.RecordAction(() => __instance.SetAnimationState(state, perc));
+            if (!__instance.TryGetComponent(out PropProxy proxy))
+                return;
+
+            GunProp prop = (GunProp)proxy.Prop;
+            prop?.RecordAction((byte)ActionType.AnimStateUpdate, () => __instance.SetAnimationState(state, perc));
         }
     }
 
@@ -34,11 +41,14 @@ internal static class GunPatches
         {
             if (__instance._magState != null)
             {
-                var gunProp = __instance.gameObject.GetComponent<GunProp>();
+                if (!__instance.TryGetComponent(out PropProxy proxy))
+                    return;
+
+                GunProp prop = (GunProp)proxy.Prop;
                 int count = __instance._magState.AmmoCount;
                 CartridgeData cartridgeData = __instance._magState.cartridgeData;
                 MagazineData magazineData = __instance._magState.magazineData;
-                gunProp?.RecordAction(new System.Action(() => gunProp.InsertMagState(cartridgeData, magazineData, count)));
+                prop?.RecordAction((byte)ActionType.InsertMag, () => prop.InsertMagState(cartridgeData, magazineData, count));
             }
         }
     }
@@ -48,8 +58,11 @@ internal static class GunPatches
     {
         internal static void Postfix(Gun __instance)
         {
-            var gunProp = __instance.gameObject.GetComponent<GunProp>();
-            gunProp?.RecordAction(new System.Action(() => gunProp.RemoveMagState()));
+            if (!__instance.TryGetComponent(out PropProxy proxy))
+                return;
+
+            GunProp prop = (GunProp)proxy.Prop;
+            prop?.RecordAction((byte)ActionType.RemoveMag, () => prop.RemoveMagState());
         }
     }
 
@@ -58,8 +71,11 @@ internal static class GunPatches
     {
         internal static void Postfix(Gun __instance)
         {
-            var gunProp = __instance.gameObject.GetComponent<GunProp>();
-            gunProp?.RecordAction(new System.Action(() => __instance.UpdateArt()));
+            if (!__instance.TryGetComponent(out PropProxy proxy))
+                return;
+
+            GunProp prop = (GunProp)proxy.Prop;
+            prop?.RecordAction((byte)ActionType.UpdateArt, () => prop.UpdateArt());
         }
     }
 }

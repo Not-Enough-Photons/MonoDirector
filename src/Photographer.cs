@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 
-using NEP.MonoDirector.Archetype;
+using NEP.MonoDirector.Archetypes;
 
 using UnityEngine;
 

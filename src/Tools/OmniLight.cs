@@ -3,6 +3,10 @@ using UnityEngine;
 
 using Il2CppSLZ.Marrow;
 using Il2CppTMPro;
+using NEP.MonoDirector.Archetypes;
+using NEP.MonoDirector.Core;
+using NEP.MonoDirector.Data;
+using NEP.MonoDirector.Extensions;
 
 namespace NEP.MonoDirector.Tools;
 
@@ -12,6 +16,7 @@ public class OmniLight(IntPtr ptr) : PointToolEntity(ptr)
     public static List<OmniLight> ComponentCache { get; private set; }
 
     private Light m_light;
+    private LightEntity m_lightEntity;
     private LightRadiusGizmo m_radiusGizmo;
     private LightIntensityGizmo m_intensityGizmo;
     private LightColorGizmo m_colorGizmo;
@@ -39,21 +44,67 @@ public class OmniLight(IntPtr ptr) : PointToolEntity(ptr)
     {
         base.OnEnable();
         ComponentCache.Add(this);
+
+        // Instead of creating a new SoundEntity,
+        // use an existing one from the active scene.
+        int entityCount = Director.ActiveScene.Entities.Count;
+        if (entityCount > 0)
+        {
+            for (int i = 0; i < entityCount; i++)
+            {
+                Entity entity = Director.ActiveScene.Entities[i];
+
+                if (!entity.AssociatedTool && entity.EntityType == Entity.Type.Light)
+                {
+                    entity.AssociateTool(this);
+                    m_lightEntity = (LightEntity)entity;
+                }
+            }
+        }
+        else
+        {
+            m_lightEntity = new LightEntity();
+            m_lightEntity.SetBarcode(m_poolee.SpawnableCrate._barcode._id);
+            m_lightEntity.SetDirectional(false);
+        
+            Director.ActiveScene.AddEntity(m_lightEntity);
+        }
     }
 
     protected override void OnDisable()
     {
         base.OnDisable();
         ComponentCache.Remove(this);
+        
+        Director.ActiveScene.RemoveEntity(m_lightEntity);
+        m_lightEntity = null;
     }
 
     protected virtual void Update()
     {
         m_lineRenderer.SetPosition(1, m_radiusGizmo.transform.localPosition);
-        m_light.range = m_radiusGizmo.Distance;
-        m_light.intensity = m_intensityGizmo.Intensity;
-        m_light.color = m_colorGizmo.Color;
+        
+        m_lightEntity.SetPosition(transform.position);
+        m_lightEntity.SetRotation(transform.rotation);
+        m_lightEntity.SetRange(m_radiusGizmo.Distance);
+        m_lightEntity.SetIntensity(m_intensityGizmo.Intensity);
+        m_lightEntity.SetColor(m_colorGizmo.Color);
+        
+        m_light.range = m_lightEntity.Range;
+        m_light.intensity = m_lightEntity.Intensity;
+        m_light.color = m_lightEntity.Color;
+        
         m_spriteRenderer.material.SetColor("_BaseColor", m_light.color);
+    }
+
+    public void LoadFromEntity(LightEntity lightEntity)
+    {
+        m_lightEntity = lightEntity;
+        m_lightEntity.SetPosition(transform.position);
+        m_lightEntity.SetRotation(transform.rotation);
+        m_lightEntity.SetRange(m_radiusGizmo.Distance);
+        m_lightEntity.SetIntensity(m_intensityGizmo.Intensity);
+        m_lightEntity.SetColor(m_colorGizmo.Color);
     }
 
     protected override void OnHandAttached(Hand hand)

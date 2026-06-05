@@ -4,28 +4,19 @@ using NEP.MonoDirector.Data;
 
 using Il2CppSLZ.Marrow;
 
-namespace NEP.MonoDirector.Archetype;
+namespace NEP.MonoDirector.Archetypes;
 
-[MelonLoader.RegisterTypeInIl2Cpp]
-public class BreakableProp(IntPtr ptr) : Prop(ptr)
+public class BreakableProp : Prop
 {
     public ObjectDestructible breakableProp;
-
-    protected override void Awake()
-    {
-        base.Awake();
-
-        m_bodyFrames = new List<ObjectFrame>();
-        m_actionFrames = new List<ActionFrame>();
-    }
 
     public override void OnSceneBegin()
     {
         base.OnSceneBegin();
 
-        foreach(ActionFrame actionFrame in m_actionFrames)
+        foreach(var action in m_actions)
         {
-            actionFrame.Reset();
+            action.Reset();
         }
     }
 
@@ -38,6 +29,6 @@ public class BreakableProp(IntPtr ptr) : Prop(ptr)
     {
         breakableProp._isDead = false;
         breakableProp.TakeDamage(Vector3.zero, 100f, true);
-        gameObject.SetActive(false);
+        // gameObject.SetActive(false);
     }
 }

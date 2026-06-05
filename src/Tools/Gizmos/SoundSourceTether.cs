@@ -1,6 +1,6 @@
-﻿using NEP.MonoDirector.Archetype;
+﻿using NEP.MonoDirector.Archetypes;
 using NEP.MonoDirector.Audio;
-using NEP.MonoDirector.Proxy;
+using NEP.MonoDirector.Archetypes.Proxy;
 
 using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.Interaction;

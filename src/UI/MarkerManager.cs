@@ -1,7 +1,7 @@
-﻿using NEP.MonoDirector.Archetype;
+﻿using NEP.MonoDirector.Archetypes;
 using NEP.MonoDirector.Core;
 using NEP.MonoDirector.Data;
-using NEP.MonoDirector.Proxy;
+using NEP.MonoDirector.Archetypes.Proxy;
 using NEP.MonoDirector.State;
 
 using UnityEngine;
@@ -62,7 +62,10 @@ public static class MarkerManager
 
     public static void AddMarkerToProp(Prop prop)
     {
-        if (m_markers.ContainsKey(prop.gameObject))
+        if (!prop.Proxy)
+            return;
+        
+        if (m_markers.ContainsKey(prop.Proxy.Entity.gameObject))
             return;
 
         Marker marker = m_loadedMarkers.FirstOrDefault((marker) => !marker.Active);
@@ -75,19 +78,19 @@ public static class MarkerManager
 
         marker.SetOffset(Vector3.up * 0.125f);
         marker.Parent(prop);
-        m_markers.Add(prop.gameObject, marker);
+        m_markers.Add(prop.Proxy.Entity.gameObject, marker);
     }
 
     public static void RemoveMarkerFromProp(Prop prop)
     {
-        if (!m_markers.ContainsKey(prop.gameObject))
+        if (!m_markers.ContainsKey(prop.Proxy.Entity.gameObject))
             return;
 
-        Marker marker = m_markers[prop.gameObject];
+        Marker marker = m_markers[prop.Proxy.Entity.gameObject];
         marker.SetOffset(Vector3.zero);
         marker.SetTarget(null);
         marker.Hide();
-        m_markers.Remove(prop.gameObject);
+        m_markers.Remove(prop.Proxy.Entity.gameObject);
     }
 
     public static void AddMarkerToActor(ActorProxy proxy)
