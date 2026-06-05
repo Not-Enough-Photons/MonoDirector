@@ -1,35 +1,31 @@
 ﻿using System.Collections;
-
-using UnityEngine;
-
-using Il2CppSLZ.Marrow.Data;
-using Il2CppSLZ.Marrow.Pool;
-
 using Il2CppCysharp.Threading.Tasks;
-
+using Il2CppSLZ.Marrow.Warehouse;
+using MelonLoader;
+using UnityEngine;
 
 namespace NEP.MonoDirector.Yielding;
 
-public sealed class WaitForAssetSpawn<T> : IEnumerator
+public sealed class WaitForAvatarSpawn<T> : IEnumerator
 {
-    public WaitForAssetSpawn(Spawnable spawnable, Vector3 position, Quaternion rotation)
+    public WaitForAvatarSpawn(AvatarCrate crate)
     {
-        m_spawnTask = AssetSpawner.SpawnAsync(
-            spawnable,
-            position,
-            rotation, 
-            new Il2CppSystem.Nullable<Vector3>(Vector3.one), 
-            null, 
-            false, 
-            new Il2CppSystem.Nullable<int>(0));
+        m_spawnTask = crate.LoadAssetAsync();
     }
     
     public object Current => null;
 
     private T m_result;
     private Action<T> m_callback;
-    private UniTask<Poolee> m_spawnTask;
+    private UniTask<GameObject> m_spawnTask;
 
+    public static WaitForAvatarSpawn<T> Run(AvatarCrate crate)
+    {
+        var instance = new WaitForAvatarSpawn<T>(crate);
+        MelonCoroutines.Start(instance);
+        return instance;
+    }
+    
     public IEnumerator Then(Action<T> callback)
     {
         m_callback = callback;

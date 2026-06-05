@@ -1,8 +1,8 @@
 ﻿using Il2CppSLZ.Marrow;
-using NEP.MonoDirector.Archetype;
+using NEP.MonoDirector.Archetypes;
 using NEP.MonoDirector.Cameras;
 using NEP.MonoDirector.Data;
-using NEP.MonoDirector.Proxy;
+using NEP.MonoDirector.Archetypes.Proxy;
 using NEP.MonoDirector.Tools;
 using UnityEngine;
 
@@ -82,31 +82,31 @@ public class Marker
 
         m_markerType = MarkerType.Prop;
 
-        if (Prop.EligibleWithType<GunProp>(prop.Entity))
+        if (Prop.EligibleWithType<Gun>(prop.Proxy.Entity))
             m_propType = PropType.Gun;
-        else if (Prop.EligibleWithType<Magazine>(prop.Entity))
+        else if (Prop.EligibleWithType<Magazine>(prop.Proxy.Entity))
             m_propType = PropType.Magazine;
-        else if (Prop.EligibleWithType<Atv>(prop.Entity))
+        else if (Prop.EligibleWithType<Atv>(prop.Proxy.Entity))
             m_propType = PropType.Vehicle;
-        else if (Prop.EligibleWithType<PointToolEntity>(prop.Entity))
+        else if (Prop.EligibleWithType<PointToolEntity>(prop.Proxy.Entity))
             m_propType = PropType.Tool;
-        else if (Prop.EligibleWithType<HandheldCamera>(prop.Entity))
+        else if (Prop.EligibleWithType<HandheldCamera>(prop.Proxy.Entity))
             m_propType = PropType.Camera;
         else
             m_propType = PropType.Generic;
 
         UpdateIcon();
 
-        m_target = prop.transform;
-        m_gameObject.transform.position = prop.transform.position;
+        m_target = prop.Proxy.transform;
+        m_gameObject.transform.position = prop.Proxy.transform.position;
 
-        if (!prop.Entity)
+        if (!prop.Proxy)
         {
             Hide();
             return;
         }
 
-        Bounds bounds = prop.Entity.AnchorBody.Bounds;
+        Bounds bounds = prop.Proxy.Entity.AnchorBody.Bounds;
         SetOffset(new Vector3(0f, (bounds.center.y + bounds.extents.y) + m_markerPadding, 0f));
     }
 

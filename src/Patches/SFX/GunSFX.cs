@@ -1,5 +1,5 @@
-﻿using NEP.MonoDirector.Archetype;
-using NEP.MonoDirector.Core;
+﻿using NEP.MonoDirector.Archetypes;
+using NEP.MonoDirector.Archetypes.Proxy;
 
 using Il2CppSLZ.Marrow;
 
@@ -12,8 +12,11 @@ internal static class GunSFXPatches
     {
         internal static void Postfix(GunSFX __instance)
         {
-            var gunProp = __instance.gameObject.GetComponent<GunProp>();
-            gunProp?.RecordAction(gunProp.Gun.gunSFX.MagazineInsert);
+            if (!__instance.TryGetComponent(out PropProxy proxy))
+                return;
+
+            GunProp prop = (GunProp)proxy.Prop;
+            //prop?.RecordAction(prop.Gun.gunSFX.MagazineInsert);
         }
     }
 
@@ -22,8 +25,11 @@ internal static class GunSFXPatches
     {
         internal static void Postfix(GunSFX __instance)
         {
-            var gunProp = __instance.gameObject.GetComponent<GunProp>();
-            gunProp?.RecordAction(gunProp.Gun.gunSFX.MagazineDrop);
+            if (!__instance.TryGetComponent(out PropProxy proxy))
+                return;
+
+            GunProp prop = (GunProp)proxy.Prop;
+            //prop?.RecordAction(prop.Gun.gunSFX.MagazineDrop);
         }
     }
 
@@ -32,8 +38,11 @@ internal static class GunSFXPatches
     {
         internal static void Postfix(GunSFX __instance)
         {
-            var gunProp = __instance.gameObject.GetComponent<GunProp>();
-            gunProp?.RecordAction(gunProp.Gun.gunSFX.SlidePull);
+            if (!__instance.TryGetComponent(out PropProxy proxy))
+                return;
+
+            GunProp prop = (GunProp)proxy.Prop;
+            //prop?.RecordAction(prop.Gun.gunSFX.SlidePull);
         }
     }
 
@@ -42,8 +51,11 @@ internal static class GunSFXPatches
     {
         internal static void Postfix(GunSFX __instance)
         {
-            var gunProp = __instance.gameObject.GetComponent<GunProp>();
-            gunProp?.RecordAction(gunProp.Gun.gunSFX.SlideRelease);
+            if (!__instance.TryGetComponent(out PropProxy proxy))
+                return;
+
+            GunProp prop = (GunProp)proxy.Prop;
+            //prop?.RecordAction(prop.Gun.gunSFX.SlideRelease);
         }
     }
 
@@ -52,8 +64,11 @@ internal static class GunSFXPatches
     {
         internal static void Postfix(GunSFX __instance)
         {
-            var gunProp = __instance.gameObject.GetComponent<GunProp>();
-            gunProp?.RecordAction(gunProp.Gun.gunSFX.SlideLock);
+            if (!__instance.TryGetComponent(out PropProxy proxy))
+                return;
+
+            GunProp prop = (GunProp)proxy.Prop;
+            //prop?.RecordAction(prop.Gun.gunSFX.SlideLock);
         }
     }
 }

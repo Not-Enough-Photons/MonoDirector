@@ -2,7 +2,7 @@
 using NEP.MonoDirector.Core;
 
 using Il2CppSLZ.Marrow;
-
+using NEP.MonoDirector.Archetypes;
 using MarrowAvatar = Il2CppSLZ.VRMK.Avatar;
 
 namespace NEP.MonoDirector.Patches;
@@ -20,8 +20,8 @@ internal static class RigManagerPatches
             }
 
             var activeActor = Recorder.Instance.ActiveActor;
-            activeActor.RecordAction(new System.Action(() => activeActor.SwitchToActor(activeActor)));
-            activeActor.CloneAvatar();
+            activeActor.RecordAction((byte)Actor.ActionType.ActorSwitchAvatar, () => activeActor.SwitchToActor(activeActor));
+            activeActor.UpdateClone();
             Recorder.Instance.ActiveActors.Add(activeActor);
             Recorder.Instance.SetActor(newAvatar);
         }

@@ -2,7 +2,7 @@ using Il2CppTMPro;
 using UnityEngine.UI;
 using UnityEngine;
 
-using NEP.MonoDirector.Archetype;
+using NEP.MonoDirector.Archetypes;
 
 namespace NEP.MonoDirector.UI.Menus;
 

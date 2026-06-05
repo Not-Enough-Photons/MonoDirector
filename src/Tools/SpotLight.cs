@@ -1,4 +1,8 @@
 using Il2CppSLZ.Marrow;
+using NEP.MonoDirector.Archetypes;
+using NEP.MonoDirector.Core;
+using NEP.MonoDirector.Data;
+using NEP.MonoDirector.Extensions;
 using UnityEngine;
 
 namespace NEP.MonoDirector.Tools;
@@ -9,6 +13,7 @@ public class SpotLight(IntPtr ptr) : PointToolEntity(ptr)
     public static List<SpotLight> ComponentCache { get; private set; }
 
     private Light m_light;
+    private LightEntity m_lightEntity;
     private LightRadiusGizmo m_radiusGizmo;
     private LightAngleGizmo m_angleGizmo;
     private LightIntensityGizmo m_intensityGizmo;
@@ -43,26 +48,70 @@ public class SpotLight(IntPtr ptr) : PointToolEntity(ptr)
     {
         base.OnEnable();
         ComponentCache.Add(this);
+
+        // Instead of creating a new SoundEntity,
+        // use an existing one from the active scene.
+        int entityCount = Director.ActiveScene.Entities.Count;
+        if (entityCount > 0)
+        {
+            for (int i = 0; i < entityCount; i++)
+            {
+                Entity entity = Director.ActiveScene.Entities[i];
+
+                if (!entity.AssociatedTool && entity.EntityType == Entity.Type.Light)
+                {
+                    entity.AssociateTool(this);
+                    m_lightEntity = (LightEntity)entity;
+                }
+            }
+        }
+        else
+        {
+            m_lightEntity = new LightEntity();
+            m_lightEntity.SetBarcode(m_poolee.SpawnableCrate._barcode._id);
+            m_lightEntity.SetDirectional(true);
+        
+            Director.ActiveScene.AddEntity(m_lightEntity);
+        }
     }
 
     protected override void OnDisable()
     {
         base.OnDisable();
         ComponentCache.Remove(this);
+        
+        m_lightEntity.AssociateTool(null);
+        Director.ActiveScene.RemoveEntity(m_lightEntity);
+        m_lightEntity = null;
     }
 
     protected virtual void Update()
     {
+        m_lightEntity.SetPosition(transform.position);
+        m_lightEntity.SetRotation(transform.rotation);
+        m_lightEntity.SetRange(m_radiusGizmo.Distance);
+        m_lightEntity.SetIntensity(m_intensityGizmo.Intensity);
+        m_lightEntity.SetAngle(m_angleGizmo.Angle);
+        m_lightEntity.SetColor(m_colorGizmo.Color);
+        
         m_radiusLineRenderer.SetPosition(1, m_radiusGizmo.transform.localPosition);
-        m_light.range = m_radiusGizmo.Distance;
-        m_light.spotAngle = m_angleGizmo.Angle;
-        // m_light.innerSpotAngle = m_angleGizmo.Angle;
-        m_light.intensity = m_intensityGizmo.Intensity;
-        m_light.color = m_colorGizmo.Color;
+        m_leftAngleLine.SetPosition(1, Vector3.forward * m_radiusGizmo.transform.localPosition.z);
+        m_rightAngleLine.SetPosition(1, Vector3.forward * m_radiusGizmo.transform.localPosition.z);
+        
+        m_light.range = m_lightEntity.Range;
+        m_light.intensity = m_lightEntity.Intensity;
+        m_light.color = m_lightEntity.Color;
+        m_light.spotAngle = m_lightEntity.Angle;
+
         m_spriteRenderer.material.SetColor("_BaseColor", m_light.color);
 
-        m_leftAngleLine.transform.localEulerAngles = new Vector3(0f, m_light.spotAngle / 2f, 0f);
-        m_rightAngleLine.transform.localEulerAngles = new Vector3(0f, -m_light.spotAngle / 2f, 0f);
+        m_leftAngleLine.transform.localEulerAngles = Vector3.up * m_lightEntity.Angle / 2f;
+        m_rightAngleLine.transform.localEulerAngles = Vector3.up * -m_lightEntity.Angle / 2f;
+    }
+    
+    public void LoadFromEntity(LightEntity lightEntity)
+    {
+        m_lightEntity = lightEntity;
     }
 
     protected override void OnHandAttached(Hand hand)

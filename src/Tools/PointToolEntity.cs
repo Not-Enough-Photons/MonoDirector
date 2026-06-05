@@ -4,6 +4,8 @@ using MelonLoader;
 using NEP.MonoDirector.State;
 using System;
 using Il2CppSLZ.Marrow.Interaction;
+using Il2CppSLZ.Marrow.Pool;
+using NEP.MonoDirector.Core;
 using UnityEngine;
 
 namespace NEP.MonoDirector.Tools;
@@ -15,6 +17,7 @@ public class PointToolEntity(IntPtr ptr) : DirectedComponent(ptr)
     protected MarrowBody m_marrowBody;
     protected GameObject m_frame;
     protected Grip m_grip;
+    protected Poolee m_poolee;
 
     private Action<Hand> m_OnHandAttached;
     private Action<Hand> m_OnHandDetached;
@@ -25,6 +28,7 @@ public class PointToolEntity(IntPtr ptr) : DirectedComponent(ptr)
         m_frame = transform.Find("Frame").gameObject;
         m_grip = transform.Find("Grip").GetComponent<Grip>();
         m_marrowBody = GetComponent<MarrowBody>();
+        m_poolee = GetComponent<Poolee>();
 
         m_OnHandAttached = new Action<Hand>(OnHandAttached);
         m_OnHandDetached = new Action<Hand>(OnHandDetached);
@@ -44,6 +48,16 @@ public class PointToolEntity(IntPtr ptr) : DirectedComponent(ptr)
 
         m_grip.attachedHandDelegate -= m_OnHandAttached;
         m_grip.detachedHandDelegate -= m_OnHandDetached;
+    }
+
+    public virtual byte[] ToBinary()
+    {
+        throw new NotImplementedException();
+    }
+
+    public virtual void FromBinary(Stream stream)
+    {
+        
     }
 
     protected override void OnPlayStateSet(PlayState playState)

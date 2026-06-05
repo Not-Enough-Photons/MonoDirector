@@ -1,6 +1,6 @@
 ﻿using HarmonyLib;
 using NEP.MonoDirector;
-using NEP.MonoDirector.Archetype;
+using NEP.MonoDirector.Archetypes;
 using NEP.MonoDirector.Core;
 
 using Il2CppSLZ.Marrow;
@@ -23,7 +23,7 @@ public static class SeatPatches
                 return;
             }
             
-            activeActor.RecordAction(() => activeActor.ParentToSeat(__instance));
+            // activeActor.RecordAction(() => activeActor.ParentToSeat(__instance));
         }
     }
 
@@ -42,7 +42,7 @@ public static class SeatPatches
                 return;
             }
 
-            activeActor.RecordAction(() => activeActor.UnparentSeat());
+            // activeActor.RecordAction(() => activeActor.UnparentSeat());
         }
     }
 }

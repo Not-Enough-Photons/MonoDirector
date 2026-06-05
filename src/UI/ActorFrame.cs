@@ -1,7 +1,7 @@
 ﻿using Il2CppSLZ.Marrow;
-using NEP.MonoDirector.Archetype;
+using NEP.MonoDirector.Archetypes;
 using NEP.MonoDirector.Data;
-using NEP.MonoDirector.Proxy;
+using NEP.MonoDirector.Archetypes.Proxy;
 using UnityEngine;
 
 namespace NEP.MonoDirector.UI;

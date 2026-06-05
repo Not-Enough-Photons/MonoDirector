@@ -233,13 +233,10 @@ public struct ObjectFrame : IBinaryData
 
     public void FromBinary(Stream stream)
     {
-        //Main.Logger.Msg($"[ObjectFrame]: FromBinary() Called!");
+        BinaryReader reader = new BinaryReader(stream);
         
         // Check the version number
-        byte[] versionBytes = new byte[sizeof(short)];
-        stream.Read(versionBytes, 0, versionBytes.Length);
-        
-        short version = BitConverter.ToInt16(versionBytes, 0);
+        short version = reader.ReadInt16();
 
         if (version != (short)VersionNumber.V1)
             throw new Exception($"Unsupported version type! Value was {version}");
@@ -248,23 +245,20 @@ public struct ObjectFrame : IBinaryData
         // This is dependent on the version number!
         if (version == (short)VersionNumber.V1)
         {
-            byte[] bytes = new byte[sizeof(float) * 8];
-            stream.Read(bytes, 0, bytes.Length);
-            
             position = new Vector3(
-                BitConverter.ToSingle(bytes, 0),
-                BitConverter.ToSingle(bytes, sizeof(float)),
-                BitConverter.ToSingle(bytes, sizeof(float) * 2)
+                reader.ReadSingle(),
+                reader.ReadSingle(),
+                reader.ReadSingle()
             );
 
             rotation = new Quaternion(
-                BitConverter.ToSingle(bytes, sizeof(float) * 3),
-                BitConverter.ToSingle(bytes, sizeof(float) * 4),
-                BitConverter.ToSingle(bytes, sizeof(float) * 5),
-                BitConverter.ToSingle(bytes, sizeof(float) * 6)
+                reader.ReadSingle(),
+                reader.ReadSingle(),
+                reader.ReadSingle(),
+                reader.ReadSingle()
             );
 
-            frameTime = BitConverter.ToSingle(bytes, sizeof(float) * 7);
+            frameTime = reader.ReadSingle();
         }
     }
 

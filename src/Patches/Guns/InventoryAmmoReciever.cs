@@ -1,8 +1,9 @@
 ﻿using NEP.MonoDirector.Core;
-using NEP.MonoDirector.Archetype;
+using NEP.MonoDirector.Archetypes;
 
 using Il2CppSLZ.Marrow;
 using Il2CppSLZ.Marrow.Interaction;
+using NEP.MonoDirector.Archetypes.Proxy;
 
 namespace NEP.MonoDirector.Patches.Guns;
 
@@ -35,9 +36,11 @@ public static class MagazinePatches
             // HACK:
             // Only show the magazine when it's being grabbed.
             // Insert two keyframes: one inactive and one active.
-            var prop = poolee.GetComponent<Prop>();
-            prop.RecordAction(() => prop.gameObject.SetActive(false), 0f);
-            prop.RecordAction(() => prop.gameObject.SetActive(true), Recorder.Instance.RecordingTime);
+            if (!poolee.TryGetComponent(out PropProxy proxy))
+                return;
+
+            proxy.Prop.RecordActionAtTime((byte)ActionType.Hide, () => proxy.gameObject.SetActive(false), 0f);
+            proxy.Prop.RecordAction((byte)ActionType.Show, () => proxy.gameObject.SetActive(true));
         }
     }
 }

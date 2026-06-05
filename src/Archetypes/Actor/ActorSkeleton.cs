@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace NEP.MonoDirector.Archetype;
+namespace NEP.MonoDirector.Archetypes;
 
 public class ActorSkeleton
 {

@@ -1,8 +1,9 @@
-﻿using Il2CppSLZ.Marrow.Pool;
-using NEP.MonoDirector.Archetype;
+﻿using Il2CppSLZ.Marrow.Interaction;
+using Il2CppSLZ.Marrow.Pool;
+using NEP.MonoDirector.Archetypes;
 using NEP.MonoDirector.Core;
 using NEP.MonoDirector.Data;
-using NEP.MonoDirector.Proxy;
+using NEP.MonoDirector.Archetypes.Proxy;
 using NEP.MonoDirector.State;
 using UnityEngine;
 
@@ -60,10 +61,12 @@ public static class PropFrameManager
 
         asset.gameObject.SetActive(true);
 
-        asset.transform.SetParent(prop.Entity.transform);
-        asset.transform.localPosition = Vector3.zero;
+        MarrowBody body = prop.Proxy.Entity.Bodies.First();
+        
+        asset.transform.SetParent(prop.Proxy.transform);
+        asset.transform.localPosition = body.Bounds.center;
         asset.transform.localRotation = Quaternion.identity;
-        asset.transform.localScale = prop.Entity.Bodies[0].Bounds.extents;
+        asset.transform.localScale = body.Bounds.extents;
 
         frames.Add(prop, asset);
         activeFrames.Add(asset);

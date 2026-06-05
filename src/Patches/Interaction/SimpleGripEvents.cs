@@ -1,4 +1,6 @@
-﻿using NEP.MonoDirector.Archetype;
+﻿using NEP.MonoDirector.Archetypes;
+using NEP.MonoDirector.Archetypes.Proxy;
+
 using UnityEngine;
 
 using Il2CppSLZ.Bonelab;
@@ -16,7 +18,11 @@ internal static class SimpleGripEventsPatches
            if(__instance.GetComponent<GripEventListener>() == null)
            {
                 var listener = __instance.gameObject.AddComponent<GripEventListener>();
-                listener.SetProp(__instance.Grips[0].Host.Rb.GetComponent<Prop>());
+
+                if (!__instance.TryGetComponent(out PropProxy proxy))
+                    return;
+                
+                listener.SetProp(proxy.Prop);
            }
         }
     }

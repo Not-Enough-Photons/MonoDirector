@@ -2,7 +2,7 @@ using Il2CppTMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-using NEP.MonoDirector.Archetype;
+using NEP.MonoDirector.Archetypes;
 using NEP.MonoDirector.Core;
 
 namespace NEP.MonoDirector.UI.Menus;
@@ -74,8 +74,8 @@ public class ActorSettingsPage(IntPtr ptr) : MonoBehaviour(ptr)
 
     public void OnShowButtonClicked()
     {
-        bool lastShow = actor.ClonedAvatar.gameObject.activeInHierarchy;
+        bool lastShow = actor.Avatar.gameObject.activeInHierarchy;
         visiblityButtonText.text = lastShow ? "Show" : "Hide";
-        actor.ClonedAvatar.gameObject.SetActive(!lastShow);
+        actor.Avatar.gameObject.SetActive(!lastShow);
     }
 }

@@ -2,7 +2,7 @@
 using System.Collections;
 using MelonLoader;
 
-using NEP.MonoDirector.Archetype;
+using NEP.MonoDirector.Archetypes;
 using NEP.MonoDirector.Audio;
 using NEP.MonoDirector.State;
 
@@ -262,7 +262,7 @@ public class Playback
     public void AnimateProp(Prop prop)
     {
         if (prop != null)
-            prop.Act();
+            prop.Perform();
     }
 
     /// TODO: Is PlayRoutine() having a delay necessary?

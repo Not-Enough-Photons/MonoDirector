@@ -1,4 +1,4 @@
-﻿using NEP.MonoDirector.Archetype;
+﻿using NEP.MonoDirector.Archetypes;
 using UnityEngine;
 using MelonLoader;
 

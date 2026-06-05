@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-using NEP.MonoDirector.Archetype;
+using NEP.MonoDirector.Archetypes;
 
 namespace NEP.MonoDirector.UI.Menus;
 

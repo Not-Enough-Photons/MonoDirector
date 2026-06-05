@@ -8,7 +8,7 @@ using Il2CppSLZ.Bonelab;
 using Il2CppSLZ.Marrow.Pool;
 using Il2CppSLZ.VFX;
 
-namespace NEP.MonoDirector.Archetype;
+namespace NEP.MonoDirector.Archetypes;
 
 public static class ActorNPCBuilder
 {
@@ -33,7 +33,7 @@ public static class ActorNPCBuilder
             var prop = actorProp;
             // prop.InteractableRigidbody.isKinematic = false;
             // Director.RecordingProps.Remove(prop);
-            GameObject.Destroy(prop);
+            //GameObject.Destroy(prop);
             vfxBlip?.CallDespawnEffect();
         }
     }

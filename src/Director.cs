@@ -1,8 +1,21 @@
-﻿using NEP.MonoDirector.Archetype;
-using NEP.MonoDirector.Cameras;
+﻿using Il2CppSLZ.Marrow;
+using Il2CppSLZ.Marrow.Data;
+using Il2CppSLZ.Marrow.Interaction;
+using Il2CppSLZ.Marrow.Pool;
+using Il2CppSLZ.Marrow.Warehouse;
+
+using MelonLoader;
+using MelonLoader.Utils;
+
+using NEP.MonoDirector.Archetypes;
 using NEP.MonoDirector.State;
+using NEP.MonoDirector.Tools;
 using NEP.MonoDirector.UI;
+using NEP.MonoDirector.Yielding;
+
 using UnityEngine;
+
+using MarrowAvatar = Il2CppSLZ.VRMK.Avatar;
 
 namespace NEP.MonoDirector.Core;
 
@@ -14,6 +27,8 @@ public static class Director
     public static Film ActiveFilm { get => m_activeFilm; }
     public static Scene ActiveScene { get => m_activeScene; }
 
+    public static string CurrentLevel { get => m_currentLevel; }
+    
     public static PlayState PlayState { get => m_playState; }
     public static PlayState LastPlayState { get => m_lastPlayState; }
     public static CaptureState CaptureState { get => m_captureState; }
@@ -22,6 +37,8 @@ public static class Director
     public static event Action<Scene> OnSceneRemoved;
     public static event Action<Scene> OnSceneSet;
 
+    private static string m_currentLevel;
+    
     private static Playback m_playback;
     private static Recorder m_recorder;
 
@@ -51,6 +68,7 @@ public static class Director
         m_activeFilm = new Film();
         m_activeScene = new Scene();
         m_activeFilm.AddScene(m_activeScene);
+        m_activeFilm.SetLevel(m_currentLevel);
     }
 
     internal static void Shutdown()
@@ -64,39 +82,27 @@ public static class Director
         Events.OnStartRecording -= () => SetPlayState(PlayState.Recording);
     }
 
-    private static void Update()
+    public static void Update()
     {
         if (!Settings.Debug.useKeys)
-        {
             return;
-        }
+
+        if (Playback.Instance == null)
+            return;
 
         float seekRate = Playback.Instance.PlaybackRate * Time.deltaTime;
         
         if (Input.GetKey(KeyCode.LeftArrow))
-        {
             Playback.Instance.Seek(-seekRate);
-        }
 
         if (Input.GetKey(KeyCode.RightArrow))
-        {
             Playback.Instance.Seek(seekRate);
-        }
 
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            Play();
-        }
+        if (Input.GetKeyDown(KeyCode.F5))
+            Save("test");
 
-        if (Input.GetKeyDown(KeyCode.RightControl))
-        {
-            Record();
-        }
-
-        if (Input.GetKeyDown(KeyCode.LeftControl))
-        {
-            Stop();
-        }
+        if (Input.GetKeyDown(KeyCode.F6))
+            Load("test");
     }
 
     public static void Play()
@@ -162,6 +168,12 @@ public static class Director
         OnSceneRemoved?.Invoke(scene);
     }
 
+    public static void SetFilm(Film film)
+    {
+        m_activeFilm = film;
+        SetScene(m_activeFilm.Scenes.First());
+    }
+    
     public static void SetScene(Scene scene)
     {
         if (scene == null)
@@ -179,7 +191,7 @@ public static class Director
 
         foreach (var prop in Caster.Props)
         {
-            prop.gameObject.SetActive(false);
+            prop.Proxy.Hide();
             MarkerManager.RemoveMarkerFromProp(prop);
             PropFrameManager.RemoveFrameFromProp(prop);
         }
@@ -195,7 +207,7 @@ public static class Director
 
         foreach (var actor in Caster.Cast)
         {
-            actor.ActorBody.AllowCollisions(true);
+            actor.ActorBody?.AllowCollisions(true);
             actor.Show();
             actor.OnSceneBegin();
             MarkerManager.AddMarkerToActor(actor.Proxy);
@@ -203,7 +215,10 @@ public static class Director
 
         foreach (var prop in Caster.Props)
         {
-            prop.gameObject.SetActive(true);
+            // idek why this happens
+            if (prop.Proxy)
+                prop.Proxy.Show();
+            
             prop.OnSceneBegin();
             MarkerManager.AddMarkerToProp(prop);
             PropFrameManager.AddFrameToProp(prop);
@@ -218,6 +233,51 @@ public static class Director
 
     public static void RemoveActor(Actor actor) => Caster.UncastActor(actor);
 
+    #if DEBUG
+    public static void Load(string name)
+    {
+        string input = Path.Combine(MelonEnvironment.UserDataDirectory, $"Not Enough Photons/MonoDirector/Films/{name}.mdf");
+
+        if (!File.Exists(input))
+        {
+            Logging.Msg($"MonoDirector film {name}.mdf does not exist!");
+            return;
+        }
+        
+        FileStream stream = File.OpenRead(input);
+
+        Film film = new Film();
+        film.FromBinary(stream);
+        
+        stream.Dispose();
+        stream.Close();
+
+        if (film.LevelBarcode != m_currentLevel)
+        {
+            MelonCoroutines.Start(new WaitForLevelLoad(film.LevelBarcode).Then(() =>
+            {
+                PrepareFilm(film);
+                SetFilm(film);
+            }));
+        }
+        else
+        {
+            PrepareFilm(film);
+            SetFilm(film);
+        }
+    }
+    
+    public static void Save(string name)
+    {
+        string output = Path.Combine(MelonEnvironment.UserDataDirectory, "Not Enough Photons/MonoDirector/Films");
+        Directory.CreateDirectory(output);
+
+        using FileStream stream = File.Create(Path.Combine(output, $"{name}.mdf"));
+        using BinaryWriter writer = new BinaryWriter(stream);
+        writer.Write(m_activeFilm.ToBinary());
+    }
+    #endif
+    
     public static void RemoveAllActors()
     {
         m_playState = PlayState.Stopped;
@@ -237,7 +297,7 @@ public static class Director
         for (int i = Caster.Props.Count - 1; i > 0; i--)
         {
             Caster.RemoveProp(Caster.Props[i]);
-            GameObject.Destroy(Caster.Props[i]);
+            //GameObject.Destroy(Caster.Props[i]);
         }
 
         Caster.ClearProps();
@@ -248,5 +308,108 @@ public static class Director
         m_lastPlayState = m_playState;
         m_playState = state;
         Events.OnPlayStateSet?.Invoke(state);
+    }
+
+    public static void SetLevel(string levelBarcode)
+    {
+        m_currentLevel = levelBarcode;
+    }
+
+    private static void PrepareFilm(Film film)
+    {
+        foreach (var scene in film.Scenes)
+            PrepareScene(scene);
+    }
+
+    private static void PrepareScene(Scene scene)
+    {
+        foreach (var actor in scene.Actors)
+        {
+            // Is the avatar installed?
+            if (!actor.AvatarCrate)
+                continue;
+            
+            MelonCoroutines.Start(new WaitForAvatarSpawn<MarrowAvatar>(actor.AvatarCrate).Then(avatar =>
+            {
+                actor.CreateProxy(avatar);
+                actor.UpdateClone();
+            }));
+        }
+        
+        foreach (var prop in scene.Props)
+        {
+            SpawnableCrateReference crateRef = new SpawnableCrateReference(new Barcode(prop.Barcode));
+
+            // Is the spawnable installed?
+            if (!crateRef.Crate)
+                continue;
+                
+            Spawnable spawnable = new Spawnable()
+            {
+                crateRef = crateRef
+            };
+            
+            AssetSpawner.Register(spawnable);
+            
+            MelonCoroutines.Start(new WaitForAssetSpawn<MarrowEntity>(spawnable, Vector3.zero, Quaternion.identity).Then(entity =>
+            {
+                prop.CreateProxy(entity);
+                prop.OnSceneBegin();
+
+                if (prop.PropType == Prop.Type.Gun)
+                {
+                    GunProp gun = prop as GunProp;
+                    gun.SetGun(prop.Proxy.GetComponent<Gun>());
+                }
+            }));
+        }
+        
+        foreach (var entity in scene.Entities)
+        {
+            SpawnableCrateReference crateRef = new SpawnableCrateReference(new Barcode(entity.Barcode));
+            
+            // Is the spawnable installed?
+            if (!crateRef.Crate)
+                continue;
+            
+            Spawnable spawnable = new Spawnable()
+            {
+                crateRef = crateRef
+            };
+            
+            AssetSpawner.Register(spawnable);
+            
+            MelonCoroutines.Start(new WaitForAssetSpawn<MarrowEntity>(spawnable, entity.Position, entity.Rotation).Then(ent =>
+            {
+                if (entity.EntityType == Entity.Type.Light)
+                {
+                    LightEntity light = (LightEntity)entity;
+
+                    if (!light.Directional)
+                    {
+                        if (!ent.TryGetComponent(out OmniLight omniLight))
+                            return;
+                        
+                        omniLight.LoadFromEntity(light);
+                    }
+                    else
+                    {
+                        if (!ent.TryGetComponent(out SpotLight spotLight))
+                            return;
+                        
+                        spotLight.LoadFromEntity(light);
+                    }
+                }
+                else if (entity.EntityType == Entity.Type.Sound)
+                {
+                    SoundEntity sound = (SoundEntity)entity;
+                    
+                    if (!ent.TryGetComponent(out SoundSource soundSource))
+                        return;
+                        
+                    soundSource.LoadFromEntity(sound);
+                }
+            }));
+        }
     }
 }
