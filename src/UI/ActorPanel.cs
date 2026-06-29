@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Il2CppSLZ.Marrow.Interaction;
+using UnityEngine;
 using MelonLoader;
 using Il2CppTMPro;
 using UnityEngine.UI;
@@ -35,6 +36,9 @@ public class ActorPanel(IntPtr ptr) : MonoBehaviour(ptr)
 
     private void Awake()
     {
+        MarrowEntity entity = GetComponent<MarrowEntity>();
+        entity.PreventDisableOnCull();
+        
         m_root = transform.GetChild(0);
 
         m_actorNameText = m_root.Find("Data/Title").GetComponent<TextMeshPro>();

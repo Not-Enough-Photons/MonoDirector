@@ -1,10 +1,10 @@
+using Il2CppSLZ.Marrow.Interaction;
 using NEP.MonoDirector.UI.Interaction;
 
-using BoneLib;
 using Il2CppTMPro;
 using MelonLoader;
 using NEP.MonoDirector.Extensions;
-using NEP.MonoDirector.Tools;
+
 using UnityEngine;
 
 namespace NEP.MonoDirector.UI.Menus;
@@ -31,6 +31,9 @@ public class Menu(IntPtr ptr) : MonoBehaviour(ptr)
     {
         Instance = this;
 
+        MarrowEntity entity = GetComponent<MarrowEntity>();
+        entity.PreventDisableOnCull();
+        
         m_pages = new List<GameObject>();
         m_pageHistory = new Stack<string>();
 
