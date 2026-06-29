@@ -135,7 +135,7 @@ public class SoundSource(IntPtr ptr) : PointToolEntity(ptr)
         if (soundHolder == null)
             return;
 
-        LinkSound(m_source.clip);
+        LinkSound(soundHolder.GetSound());
         soundHolder.gameObject.SetActive(false);
         FeedbackSFX.LinkAudio();
     }
