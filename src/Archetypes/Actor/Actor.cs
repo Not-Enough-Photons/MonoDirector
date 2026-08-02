@@ -152,7 +152,7 @@ public class Actor : Archetype, IBinaryData
             m_previousFrame = m_nextFrame;
             m_nextFrame = frame;
 
-            if (frame.FrameTime > Playback.Instance.PlaybackTime)
+            if (frame.FrameTime > Playback.PlaybackTime)
             {
                 break;
             }
@@ -168,7 +168,7 @@ public class Actor : Archetype, IBinaryData
         {
             var actionFrame = m_actions[i];
 
-            if(Playback.Instance.PlaybackTime < actionFrame.timestamp)
+            if(Playback.PlaybackTime < actionFrame.timestamp)
             {
                 continue;
             }
@@ -196,7 +196,7 @@ public class Actor : Archetype, IBinaryData
         if (Director.PlayState != PlayState.Recording)
             return;
         
-        m_actions.Add(new ActionFrame(type, action, Recorder.Instance.RecordingTime));
+        m_actions.Add(new ActionFrame(type, action, Recorder.RecordingTime));
     }
 
     public void CastActor()

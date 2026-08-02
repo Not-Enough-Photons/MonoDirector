@@ -67,7 +67,7 @@ public class ActorProxy(IntPtr ptr) : MonoBehaviour(ptr)
     public void Pose(FrameGroup previous, FrameGroup next)
     {
         float gap = next.FrameTime - previous.FrameTime;
-        float head = Playback.Instance.PlaybackTime - previous.FrameTime;
+        float head = Playback.PlaybackTime - previous.FrameTime;
 
         float delta = head / gap;
 
@@ -125,7 +125,7 @@ public class ActorProxy(IntPtr ptr) : MonoBehaviour(ptr)
             frames.Add(frame);
         }
 
-        group.SetFrames(frames.ToArray(), Recorder.Instance.RecordingTime);
+        group.SetFrames(frames.ToArray(), Recorder.RecordingTime);
         
         // Undo the head offset... afterward because no branching :P
         // This undoes it for every bone we count under it too!

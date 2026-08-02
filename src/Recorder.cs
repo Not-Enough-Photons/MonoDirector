@@ -11,59 +11,63 @@ using MarrowAvatar = Il2CppSLZ.VRMK.Avatar;
 
 namespace NEP.MonoDirector.Core;
 
-public class Recorder
+public static class Recorder
 {
-    public Recorder()
-    {
-        Instance = this;
+    public static float RecordingTime { get => m_recordingTime; }
+    public static float TakeTime;
 
+    public static int RecordTick { get => m_recordTick; }
+
+    public static int Countdown { get; private set; }
+
+    public static List<Actor> ActiveActors = new List<Actor>();
+
+    public static Actor ActiveActor { get => m_activeActor; }
+    public static Actor LastActor { get => m_lastActor; }
+
+    private static Actor m_activeActor;
+    private static Actor m_lastActor;
+
+    private static Coroutine m_recordRoute;
+
+    private static float m_fpsTimer = 0f;
+
+    private static float m_recordingTime;
+
+    private static float m_timeSinceLastTick = 0;
+    private static float m_timeSpentInMenu = 0f;
+    private static bool m_usedMenu;
+
+    private static int m_recordTick;
+
+    public static void Initialize()
+    {
         Events.OnPreRecord += OnPreRecord;
         Events.OnStartRecording += OnPostRecord;
         Events.OnRecordTick += OnRecordTick;
         Events.OnStopRecording += OnStopRecording;
     }
 
-    public static Recorder Instance { get; private set; }
-
-    public float RecordingTime { get => m_recordingTime; }
-    public float TakeTime;
-
-    public int RecordTick { get => m_recordTick; }
-
-    public int Countdown { get; private set; }
-
-    public List<Actor> ActiveActors = new List<Actor>();
-
-    public Actor ActiveActor { get => m_activeActor; }
-    public Actor LastActor { get => m_lastActor; }
-
-    private Actor m_activeActor;
-    private Actor m_lastActor;
-
-    private Coroutine m_recordRoute;
-
-    private float m_fpsTimer = 0f;
-
-    private float m_recordingTime;
-
-    private float m_timeSinceLastTick = 0;
-    private float m_timeSpentInMenu = 0f;
-    private bool m_usedMenu;
-
-    private int m_recordTick;
-
-    public void SetActor(MarrowAvatar avatar)
+    public static void Shutdown()
+    {
+        Events.OnPreRecord -= OnPreRecord;
+        Events.OnStartRecording -= OnPostRecord;
+        Events.OnRecordTick -= OnRecordTick;
+        Events.OnStopRecording -= OnStopRecording;
+    }
+    
+    public static void SetActor(MarrowAvatar avatar)
     {
         m_lastActor = m_activeActor;
         m_activeActor = new Actor(avatar);
     }
 
-    public void SetUsedMenu(bool usedMenu)
+    public static void SetUsedMenu(bool usedMenu)
     {
         m_usedMenu = usedMenu;
     }
 
-    public void Tick()
+    public static void Tick()
     {
         if (Director.PlayState != PlayState.Recording)
         {
@@ -81,7 +85,7 @@ public class Recorder
         }
     }
 
-    public void StartRecordRoutine()
+    public static void StartRecordRoutine()
     {
         if (m_recordRoute == null)
         {
@@ -89,7 +93,7 @@ public class Recorder
         }
     }
 
-    public void RecordCamera()
+    public static void RecordCamera()
     {
         foreach (var castMember in Caster.Cast)
         {
@@ -97,7 +101,7 @@ public class Recorder
         }
     }
 
-    public void RecordActor()
+    public static void RecordActor()
     {
         try
         {
@@ -113,12 +117,12 @@ public class Recorder
 
             foreach (var castMember in Caster.Cast)
             {
-                Playback.Instance.AnimateActor(castMember);
+                Playback.AnimateActor(castMember);
             }
 
             foreach (var prop in Caster.Props)
             {
-                Playback.Instance.AnimateProp(prop);
+                Playback.AnimateProp(prop);
             }
         }
         catch (Exception e)
@@ -132,7 +136,7 @@ public class Recorder
     /// <summary>
     /// Called when we first hit the record button.
     /// </summary>
-    public void OnPreRecord()
+    public static void OnPreRecord()
     {
         try
         {
@@ -141,7 +145,7 @@ public class Recorder
                 m_recordTick = 0;
             }
 
-            Playback.Instance.ResetPlayhead();
+            Playback.ResetPlayhead();
 
             m_fpsTimer = 0f;
 
@@ -175,7 +179,7 @@ public class Recorder
     /// <summary>
     /// Called the moment the recording begins.
     /// </summary>
-    public void OnPostRecord()
+    public static void OnPostRecord()
     {
         try
         {
@@ -201,7 +205,7 @@ public class Recorder
     /// <summary>
     /// Called every time a frame is recorded
     /// </summary>
-    public void OnRecordTick()
+    public static void OnRecordTick()
     {
         if (Director.PlayState == PlayState.Paused)
         {
@@ -224,7 +228,7 @@ public class Recorder
                 TakeTime = m_recordingTime;
             }
 
-            Playback.Instance.MovePlayhead(m_timeSinceLastTick);
+            Playback.MovePlayhead(m_timeSinceLastTick);
 
             if (Director.CaptureState == CaptureState.CaptureCamera)
             {
@@ -255,7 +259,7 @@ public class Recorder
     /// <summary>
     /// Called when the recording stops.
     /// </summary>
-    public void OnStopRecording()
+    public static void OnStopRecording()
     {
         try
         {
@@ -318,7 +322,7 @@ public class Recorder
         }
     }
 
-    public IEnumerator RecordRoutine()
+    public static IEnumerator RecordRoutine()
     {
         Events.OnPreRecord?.Invoke();
 

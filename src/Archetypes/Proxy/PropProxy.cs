@@ -108,7 +108,7 @@ public class PropProxy(IntPtr ptr) : ArchetypeProxy(ptr)
     public void Pose(FrameGroup previous, FrameGroup next)
     {
         float gap = next.FrameTime - previous.FrameTime;
-        float head = Playback.Instance.PlaybackTime - previous.FrameTime;
+        float head = Playback.PlaybackTime - previous.FrameTime;
 
         float delta = head / gap;
 
@@ -168,13 +168,13 @@ public class PropProxy(IntPtr ptr) : ArchetypeProxy(ptr)
                 rigidbodyVelocity = body._rigidbody.velocity,
                 rigidbodyAngularVelocity = body._rigidbody.angularVelocity,
 #endif
-                frameTime = Recorder.Instance.RecordingTime
+                frameTime = Recorder.RecordingTime
             }; 
             
             objectFrames.Add(objectFrame);
         }
 
-        group.SetFrames(objectFrames.ToArray(), Recorder.Instance.RecordingTime);
+        group.SetFrames(objectFrames.ToArray(), Recorder.RecordingTime);
         return group;
     }
 

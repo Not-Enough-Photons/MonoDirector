@@ -164,12 +164,12 @@ public class InformationInterface(IntPtr ptr) : MonoBehaviour(ptr)
 
         if(playState == PlayState.Playing)
         {
-            time = Playback.Instance.PlaybackTime;
+            time = Playback.PlaybackTime;
         }
 
         if(playState == PlayState.Recording)
         {
-            time = Recorder.Instance.RecordingTime;
+            time = Recorder.RecordingTime;
         }
 
         timecodeText.text = time.ToString("0.000") + "s";
@@ -183,7 +183,7 @@ public class InformationInterface(IntPtr ptr) : MonoBehaviour(ptr)
     public void OnTimerCountdown()
     {
         countdownObject.SetActive(false);
-        int counter = Director.PlayState == PlayState.Prerecording ? Recorder.Instance.Countdown : Playback.Instance.Countdown;
+        int counter = Director.PlayState == PlayState.Prerecording ? Recorder.Countdown : Playback.Countdown;
         int currentCountdown = Settings.World.delay - counter;
         countdownText.text = currentCountdown.ToString();
         countdownObject.SetActive(true);

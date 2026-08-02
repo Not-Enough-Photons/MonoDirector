@@ -21,9 +21,6 @@ namespace NEP.MonoDirector.Core;
 
 public static class Director
 {
-    public static Playback Playback { get => m_playback; }
-    public static Recorder Recorder { get => m_recorder; }
-
     public static Film ActiveFilm { get => m_activeFilm; }
     public static Scene ActiveScene { get => m_activeScene; }
 
@@ -38,9 +35,6 @@ public static class Director
     public static event Action<Scene> OnSceneSet;
 
     private static string m_currentLevel;
-    
-    private static Playback m_playback;
-    private static Recorder m_recorder;
 
     private static Film m_activeFilm;
     private static Scene m_activeScene;
@@ -53,8 +47,8 @@ public static class Director
 
     internal static void Initialize()
     {
-        m_playback = new Playback();
-        m_recorder = new Recorder();
+        Playback.Initialize();
+        Recorder.Initialize();
         Caster.Initialize();
 
         Caster.OnActorRecasted += (_) => Record();
@@ -73,6 +67,8 @@ public static class Director
 
     internal static void Shutdown()
     {
+        Playback.Shutdown();
+        Recorder.Shutdown();
         Caster.OnActorRecasted -= (_) => Record();
         
         Events.OnPrePlayback -= () => SetPlayState(PlayState.Preplaying);
@@ -87,16 +83,13 @@ public static class Director
         if (!Settings.Debug.useKeys)
             return;
 
-        if (Playback.Instance == null)
-            return;
-
-        float seekRate = Playback.Instance.PlaybackRate * Time.deltaTime;
+        float seekRate = Playback.PlaybackRate * Time.deltaTime;
         
         if (Input.GetKey(KeyCode.LeftArrow))
-            Playback.Instance.Seek(-seekRate);
+            Playback.Seek(-seekRate);
 
         if (Input.GetKey(KeyCode.RightArrow))
-            Playback.Instance.Seek(seekRate);
+            Playback.Seek(seekRate);
 
         if (Input.GetKeyDown(KeyCode.F5))
             Save("test");

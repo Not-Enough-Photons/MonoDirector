@@ -10,45 +10,49 @@ using UnityEngine;
 
 namespace NEP.MonoDirector.Core;
 
-public class Playback
+public static class Playback
 {
-    public Playback()
-    {
-        Instance = this;
+    /// <summary>
+    /// The current time stamp of the playhead
+    /// </summary>
+    public static float PlaybackTime => m_playbackTime;
+    
+    /// <summary>
+    /// The rate at which the playhead seeks, similar to Time.timeScale
+    /// </summary>
+    public static float PlaybackRate = 1;
+    // TODO: Should this be private for some reason?
 
+    public static int Countdown { get; private set; }
+
+    private static float m_playbackTime;
+    private static Coroutine m_playRoutine;
+
+    private static Film m_film;
+    private static Scene m_scene;
+
+    public static void Initialize()
+    {
         Events.OnPrePlayback += OnPrePlayback;
         Events.OnPlay += OnPlay;
         Events.OnPlaybackTick += OnPlaybackTick;
         Events.OnStopPlayback += OnStopPlayback;
     }
 
-    public static Playback Instance { get; private set; }
+    public static void Shutdown()
+    {
+        Events.OnPrePlayback += OnPrePlayback;
+        Events.OnPlay += OnPlay;
+        Events.OnPlaybackTick += OnPlaybackTick;
+        Events.OnStopPlayback += OnStopPlayback;
+    }
     
-    /// <summary>
-    /// The current time stamp of the playhead
-    /// </summary>
-    public float PlaybackTime => m_playbackTime;
-    
-    /// <summary>
-    /// The rate at which the playhead seeks, similar to Time.timeScale
-    /// </summary>
-    public float PlaybackRate = 1;
-    // TODO: Should this be private for some reason?
-
-    public int Countdown { get; private set; }
-
-    private float m_playbackTime;
-    private Coroutine m_playRoutine;
-
-    private Film m_film;
-    private Scene m_scene;
-
     //
     // Playback modification methods
     //
-    public void ResetPlayhead() => m_playbackTime = 0f;
+    public static void ResetPlayhead() => m_playbackTime = 0f;
 
-    public void MovePlayhead(float amount) => m_playbackTime += amount;
+    public static void MovePlayhead(float amount) => m_playbackTime += amount;
 
     //
     // Playback methods
@@ -57,7 +61,7 @@ public class Playback
     /// <summary>
     /// Called per frame, invokes any and all OnPlaybackTick delegates
     /// </summary>
-    public void Tick()
+    public static void Tick()
     {
         if (Director.PlayState != PlayState.Playing)
             return;
@@ -77,7 +81,7 @@ public class Playback
     /// Called when playback is requested to start
     /// This spawns a coroutine that waits until a delay has passed to begin playing
     /// </summary>
-    public void BeginPlayback()
+    public static void BeginPlayback()
     {
         if (Director.LastPlayState == PlayState.Paused)
         {
@@ -104,7 +108,7 @@ public class Playback
     /// Called before playback begins
     /// This resets the scene state and playhead
     /// </summary>
-    public void OnPrePlayback()
+    public static void OnPrePlayback()
     {
         try
         {
@@ -130,7 +134,7 @@ public class Playback
     /// <summary>
     /// Called during playback
     /// </summary>
-    public void OnPlay()
+    public static void OnPlay()
     {
         try
         {
@@ -156,7 +160,7 @@ public class Playback
     /// <summary>
     /// Called per playback tick
     /// </summary>
-    public void OnPlaybackTick()
+    public static void OnPlaybackTick()
     {
         if (Director.PlayState == PlayState.Stopped || Director.PlayState == PlayState.Paused)
         {
@@ -178,7 +182,7 @@ public class Playback
     /// <summary>
     /// Called when playback is requested to stop
     /// </summary>
-    public void OnStopPlayback()
+    public static void OnStopPlayback()
     {
         try
         {
@@ -208,7 +212,7 @@ public class Playback
     /// Negative seconds will reverse the playback 
     /// </summary>
     /// <param name="amount">The amount of seconds to seek the playback</param>
-    public void Seek(float amount)
+    public static void Seek(float amount)
     {
         if (Director.PlayState != PlayState.Stopped)
             return;
@@ -228,7 +232,7 @@ public class Playback
     /// Animates all tracked scene objects
     /// Call when playback head is seeked to make sure changes are applied!
     /// </summary>
-    public void AnimateAll()
+    public static void AnimateAll()
     {
         try
         {
@@ -249,7 +253,7 @@ public class Playback
     /// Animates the provided actor
     /// </summary>
     /// <param name="actor">The actor to "act"</param>
-    public void AnimateActor(Actor actor)
+    public static void AnimateActor(Actor actor)
     {
         if (actor != null)
             actor.Perform();
@@ -259,7 +263,7 @@ public class Playback
     /// Animates the provided prop
     /// </summary>
     /// <param name="prop">The prop to "act"</param>
-    public void AnimateProp(Prop prop)
+    public static void AnimateProp(Prop prop)
     {
         if (prop != null)
             prop.Perform();
@@ -271,7 +275,7 @@ public class Playback
     /// Playback coroutine. Supports a delay of any duration.
     /// </summary>
     /// <returns></returns>
-    public IEnumerator PlayRoutine()
+    public static IEnumerator PlayRoutine()
     {
         bool begun = false;
 

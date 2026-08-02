@@ -189,7 +189,7 @@ internal static class MDBoneMenu
             0.1f,
             float.NegativeInfinity,
             float.PositiveInfinity,
-            value => Playback.Instance.PlaybackRate = value
+            value => Playback.PlaybackRate = value
         );
 
         category.CreateInt(

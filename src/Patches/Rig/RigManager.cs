@@ -19,11 +19,11 @@ internal static class RigManagerPatches
                 return;
             }
 
-            var activeActor = Recorder.Instance.ActiveActor;
+            var activeActor = Recorder.ActiveActor;
             activeActor.RecordAction((byte)Actor.ActionType.ActorSwitchAvatar, () => activeActor.SwitchToActor(activeActor));
             activeActor.UpdateClone();
-            Recorder.Instance.ActiveActors.Add(activeActor);
-            Recorder.Instance.SetActor(newAvatar);
+            Recorder.ActiveActors.Add(activeActor);
+            Recorder.SetActor(newAvatar);
         }
     }
 }

@@ -18,7 +18,7 @@ internal static class PreferencesPanelViewPatches
         {
             if (Director.PlayState == State.PlayState.Recording)
             {
-                Director.Recorder.SetUsedMenu(true);
+                // Director.SetUsedMenu(true);
             }
         }
     }

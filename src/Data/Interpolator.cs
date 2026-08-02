@@ -7,7 +7,7 @@ public static class Interpolator
 {
     public static float GetPlaybackTime()
     {
-        return Playback.Instance.PlaybackTime;
+        return Playback.PlaybackTime;
     }
 
     public static float GetFrameDelta(float nextFrameTime, float previousFrameTime)

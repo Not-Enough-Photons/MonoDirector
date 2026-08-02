@@ -166,7 +166,7 @@ public class Prop : Archetype, IBinaryData
             m_previousFrame = m_nextFrame;
             m_nextFrame = frame;
 
-            if (frame.FrameTime > Playback.Instance.PlaybackTime)
+            if (frame.FrameTime > Playback.PlaybackTime)
                 break;
         }
 
@@ -174,7 +174,7 @@ public class Prop : Archetype, IBinaryData
         
         foreach(var action in m_actions)
         {
-            if (Playback.Instance.PlaybackTime < action.timestamp)
+            if (Playback.PlaybackTime < action.timestamp)
             {
                 continue;
             }
@@ -197,7 +197,7 @@ public class Prop : Archetype, IBinaryData
     
     public override void RecordAction(byte type, Action action)
     {
-        RecordActionAtTime(type, action, Recorder.Instance.RecordingTime);
+        RecordActionAtTime(type, action, Recorder.RecordingTime);
     }
 
     public void RecordActionAtTime(byte type, Action action, float time = 0f)

@@ -98,12 +98,12 @@ public class ActorSpeech(IntPtr ptr) : MonoBehaviour(ptr)
             // special thanks to wnp and someone somewhere for this suggestion
             // stops desyncs of mic recordings, and also allows for slow motion playback!
             float tolerance = Time.deltaTime * desyncTolerance;
-            float time = Mathf.Abs(source.time - Core.Playback.Instance.PlaybackTime);
+            float time = Mathf.Abs(source.time - Core.Playback.PlaybackTime);
 
             if (time > tolerance)
             {
-                source.time = Core.Playback.Instance.PlaybackTime;
-                source.pitch = Time.timeScale * Core.Playback.Instance.PlaybackRate;
+                source.time = Core.Playback.PlaybackTime;
+                source.pitch = Time.timeScale * Core.Playback.PlaybackRate;
             }
         }
     }
