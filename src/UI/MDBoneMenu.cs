@@ -1,45 +1,36 @@
-using NEP.MonoDirector.Cameras;
 using NEP.MonoDirector.Core;
-using NEP.MonoDirector.State;
 
 using UnityEngine;
 
 using BoneLib.BoneMenu;
-using Il2CppSLZ.Marrow;
-using Il2CppSystem;
-using BoneLib;
-using NEP.MonoDirector.Compatibility;
-using NEP.MonoDirector.Tools;
 
 namespace NEP.MonoDirector.UI;
 
 internal static class MDBoneMenu
 {
-    public static Page MonoDirectorPage => mdCategory;
-    public static Page PlaybackPage => playbackCategory;
-    public static Page SettingsPage => settingsCategory;
+    public static Page MonoDirectorPage => m_monoDirectorPage;
+    public static Page PlaybackPage => m_playbackPage;
+    public static Page SettingsPage => m_settingsPage;
 
-    internal static Page rootCategory;
+    internal static Page m_modPage;
 
-    internal static Page mdCategory;
+    internal static Page m_monoDirectorPage;
 
-    internal static Page playbackCategory;
-    internal static Page actorCategory;
-    internal static Page settingsCategory;
+    internal static Page m_playbackPage;
+    internal static Page m_actorCategory;
+    internal static Page m_settingsPage;
 
     internal static void Initialize()
     {
-        rootCategory = Page.Root.CreatePage("Not Enough Photons", Color.white);
+        m_modPage = Page.Root.CreatePage("Not Enough Photons", Color.white);
 
-        mdCategory = rootCategory.CreatePage("Mono<color=red>Director</color>", Color.white);
+        m_monoDirectorPage = m_modPage.CreatePage("Mono<color=red>Director</color>", Color.white);
 
-        playbackCategory = mdCategory.CreatePage("Playback", Color.white);
-        actorCategory = mdCategory.CreatePage("Actors", Color.white);
-        settingsCategory = mdCategory.CreatePage("Settings", Color.white);
+        m_playbackPage = m_monoDirectorPage.CreatePage("Playback", Color.white);
+        m_actorCategory = m_monoDirectorPage.CreatePage("Actors", Color.white);
+        m_settingsPage = m_monoDirectorPage.CreatePage("Settings", Color.white);
 
-        BuildPlaybackMenu(playbackCategory);
-        BuildActorMenu(actorCategory);
-        BuildSettingsMenu(settingsCategory);
+        BuildPlaybackMenu(m_playbackPage);
     }
 
     private static void BuildPlaybackMenu(Page category)
@@ -47,356 +38,25 @@ internal static class MDBoneMenu
         category.CreateFunction(
             "Record",
             Color.red,
-            () => Director.Record()
+            Director.Record
         );
 
         category.CreateFunction(
             "Play",
             Color.green,
-            () => Director.Play()
+            Director.Play
+        );
+        
+        category.CreateFunction(
+            "Pause",
+            Color.yellow,
+            Director.Pause
         );
 
         category.CreateFunction(
             "Stop",
             Color.red,
-            () => Director.Stop()
+            Director.Stop
         );
-
-        category.CreateFunction(
-            "Show Stage Shelf",
-            Color.white,
-            () =>
-            {
-                SceneShelf.Instance.gameObject.SetActive(false);
-                SceneShelf.Instance.gameObject.SetActive(true);
-            });
-    }
-
-    private static void BuildActorMenu(Page category)
-    {
-        category.CreateFunction(
-            "Remove All Actors", 
-            Color.red, 
-            () =>
-            {
-                Color primary = Color.red * 0.5f;
-                Color secondary = Color.red * 0.1f;
-
-                DialogData data = new()
-                {
-                    Confirm = () => Director.RemoveAllActors(),
-                    Message = "Are you sure? This cannot be undone.",
-                    Primary = primary,
-                    Secondary = secondary
-                };
-
-                BoneLib.BoneMenu.Menu.DisplayDialog(data);
-                Director.RemoveAllActors();
-            }
-        );
-        
-        category.CreateFunction(
-            "Clear Scene", 
-            Color.red, 
-            () =>
-            {
-                Color primary = Color.red * 0.5f;
-                Color secondary = Color.red * 0.1f;
-
-                DialogData data = new()
-                {
-                    Confirm = () => Director.ClearScene(),
-                    Message = "Are you sure? This cannot be undone.",
-                    Primary = primary,
-                    Secondary = secondary
-                };
-
-                BoneLib.BoneMenu.Menu.DisplayDialog(data);
-            }
-        );
-    }
-
-    private static void BuildSettingsMenu(Page category)
-    {
-        Page audioCategory = category.CreatePage("Audio", Color.white);
-
-        // WideEye already has good camera settings. Don't want to interfere with that.
-        // Camera settings on Quest wouldn't make much sense.
-        if (ModCompatibility.HasWideEye || !HelperMethods.IsAndroid())
-        {
-            Page cameraCategory = category.CreatePage("Camera", Color.white);
-            BuildCameraCategory(cameraCategory);
-        }
-
-        Page toolCategory = category.CreatePage("Tools", Color.white);
-        Page uiCategory = category.CreatePage("UI", Color.white);
-
-        #if DEBUG
-        Page debugCategory = category.CreatePage("DEBUG", Color.red);
-        BuildDebugCategory(debugCategory);
-        #endif
-
-        audioCategory.CreateBool(
-            "Use Microphone", 
-            Color.white, 
-            false,
-            value => Settings.World.useMicrophone = value
-        );
-        
-        audioCategory.CreateBool(
-            "Mic Playback", 
-            Color.white, 
-            false,
-            value => Settings.World.micPlayback = value
-        );
-
-        BuildToolCategory(toolCategory);
-
-        BuildUIMenu(uiCategory);
-    }
-
-    private static void BuildCameraCategory(Page category)
-    {
-        Page camModeCategory = category.CreatePage("Camera Modes", Color.white);
-        Page headModeCategory = category.CreatePage("Head Mode Settings", Color.white);
-        Page freeCamCategory = category.CreatePage("Free Camera Settings", Color.white);
-
-        camModeCategory.CreateFunction("Mode: None", Color.white, () => CameraRigManager.Instance.CameraMode = CameraMode.None);
-        camModeCategory.CreateFunction("Mode: Handheld", Color.white, () => CameraRigManager.Instance.CameraMode = CameraMode.Handheld);
-        camModeCategory.CreateFunction("Mode: Free", Color.white, () => CameraRigManager.Instance.CameraMode = CameraMode.Free);
-        camModeCategory.CreateFunction("Mode: Head", Color.white, () => CameraRigManager.Instance.CameraMode = CameraMode.Head);
-
-        BuildHeadModeCategory(headModeCategory);
-        BuildFreeModeCategory(freeCamCategory);
-
-        Page vfxCategory = category.CreatePage("VFX", Color.white);
-        BuildVFXCategory(vfxCategory);
-
-        category.CreateBool(
-            "Kinematic On Release",
-            Color.white,
-            false,
-            (value) => Settings.Camera.handheldKinematicOnRelease = value
-        );
-    }
-
-    private static void BuildToolCategory(Page category)
-    {
-        category.CreateFloat(
-            "Playback Speed",
-            Color.white,
-            1f,
-            0.1f,
-            float.NegativeInfinity,
-            float.PositiveInfinity,
-            value => Playback.PlaybackRate = value
-        );
-
-        category.CreateInt(
-            "Delay",
-            Color.white,
-            5,
-            1,
-            0,
-            30,
-            value => Settings.World.delay = value
-        );
-
-        category.CreateInt(
-            "FPS",
-            Color.white,
-            60,
-            5,
-            5,
-            160,
-            value => Settings.World.fps = value
-        );
-
-        category.CreateBool(
-            "Ignore Slomo",
-            Color.white,
-            false,
-            value => Settings.World.ignoreSlomo = value
-        );
-
-        category.CreateBool(
-            "Temporal Scaling",
-            Color.white,
-            true,
-            value => Settings.World.temporalScaling = value
-        );
-
-        category.CreateBool(
-            "Record Actors",
-            Color.white,
-            true,
-            value => Settings.World.recordActors = value
-        );
-    }
-
-    private static void BuildUIMenu(Page category)
-    {
-        category.CreateBool(
-            "Show UI",
-            Color.white,
-            false,
-            value => InformationInterface.Instance.ShowUI = value
-        );
-
-        category.CreateBool(
-            "Show Timecode",
-            Color.white,
-            false,
-            value => InformationInterface.Instance.ShowTimecode = value
-        );
-
-        category.CreateBool(
-            "Show Play Mode",
-            Color.white,
-            false,
-            value => InformationInterface.Instance.ShowPlaymode = value
-        );
-
-        category.CreateBool(
-            "Show Icons",
-            Color.white,
-            false,
-            value => InformationInterface.Instance.ShowIcons = value
-        );
-    }
-
-#if DEBUG
-    private static void BuildDebugCategory(Page category)
-    {
-        category.CreateFunction(
-            "Duplicate Player",
-            Color.white,
-            () =>
-            {
-                RigManager rig = Constants.RigManager;
-                //rig.AvatarCrate.Crate.Spawn(rig.ControllerRig.m_head.position, Quaternion.identity);
-            }
-        );
-        
-        category.CreateBool(
-            "Debug Mode", 
-            Color.white, 
-            false,
-            value => Settings.Debug.debugEnabled = value
-        );
-        
-        category.CreateBool(
-            "Use Debug Keys", 
-            Color.white, 
-            false, 
-            value => Settings.Debug.useKeys = value
-        );
-    }
-#endif
-    
-    private static void BuildHeadModeCategory(Page headModeCategory)
-    {
-        headModeCategory.CreateFloat(
-            "Interpolation", 
-            Color.white, 
-            4f, 
-            1f, 
-            0f, 
-            64f,
-            value => CameraRigManager.Instance.CameraSmoothness = value
-        );
-
-        headModeCategory.CreateEnum(
-            "Position", 
-            Color.white, 
-            BodyPart.Head,
-            bone => CameraRigManager.Instance.FollowCamera.SetFollowBone((BodyPart)bone)
-        );
-    }
-
-    private static void BuildFreeModeCategory(Page freeModeCategory)
-    {
-        freeModeCategory.CreateFloat(
-            "Mouse Sens.",
-            Color.white,
-            1f,
-            0.5f,
-            0f,
-            float.PositiveInfinity,
-            (value) => CameraRigManager.Instance.MouseSensitivity = value);
-
-        freeModeCategory.CreateFloat(
-            "Mouse Smoothing",
-            Color.white,
-            1f,
-            0.5f,
-            0f,
-            float.PositiveInfinity,
-            (value) => CameraRigManager.Instance.MouseSmoothness = value
-        );
-
-        freeModeCategory.CreateFloat(
-            "Slow Speed",
-            Color.white,
-            5f,
-            1f,
-            0f,
-            float.PositiveInfinity,
-            (value) => CameraRigManager.Instance.SlowSpeed = value
-        );
-
-        freeModeCategory.CreateFloat(
-            "Fast Speed",
-            Color.white,
-            10f,
-            1f,
-            0f,
-            float.PositiveInfinity,
-            (value) => CameraRigManager.Instance.FastSpeed = value
-        );
-
-        freeModeCategory.CreateFloat(
-            "Max Speed",
-            Color.white,
-            15f,
-            1f,
-            0f,
-            float.PositiveInfinity,
-            (value) => CameraRigManager.Instance.MaxSpeed = value
-        );
-
-        freeModeCategory.CreateFloat(
-            "Friction",
-            Color.white,
-            5f,
-            1f,
-            0f,
-            float.PositiveInfinity,
-            (value) => CameraRigManager.Instance.Friction = value
-        );
-    }
-
-    private static void BuildVFXCategory(Page vfxCategory)
-    {
-        vfxCategory.CreateBool(
-            "Lens Distortion", 
-            Color.white, 
-            true,
-            value => CameraRigManager.Instance.EnableLensDistortion(value)
-        );
-        
-        //vfxCategory.CreateBool("Motion Blur", Color.white, true, (value) => CameraRigManager.Instance.CameraVolume.MotionBlur.active = value);
-        
-        vfxCategory.CreateBool(
-            "Chromatic Abberation", 
-            Color.white, 
-            true,
-            value => CameraRigManager.Instance.EnableChromaticAbberation(value)
-        );
-        
-        //vfxCategory.CreateBool("Vignette", Color.white, true, (value) => CameraRigManager.Instance.CameraVolume.Vignette.active = true);
-
-        //vfxCategory.CreateBool("Bloom", Color.white, true, (value) => CameraRigManager.Instance.CameraVolume.Bloom.active = true);
-        //vfxCategory.CreateBool("MK Glow", Color.white, true, (value) => CameraRigManager.Instance.CameraVolume.MkGlow.active = true);
     }
 }

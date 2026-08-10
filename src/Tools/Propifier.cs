@@ -1,10 +1,10 @@
-﻿using NEP.MonoDirector.Archetypes;
-using UnityEngine;
+﻿using UnityEngine;
 using MelonLoader;
 
 using Il2CppSLZ.Marrow;
-using Il2CppTrees;
 using Il2CppSLZ.Marrow.Interaction;
+
+using NEP.MonoDirector.Archetypes;
 
 namespace NEP.MonoDirector.Tools;
 
@@ -86,9 +86,9 @@ public class Propifier(IntPtr ptr) : MonoBehaviour(ptr)
                 return;
 
             if(m_mode == Mode.Prop)
-                PropBuilder.BuildProp(entity);
+                PropBuilder.CreateProp(entity);
             else
-                PropBuilder.RemoveProp(entity);
+                PropBuilder.DestroyProp(entity);
         }
     }
 

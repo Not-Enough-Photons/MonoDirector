@@ -3,7 +3,7 @@ using NEP.MonoDirector.Core;
 
 namespace NEP.MonoDirector;
 
-public static partial class BuildInfo
+public static class BuildInfo
 {
     public const string Name = "MonoDirector";
     public const string Description = "A movie/photo making utility for BONELAB!";
@@ -15,9 +15,9 @@ public static partial class BuildInfo
 
 public class Main : MelonMod
 {
-    public override void OnInitializeMelon() => Bootstrap.Initialize();
+    public override void OnInitializeMelon() => Engine.Initialize();
 
-    public override void OnUpdate() => Bootstrap.Update();
+    public override void OnUpdate() => Engine.Update();
 
-    public override void OnDeinitializeMelon() => Bootstrap.Shutdown();
+    public override void OnDeinitializeMelon() => Engine.Shutdown();
 }
