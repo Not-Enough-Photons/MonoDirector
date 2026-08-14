@@ -82,9 +82,6 @@ public class Propifier(IntPtr ptr) : MonoBehaviour(ptr)
 
             MarrowEntity entity = body.Entity;
 
-            if (entity == null)
-                return;
-
             if(m_mode == Mode.Prop)
                 PropBuilder.CreateProp(entity);
             else
@@ -109,19 +106,13 @@ public class Propifier(IntPtr ptr) : MonoBehaviour(ptr)
         if (bTapped)
         {
             if(m_mode == Mode.Prop)
-            {
                 SetMode(Mode.Remove);
-            }
             else
-            {
                 SetMode(Mode.Prop);
-            }
         }
 
         if (hand._indexButtonDown)
-        {
             PrimaryButtonDown();
-        }
     }
 
     private void SetMode(Mode mode)

@@ -42,7 +42,14 @@
 		<Compile Include="src\Archetypes\Archetype.cs" />
 		<Compile Include="src\Archetypes\Props\Prop.cs" />
 		<Compile Include="src\Archetypes\Props\PropBuilder.cs" />
+		<Compile Include="src\Archetypes\Props\PropType.cs" />
+		<Compile Include="src\Archetypes\Type.cs" />
 		<Compile Include="src\Compatibility\ModCompatibility.cs" />
+		<Compile Include="src\Content\AssetDownloader.cs" />
+		<Compile Include="src\Content\DataResult.cs" />
+		<Compile Include="src\Content\ModObject.cs" />
+		<Compile Include="src\Content\PalletVersion.cs" />
+		<Compile Include="src\Content\PlatformObject.cs" />
 		<Compile Include="src\Core\Caster.cs" />
 		<Compile Include="src\Core\Director.cs" />
 		<Compile Include="src\Core\Engine.cs" />
@@ -51,25 +58,47 @@
 		<Compile Include="src\Core\Playhead.cs" />
 		<Compile Include="src\Core\Scene.cs" />
 		<Compile Include="src\Core\Settings.cs" />
+		<Compile Include="src\Core\States\CountdownState.cs" />
 		<Compile Include="src\Core\States\PlayState.cs" />
 		<Compile Include="src\Core\States\RecordState.cs" />
 		<Compile Include="src\Core\States\State.cs" />
-		<Compile Include="src\Data\BundleLoader.cs" />
-		<Compile Include="src\Downloading\AssetDownloader.cs" />
-		<Compile Include="src\Downloading\DataResult.cs" />
-		<Compile Include="src\Downloading\PalletVersion.cs" />
-		<Compile Include="src\Downloading\PlatformObject.cs" />
-		<Compile Include="src\Downloading\ModObject.cs" />
+		<Compile Include="src\Content\BundleLoader.cs" />
+		<Compile Include="src\Events\Actor\FootstepPacket.cs" />
+		<Compile Include="src\Events\Actor\HandGrabPacket.cs" />
+		<Compile Include="src\Events\Audio\AudioImpactPacket.cs" />
+		<Compile Include="src\Events\EventPacket.cs" />
+		<Compile Include="src\Events\EventType.cs" />
+		<Compile Include="src\Events\Gun\GunFirePacket.cs" />
+		<Compile Include="src\Events\Gun\GunSlidePacket.cs" />
+		<Compile Include="src\Events\Gun\MuzzleFlashPacket.cs" />
+		<Compile Include="src\Events\Node\LightNodeUpdate.cs" />
 		<Compile Include="src\Extensions\MarrowEntityExtensions.cs" />
 		<Compile Include="src\Extensions\TransformExtensions.cs" />
 		<Compile Include="src\Keyframes\Interpolator.cs" />
 		<Compile Include="src\Keyframes\Keyframe.cs" />
 		<Compile Include="src\Keyframes\KeyframeTrack.cs" />
-		<Compile Include="src\Data\WarehouseLoader.cs" />
+		<Compile Include="src\Content\WarehouseLoader.cs" />
+		<Compile Include="src\Keyframes\Trimmer.cs" />
 		<Compile Include="src\Main.cs" />
+		<Compile Include="src\Nodes\Gizmos\AngleGizmo.cs" />
+		<Compile Include="src\Nodes\Gizmos\DialGizmo.cs" />
+		<Compile Include="src\Nodes\Gizmos\Gizmo.cs" />
+		<Compile Include="src\Nodes\Gizmos\SliderGizmo.cs" />
+		<Compile Include="src\Nodes\Gizmos\TetherGizmo.cs" />
+		<Compile Include="src\Nodes\Node.cs" />
+		<Compile Include="src\Nodes\LightNode.cs" />
+		<Compile Include="src\Nodes\SoundNode.cs" />
+		<Compile Include="src\Patches\Gun\Gun.cs" />
+		<Compile Include="src\Patches\Impact\ImpactSFX.cs" />
+		<Compile Include="src\Patches\Rig\FootstepSFX.cs" />
+		<Compile Include="src\Patches\Rig\GrabSFX.cs" />
 		<Compile Include="src\Patches\VRMK\PlayerAvatarArt.cs" />
+		<Compile Include="src\Serialization\ISerialized.cs" />
 		<Compile Include="src\Tools\Propifier.cs" />
 		<Compile Include="src\UI\MDBoneMenu.cs" />
+		<Compile Include="src\Visuals\VisBounds.cs" />
+		<Compile Include="src\Visuals\VisMarker.cs" />
+		<Compile Include="src\Visuals\VisualManager.cs" />
 		<Compile Include="src\Yielding\WaitForAssetSpawn.cs" />
 		<Compile Include="src\Yielding\WaitForAvatarSpawn.cs" />
 		<Compile Include="src\Yielding\WaitForLevelLoad.cs" />
@@ -164,11 +193,6 @@
 	  <Reference Include="UnityEngine.UIModule">
 	    <HintPath>$(BONELAB_DIR)\MelonLoader\Il2CppAssemblies\UnityEngine.UIModule.dll</HintPath>
 	  </Reference>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="src\Archetypes\Pawns\" />
-	  <Folder Include="src\Events\" />
 	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using Il2CppSLZ.Marrow.Interaction;
 
-using NEP.MonoDirector.Data;
+using NEP.MonoDirector.Content;
 using NEP.MonoDirector.Extensions;
 using NEP.MonoDirector.Keyframes;
 
@@ -35,8 +35,12 @@ public sealed class Prop : Archetype
         Initialize();
     }
 
+    public override Type Type => Type.Prop;
+    
+    public PropType PropType => m_propType;
     public MarrowEntity Entity => m_entity;
     
+    private PropType m_propType;
     private MarrowEntity m_entity;
 	
     public override void Initialize()
@@ -51,13 +55,13 @@ public sealed class Prop : Archetype
 
     public override void Destroy()
     {
-        m_entity.Unfreeze();
+        m_entity?.Unfreeze();
         m_entity = null;
     }
 	
     public override void SceneBegin()
     {
-        m_entity.Freeze();
+        m_entity?.Freeze();
         
         for (int i = 0; i < m_entity.Bodies.Count; i++)
         {
@@ -65,11 +69,14 @@ public sealed class Prop : Archetype
             body.transform.position = m_positionTracks[i].FirstFrame.Value;
             body.transform.rotation = m_rotationTracks[i].FirstFrame.Value;
         }
+        
+        foreach (var packet in m_eventTrack.Frames)
+            packet.Value.Reset();
     }
 	
     public override void SceneEnd()
     {
-        m_entity.Unfreeze();
+        m_entity?.Unfreeze();
         
         for (int i = 0; i < m_entity.Bodies.Count; i++)
         {
@@ -81,6 +88,8 @@ public sealed class Prop : Archetype
 	
     public override void Act(float time)
     {
+        m_entity?.gameObject.SetActive(m_visible);
+        
         for (int i = 0; i < m_entity.Bodies.Count; i++)
         {
             MarrowBody body = m_entity.Bodies[i];
@@ -91,6 +100,8 @@ public sealed class Prop : Archetype
             body.transform.position = Interpolator.EvaluatePosition(time, ref positionTrack);
             body.transform.rotation = Interpolator.EvaluateRotation(time, ref rotationTrack);
         }
+        
+        ActEvents(time);
     }
 	
     public override void Capture(float time)
@@ -102,6 +113,18 @@ public sealed class Prop : Archetype
             m_rotationTracks[i].Add(time, body.transform.rotation);
         }
 
-       //ProcessQueuedEvents(time);
+       ProcessQueuedEvents(time);
+    }
+
+    public override void Show()
+    {
+        base.Show();
+        m_entity?.Hide(false);
+    }
+
+    public override void Hide()
+    {
+        base.Hide();
+        m_entity?.Hide();
     }
 }

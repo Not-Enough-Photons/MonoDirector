@@ -5,11 +5,10 @@ using BoneLib;
 using MelonLoader;
 using Il2CppSLZ.Marrow.Warehouse;
 using BoneLib.Notifications;
-
-using NEP.MonoDirector.Data;
-using NEP.MonoDirector.Downloading;
+using NEP.MonoDirector.Content;
 using NEP.MonoDirector.Compatibility;
 using NEP.MonoDirector.UI;
+using NEP.MonoDirector.Visuals;
 
 namespace NEP.MonoDirector.Core;
 
@@ -49,6 +48,7 @@ public static class Engine
     internal static void Update()
     {
         Director.Update();
+        VisualManager.Update();
     }
     
     internal static void OnWarehouseReady()
@@ -137,6 +137,7 @@ public static class Engine
         MainContainerObject = new GameObject("[MonoDirector]");
 
         Director.Initialize();
+        VisualManager.Initialize();
         
         // CreateUI();
     }
@@ -152,9 +153,7 @@ public static class Engine
     private static void CheckAudioImport()
     {
         if (MelonBase.FindMelon("AudioImportLib", "trev & zCubed") != null)
-        {
             m_audioImportInstalled = true;
-        }
     }
 
     internal static void AnnounceError()

@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
-using System.Runtime.CompilerServices;
 
-namespace NEP.MonoDirector.Downloading;
+namespace NEP.MonoDirector.Content;
 
 [JsonObject(MemberSerialization.Fields)]
 public sealed class PlatformObject

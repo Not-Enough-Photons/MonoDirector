@@ -30,6 +30,7 @@ public static class PropBuilder
         EntityTable.Add(entity, prop);
         
         Caster.AddProp(prop);
+        Director.Scene.AddArchetype(prop);
     }
 
     public static void DestroyProp(MarrowEntity entity)
@@ -38,6 +39,10 @@ public static class PropBuilder
             return;
 
         prop.Destroy();
+
+        EntityTable.Remove(entity);
+        
         Caster.RemoveProp(prop);
+        Director.Scene.RemoveArchetype(prop);
     }
 }

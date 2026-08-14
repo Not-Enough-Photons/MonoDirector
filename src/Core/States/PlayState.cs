@@ -1,4 +1,8 @@
-﻿namespace NEP.MonoDirector.Core.States;
+﻿using NEP.MonoDirector.Content;
+using NEP.MonoDirector.Visuals;
+using UnityEngine;
+
+namespace NEP.MonoDirector.Core.States;
 
 public sealed class PlayState : State
 {
@@ -6,47 +10,46 @@ public sealed class PlayState : State
     {
         Playhead.Reset();
         Playhead.UseLimit(true);
+        Playhead.UseLoop(false);
         
-        foreach (var actor in Caster.Actors)
-        {
-            if (!actor.Armed)
-                actor.SceneBegin();
-        }
+        VisualManager.HideAll();
 
-        foreach (var prop in Caster.Props)
+        foreach (var archetype in Caster.Archetypes)
         {
-            if (!prop.Armed)
-                prop.SceneBegin();
+            if (!archetype.Armed)
+                archetype.SceneBegin();
         }
     }
 
-    public override void Update(float time)
+    public override void Update()
     {
-        foreach (var actor in Caster.Actors)
+        if (!Playhead.Finished)
+            Playhead.Advance(Time.deltaTime);
+        else
         {
-            if (!actor.Armed)
-                actor.Act(time);
+            if (Playhead.Looping)
+                Start();
+            else
+                Stop();
         }
-
-        foreach (var prop in Caster.Props)
+        
+        foreach (var archetype in Caster.Archetypes)
         {
-            if (!prop.Armed)
-                prop.Act(time);
+            if (!archetype.Armed)
+                archetype.Act(Playhead.Time);
         }
     }
 
     public override void Stop()
     {
-        foreach (var actor in Caster.Actors)
+        foreach (var archetype in Caster.Archetypes)
         {
-            if (!actor.Armed)
-                actor.SceneEnd();
+            if (!archetype.Armed)
+                archetype.SceneEnd();
         }
-
-        foreach (var prop in Caster.Props)
-        {
-            if (!prop.Armed)
-                prop.SceneEnd();
-        }
+        
+        VisualManager.ShowAll();
+        
+        Director.PlaySound(BundleLoader.BeepClip);
     }
 }

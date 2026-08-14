@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace NEP.MonoDirector.Downloading;
+namespace NEP.MonoDirector.Content;
 
 [JsonObject(MemberSerialization.Fields)]
 public class DataResult

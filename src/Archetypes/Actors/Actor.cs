@@ -1,4 +1,4 @@
-﻿using NEP.MonoDirector.Data;
+﻿using NEP.MonoDirector.Content;
 using NEP.MonoDirector.Keyframes;
 using NEP.MonoDirector.Patches;
 
@@ -20,19 +20,13 @@ public class Actor : Archetype
         Initialize();
     }
 
+    public override Type Type => Type.Actor;
+
     public MarrowAvatar Avatar => m_avatar;
 
-    private readonly List<int> HeadBones =
-    [
-        (int)HumanBodyBones.Head,
-        (int)HumanBodyBones.Jaw,
-        (int)HumanBodyBones.LeftEye,
-        (int)HumanBodyBones.RightEye
-    ];
-    
     private MarrowAvatar m_avatar;
     private List<Transform> m_bones;
-    
+
     public sealed override void Initialize()
     {
         for (int i = 0; i < m_bones.Count; i++)
@@ -68,10 +62,13 @@ public class Actor : Archetype
 
             if (!bone)
                 continue;
-            
+
             bone.transform.position = m_positionTracks[i].FirstFrame.Value;
             bone.transform.rotation = m_rotationTracks[i].FirstFrame.Value;
         }
+        
+        foreach (var packet in m_eventTrack.Frames)
+            packet.Value.Reset();
     }
 
     public override void SceneEnd()
@@ -82,7 +79,7 @@ public class Actor : Archetype
 
             if (!bone)
                 continue;
-            
+
             bone.transform.position = m_positionTracks[i].LastFrame.Value;
             bone.transform.rotation = m_rotationTracks[i].LastFrame.Value;
         }
@@ -93,16 +90,18 @@ public class Actor : Archetype
         for (int i = 0; i < m_bones.Count; i++)
         {
             Transform bone = m_bones[i];
-            
+
             if (!bone)
                 continue;
-            
+
             KeyframeTrack<Vector3> positionTrack = m_positionTracks[i];
             KeyframeTrack<Quaternion> rotationTrack = m_rotationTracks[i];
-            
+
             bone.transform.position = Interpolator.EvaluatePosition(time, ref positionTrack);
             bone.transform.rotation = Interpolator.EvaluateRotation(time, ref rotationTrack);
         }
+        
+        ActEvents(time);
     }
 
     public override void Capture(float time)
@@ -110,12 +109,14 @@ public class Actor : Archetype
         for (int i = 0; i < m_bones.Count; i++)
         {
             Transform bone = m_bones[i];
-            
+
             if (!bone)
                 continue;
 
+            // TODO: refactor this into an "ActorBody" archetype component
+            // because this is quite cancerous
             if ((HumanBodyBones)i == HumanBodyBones.Head
-                && (HumanBodyBones)i == HumanBodyBones.Jaw
+                || (HumanBodyBones)i == HumanBodyBones.Jaw
                 || (HumanBodyBones)i == HumanBodyBones.LeftEye
                 || (HumanBodyBones)i == HumanBodyBones.RightEye)
             {
@@ -123,10 +124,12 @@ public class Actor : Archetype
                 m_rotationTracks[i].Add(time, bone.transform.rotation);
                 continue;
             }
-            
+
             m_positionTracks[i].Add(time, bone.transform.position);
             m_rotationTracks[i].Add(time, bone.transform.rotation);
         }
+        
+        ProcessQueuedEvents(time);
     }
 
     public void SetAvatar(MarrowAvatar avatar)
@@ -134,7 +137,19 @@ public class Actor : Archetype
         m_avatar = avatar;
         SetBones(avatar);
     }
-    
+
+    public override void Show()
+    {
+        base.Show();
+        m_avatar.gameObject.SetActive(true);
+    }
+
+    public override void Hide()
+    {
+        base.Hide();
+        m_avatar.gameObject.SetActive(false);
+    }
+
     private void SetBones(MarrowAvatar avatar)
     {
         if (!avatar)

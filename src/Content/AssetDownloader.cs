@@ -7,7 +7,7 @@ using System.Collections;
 
 using UnityEngine;
 
-namespace NEP.MonoDirector.Downloading;
+namespace NEP.MonoDirector.Content;
 
 public static class AssetDownloader
 {

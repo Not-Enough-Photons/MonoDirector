@@ -2,7 +2,7 @@
 using UnityEngine;
 using System.Reflection;
 
-namespace NEP.MonoDirector.Data;
+namespace NEP.MonoDirector.Content;
 
 public static class BundleLoader
 {

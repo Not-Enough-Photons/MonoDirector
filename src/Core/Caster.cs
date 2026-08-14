@@ -18,32 +18,30 @@ public static class Caster
     public static IReadOnlyList<Actor> SelectedActors => m_selectedActors.AsReadOnly();
     public static IReadOnlyList<Prop> SelectedProps => m_selectedProps.AsReadOnly();
 
-    public static IReadOnlyList<Actor> Actors => m_actors.AsReadOnly();
-    public static IReadOnlyList<Prop> Props => m_props.AsReadOnly();
+    public static IReadOnlyList<Archetype> Archetypes => m_archetypes.AsReadOnly();
 
     private static List<Actor> m_selectedActors;
     private static List<Prop> m_selectedProps;
 
-    private static List<Actor> m_actors;
-    private static List<Prop> m_props;
+    private static List<Archetype> m_archetypes;
 
     internal static void Initialize()
     {
-        m_actors = new List<Actor>();
-        m_props = new List<Prop>();
+        m_archetypes = new List<Archetype>();
         m_selectedActors = new List<Actor>();
         m_selectedProps = new List<Prop>();
     }
 
     public static void AddActor(Actor actor)
     {
-        m_actors.Add(actor);
+        m_archetypes.Add(actor);
         OnActorAdded?.Invoke(actor);
     }
 
     public static void RemoveActor(Actor actor)
     {
-        m_actors.Remove(actor);
+        m_archetypes.Remove(actor);
+        m_selectedActors.Remove(actor);
         OnActorRemoved?.Invoke(actor);
     }
     
@@ -66,13 +64,26 @@ public static class Caster
 
     public static void AddProp(Prop prop)
     {
-        m_props.Add(prop);
+        m_archetypes.Add(prop);
         OnPropAdded?.Invoke(prop);
     }
     
     public static void RemoveProp(Prop prop)
     {
-        m_props.Remove(prop);
+        m_archetypes.Remove(prop);
+        m_selectedProps.Remove(prop);
         OnPropRemoved?.Invoke(prop);
+    }
+
+    public static void SelectProp(Prop prop)
+    {
+        m_selectedProps.Add(prop);
+        OnPropSelected?.Invoke(prop);
+    }
+    
+    public static void DeselectProp(Prop prop)
+    {
+        m_selectedProps.Remove(prop);
+        OnPropDeselected?.Invoke(prop);
     }
 }

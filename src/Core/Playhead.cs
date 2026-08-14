@@ -5,13 +5,19 @@ public static class Playhead
     public static float Time => m_time;
     public static float Duration => m_duration;
     public static float Rate => m_rate;
+    
+    public static bool Finished => m_finished;
+    public static bool Looping => m_loop;
 
     public static float PerTick => 1f / Settings.FPS;
 
     private static float m_time;
     private static float m_duration;
     private static float m_rate = 1f;
+    
     private static bool m_limit = true;
+    private static bool m_loop = false;
+    private static bool m_finished = false;
 
     public static void Initialize()
     {
@@ -26,7 +32,7 @@ public static class Playhead
         if (m_time >= m_duration)
         {
             if (m_limit)
-                m_time = m_duration;
+                m_finished = true;
             else
                 m_duration = m_time;
         }
@@ -38,6 +44,7 @@ public static class Playhead
     public static void Reset()
     {
         m_time = 0f;
+        m_finished = false;
     }
 
     public static void SetDuration(float duration)
@@ -51,6 +58,11 @@ public static class Playhead
     public static void UseLimit(bool limit)
     {
         m_limit = limit;
+    }
+
+    public static void UseLoop(bool loop)
+    {
+        m_loop = true;
     }
 
     public static void SetPlaybackRate(float rate)

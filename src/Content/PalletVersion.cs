@@ -1,4 +1,4 @@
-﻿namespace NEP.MonoDirector.Downloading;
+﻿namespace NEP.MonoDirector.Content;
 
 public struct PalletVersion
 {

@@ -1,8 +1,9 @@
-﻿using UnityEngine;
+﻿using NEP.MonoDirector.Events;
+using UnityEngine;
 
 using NEP.MonoDirector.Keyframes;
 
-namespace NEP.MonoDirector.Data;
+namespace NEP.MonoDirector.Content;
 
 public static class Interpolator
 {
