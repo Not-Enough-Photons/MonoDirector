@@ -17,4 +17,14 @@ public sealed class GunFirePacket : EventPacket
     {
         m_gun.OnFire();
     }
+
+    public override byte[] Serialize()
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void Deserialize(Stream stream)
+    {
+        throw new NotImplementedException();
+    }
 }

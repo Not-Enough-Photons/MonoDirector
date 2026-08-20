@@ -32,4 +32,14 @@ public sealed class HandGrabPacket : EventPacket
             m_pitch,
             m_spatial);
     }
+
+    public override byte[] Serialize()
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void Deserialize(Stream stream)
+    {
+        throw new NotImplementedException();
+    }
 }

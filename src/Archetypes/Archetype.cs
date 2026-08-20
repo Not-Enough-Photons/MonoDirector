@@ -14,12 +14,15 @@ public abstract class Archetype
         m_eventTrack = new KeyframeTrack<EventPacket>();
         m_queuedEvents = new Queue<EventPacket>();
     }
-    
+
+    public string Barcode => m_barcode;
     public bool Armed => m_armed;
     public bool Visible => m_visible;
 
     public virtual Type Type => Type.None;
 
+    protected string m_barcode;
+    
     protected List<KeyframeTrack<Vector3>> m_positionTracks;
     protected List<KeyframeTrack<Quaternion>> m_rotationTracks;
     protected KeyframeTrack<EventPacket> m_eventTrack;
@@ -45,6 +48,8 @@ public abstract class Archetype
     public abstract void SceneEnd();
     public abstract void Act(float time);
     public abstract void Capture(float time);
+    public abstract byte[] Serialize();
+    public abstract void Deserialize(Stream stream);
 
     /// Arm this archetype for recording.
     public void Arm() => m_armed = true;
@@ -61,6 +66,8 @@ public abstract class Archetype
     {
         m_visible = false;
     }
+
+    public void SetBarcode(string barcode) => m_barcode = barcode;
 
     public void EnqueueEvent(EventPacket e)
     {

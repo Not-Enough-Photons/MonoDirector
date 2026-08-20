@@ -13,6 +13,8 @@ public abstract class EventPacket
     private bool m_executed;
 
     public abstract void Execute();
+    public abstract byte[] Serialize();
+    public abstract void Deserialize(Stream stream);
 
     public void SetOneShot(bool oneshot)
     {

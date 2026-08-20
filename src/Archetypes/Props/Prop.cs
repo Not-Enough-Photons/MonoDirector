@@ -116,6 +116,57 @@ public sealed class Prop : Archetype
        ProcessQueuedEvents(time);
     }
 
+    public override byte[] Serialize()
+    {
+        using MemoryStream stream = new MemoryStream();
+        using BinaryWriter writer = new BinaryWriter(stream);
+
+        writer.Write((byte)Type);
+        writer.Write((byte)m_propType);
+        writer.Write(m_visible);
+        writer.Write(m_barcode);
+
+        foreach (var track in m_positionTracks)
+        {
+            writer.Write(track.Name);
+            
+            foreach (var frame in track.Frames)
+            {
+                writer.Write(frame.Value.x);
+                writer.Write(frame.Value.y);
+                writer.Write(frame.Value.z);
+                writer.Write(frame.Time);
+            }
+        }
+
+        foreach (var track in m_rotationTracks)
+        {
+            writer.Write(track.Name);
+            
+            foreach (var frame in track.Frames)
+            {
+                writer.Write(frame.Value.x);
+                writer.Write(frame.Value.y);
+                writer.Write(frame.Value.z);
+                writer.Write(frame.Value.w);
+                writer.Write(frame.Time);
+            }
+        }
+
+        foreach (var packet in m_eventTrack.Frames)
+        {
+            writer.Write(packet.Value.Serialize());
+            writer.Write(packet.Time);
+        }
+        
+        return stream.ToArray();
+    }
+
+    public override void Deserialize(Stream stream)
+    {
+        throw new NotImplementedException();
+    }
+
     public override void Show()
     {
         base.Show();

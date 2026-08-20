@@ -25,4 +25,14 @@ public sealed class AudioImpactPacket : EventPacket
     {
         BoneLib.Audio.PlayAtPoint(m_clips.ToArray(), m_position, BoneLib.Audio.Impact, m_volume, m_pitch, m_spatial);
     }
+
+    public override byte[] Serialize()
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void Deserialize(Stream stream)
+    {
+        throw new NotImplementedException();
+    }
 }

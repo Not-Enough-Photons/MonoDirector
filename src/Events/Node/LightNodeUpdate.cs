@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace NEP.MonoDirector.Events;
 
-public sealed class LightNodeUpdate : EventPacket, ISerialized
+public sealed class LightNodeUpdate : EventPacket
 {
     public LightNodeUpdate(LightNode node, byte type, float range, float intensity, Color color)
     {
@@ -28,20 +28,12 @@ public sealed class LightNodeUpdate : EventPacket, ISerialized
         throw new NotImplementedException();
     }
 
-    public byte[] Serialize()
+    public override byte[] Serialize()
     {
-        using MemoryStream stream = new MemoryStream();
-        using StreamWriter writer = new StreamWriter(stream);
-        
-        writer.Write(m_lightType);
-        writer.Write(m_lightRange);
-        writer.Write(m_lightIntensity);
-        writer.Write(m_lightColor);
-
-        return stream.GetBuffer();
+        throw new NotImplementedException();
     }
 
-    public void Deserialize(Stream stream)
+    public override void Deserialize(Stream stream)
     {
         throw new NotImplementedException();
     }

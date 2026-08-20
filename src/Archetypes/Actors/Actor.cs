@@ -1,13 +1,14 @@
 ﻿using NEP.MonoDirector.Content;
 using NEP.MonoDirector.Keyframes;
 using NEP.MonoDirector.Patches;
+using NEP.MonoDirector.Serialization;
 
 using UnityEngine;
 using MarrowAvatar = Il2CppSLZ.VRMK.Avatar;
 
 namespace NEP.MonoDirector.Archetypes;
 
-public class Actor : Archetype
+public class Actor : Archetype, ISerialized
 {
     public Actor()
     {
@@ -162,5 +163,55 @@ public class Actor : Archetype
             Transform bone = avatar.animator.GetBoneTransform(index);
             m_bones.Add(bone);
         }
+    }
+
+    public override byte[] Serialize()
+    {
+        using MemoryStream stream = new MemoryStream();
+        using BinaryWriter writer = new BinaryWriter(stream);
+
+        writer.Write((byte)Type);
+        writer.Write(m_visible);
+        writer.Write(m_barcode);
+
+        foreach (var track in m_positionTracks)
+        {
+            writer.Write(track.Name);
+            
+            foreach (var frame in track.Frames)
+            {
+                writer.Write(frame.Value.x);
+                writer.Write(frame.Value.y);
+                writer.Write(frame.Value.z);
+                writer.Write(frame.Time);
+            }
+        }
+
+        foreach (var track in m_rotationTracks)
+        {
+            writer.Write(track.Name);
+            
+            foreach (var frame in track.Frames)
+            {
+                writer.Write(frame.Value.x);
+                writer.Write(frame.Value.y);
+                writer.Write(frame.Value.z);
+                writer.Write(frame.Value.w);
+                writer.Write(frame.Time);
+            }
+        }
+
+        foreach (var packet in m_eventTrack.Frames)
+        {
+            writer.Write(packet.Value.Serialize());
+            writer.Write(packet.Time);
+        }
+        
+        return stream.ToArray();
+    }
+
+    public override void Deserialize(Stream stream)
+    {
+        
     }
 }

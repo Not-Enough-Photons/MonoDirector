@@ -33,4 +33,14 @@ public sealed class FootstepPacket : EventPacket
         
         BoneLib.Audio.PlayAtPoint(clips, m_position, BoneLib.Audio.Footsteps, m_volume, m_pitch, m_spatial);
     }
+
+    public override byte[] Serialize()
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void Deserialize(Stream stream)
+    {
+        throw new NotImplementedException();
+    }
 }

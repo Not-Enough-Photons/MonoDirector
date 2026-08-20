@@ -1,4 +1,6 @@
-﻿namespace NEP.MonoDirector.Keyframes;
+﻿using NEP.MonoDirector.Serialization;
+
+namespace NEP.MonoDirector.Keyframes;
 
 public class Keyframe<T>
 {

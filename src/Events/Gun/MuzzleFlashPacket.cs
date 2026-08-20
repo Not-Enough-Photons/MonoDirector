@@ -2,21 +2,21 @@
 
 namespace NEP.MonoDirector.Events;
 
-public sealed class MuzzleFlashPacket : EventPacket, ISerialized
+public sealed class MuzzleFlashPacket : EventPacket
 {
-    public override byte ID => (byte)EventType.MUZZLE_FLASH;
+    public override byte ID => (byte)EventType.GUN_MUZZLE_FLASH;
     
-    public byte[] Serialize()
+    public override void Execute()
     {
         throw new NotImplementedException();
     }
 
-    public void Deserialize(Stream stream)
+    public override byte[] Serialize()
     {
         throw new NotImplementedException();
     }
-    
-    public override void Execute()
+
+    public override void Deserialize(Stream stream)
     {
         throw new NotImplementedException();
     }
